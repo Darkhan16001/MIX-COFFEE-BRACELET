@@ -1,0 +1,393 @@
+
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#e4c9b3">
+
+  <title>MIX BRACELET | Coffee Bracelets</title>
+
+  <meta name="description"
+        content="MIX BRACELET — кофе дәндерінен жасалған ерекше білезіктер.">
+
+  <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+  <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&family=Playfair+Display:wght@400;500&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="products.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+
+    <a href="#home" class="brand">
+      MIX BRACELET
+    </a>
+
+    <nav class="header-actions" aria-label="Store">
+
+      <a href="#collection" class="shop-link">
+        SHOP
+      </a>
+
+      <div class="languages" aria-label="Language">
+        <button type="button"
+                class="lang-btn active"
+                data-lang="kz">KZ</button>
+        <button type="button"
+                class="lang-btn"
+                data-lang="ru">RU</button>
+        <button type="button"
+                class="lang-btn"
+                data-lang="en">EN</button>
+      </div>
+
+      <button type="button"
+              id="favoritesButton"
+              class="header-icon"
+              aria-label="Таңдаулылар">
+
+        <svg viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="1.6"
+             stroke-linecap="round"
+             stroke-linejoin="round">
+          <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>
+        </svg>
+
+        <span id="favoritesCount"
+              class="icon-count">0</span>
+      </button>
+
+      <button type="button"
+              id="cartButton"
+              class="header-icon"
+              aria-label="Себет"
+              aria-controls="cartPanel">
+
+        <svg viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="1.6"
+             stroke-linecap="round"
+             stroke-linejoin="round">
+          <path d="M5 8h14l1 12H4L5 8Z"/>
+          <path d="M9 9V6a3 3 0 0 1 6 0v3"/>
+        </svg>
+
+        <span id="cartCount"
+              class="icon-count">0</span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- БАСТЫ БЕТ -->
+    <section id="home" class="hero">
+      <div class="hero-inner">
+
+        <p class="hero-tagline"
+           data-i18n="tagline">
+          Іріктелген кофе дәндері 🤎
+        </p>
+
+        <h1>
+          MIX COFFEE
+          <span>BRACELET</span>
+        </h1>
+
+        <p class="hero-description"
+           data-i18n="heroDescription">
+          Кофе әрдайым жаныңда.
+          Кофеге деген махаббат – білегіңде.
+        </p>
+
+        <a href="#collection"
+           class="primary-btn"
+           data-i18n="viewCollection">
+          Коллекцияны көру
+        </a>
+
+      </div>
+    </section>
+
+    <!-- КОЛЛЕКЦИЯЛАР -->
+    <section id="collection"
+             class="section collection">
+
+      <div class="section-heading">
+        <h2 data-i18n="collectionTitle">
+          Біздің коллекция
+        </h2>
+      </div>
+
+      <div class="collection-grid">
+
+        <!-- CLASSIC -->
+        <button type="button"
+                class="collection-card"
+                data-open-category="classic">
+
+          <div class="collection-cover"
+               id="classicCover">
+          </div>
+
+          <div class="collection-info">
+            <h3>Coffee Classic</h3>
+
+            <p data-i18n="classicShort">
+              Серпімді резеңке жіптен жасалған білезік
+            </p>
+
+            <div class="collection-bottom">
+              <strong>3 990 ₸</strong>
+              <span class="arrow">↗</span>
+            </div>
+          </div>
+        </button>
+
+        <!-- PREMIUM -->
+        <button type="button"
+                class="collection-card"
+                data-open-category="premium">
+
+          <div class="collection-cover"
+               id="premiumCover">
+          </div>
+
+          <div class="collection-info">
+            <h3>Coffee Premium</h3>
+
+            <p data-i18n="premiumShort">
+              Арнайы берік жіптен жасалған білезік
+            </p>
+
+            <div class="collection-bottom">
+              <strong>5 990 ₸</strong>
+              <span class="arrow">↗</span>
+            </div>
+          </div>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- ТАУАРЛАР -->
+    <section id="products"
+             class="section products-section"
+             hidden>
+
+      <div class="products-heading">
+
+        <div>
+          <h2 id="productsTitle">
+            Coffee Classic
+          </h2>
+
+          <!-- СИПАТТАМА БІР РЕТ ҚАНА -->
+          <p id="categoryDescription"
+             class="category-description"></p>
+        </div>
+
+        <button type="button"
+                id="backButton"
+                class="outline-btn"
+                data-i18n="back">
+          ← Артқа
+        </button>
+
+      </div>
+
+      <div id="categoryTabs"
+           class="category-tabs">
+
+        <button type="button"
+                class="category-tab active"
+                data-category="classic">
+          Classic
+        </button>
+
+        <button type="button"
+                class="category-tab"
+                data-category="premium">
+          Premium
+        </button>
+      </div>
+
+      <p id="productCount"
+         class="product-count"
+         aria-live="polite"></p>
+
+      <div id="productGrid"
+           class="product-grid"></div>
+
+      <p id="emptyMessage"
+         class="empty-message"
+         hidden></p>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+
+    <div class="footer-inner">
+
+      <h2 class="footer-brand">
+        MIX BRACELET
+      </h2>
+
+      <p class="footer-description"
+         data-i18n="tagline">
+        Іріктелген кофе дәндері 🤎
+      </p>
+
+      <!-- INSTAGRAM ҮСТІНДЕ -->
+      <div class="social-links">
+
+        <a href="https://www.instagram.com/mix_coffee_bracelet/"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="social-link">
+
+          <svg viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="1.7">
+            <rect x="3" y="3"
+                  width="18" height="18" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5"
+                    r="1" fill="currentColor"
+                    stroke="none"/>
+          </svg>
+
+          <span class="social-text">
+            <small>INSTAGRAM</small>
+            <strong>@mix_coffee_bracelet</strong>
+          </span>
+
+          <span class="social-arrow">↗</span>
+        </a>
+
+        <!-- WHATSAPP АСТЫНДА -->
+        <a href="https://wa.me/77058038122"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="social-link">
+
+          <svg viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="1.7"
+               stroke-linecap="round"
+               stroke-linejoin="round">
+            <path d="M20.5 11.7a8.5 8.5 0 0 1-12.8 7.4L3 20.5l1.4-4.7a8.5 8.5 0 1 1 16.1-4.1Z"/>
+            <path d="M8.5 8.5c.4 3.2 3.3 6.1 6.7 6.8l1.1-1.4-2.4-1.3-1.1 1c-1.1-.5-2-1.4-2.5-2.4l1-1.1-1.5-2.5-1.3.9Z"/>
+          </svg>
+
+          <span class="social-text">
+            <small>WHATSAPP</small>
+            <strong>+7 705 803-81-22</strong>
+          </span>
+
+          <span class="social-arrow">↗</span>
+        </a>
+
+      </div>
+
+      <div class="footer-bottom">
+        <span>
+          © <span id="year"></span> MIX BRACELET
+        </span>
+        <span data-i18n="tagline">
+          Іріктелген кофе дәндері 🤎
+        </span>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- СЕБЕТ ФОНЫ -->
+  <div id="cartBackdrop"
+       class="cart-backdrop"
+       hidden></div>
+
+  <!-- СЕБЕТ -->
+  <aside id="cartPanel"
+         class="cart-panel"
+         role="dialog"
+         aria-modal="true"
+         aria-hidden="true"
+         aria-labelledby="cartTitle">
+
+    <div class="cart-header">
+
+      <div>
+        <p class="cart-eyebrow">
+          MIX BRACELET
+        </p>
+        <h2 id="cartTitle">
+          Себет
+        </h2>
+      </div>
+
+      <button type="button"
+              id="closeCart"
+              class="close-cart"
+              aria-label="Себетті жабу">
+        ×
+      </button>
+    </div>
+
+    <div id="cartItems"
+         class="cart-items"></div>
+
+    <div class="cart-footer">
+
+      <div class="cart-total">
+        <span id="totalLabel">
+          Жалпы сома
+        </span>
+        <strong id="totalPrice">
+          0 ₸
+        </strong>
+      </div>
+
+      <a id="orderWhatsApp"
+         class="checkout-btn disabled"
+         aria-disabled="true"
+         target="_blank"
+         rel="noopener noreferrer">
+        WhatsApp арқылы тапсырыс беру
+      </a>
+
+      <button type="button"
+              id="copyOrder"
+              class="copy-btn">
+        Тізімді көшіру
+      </button>
+
+      <p id="cartMessage"
+         role="status"
+         class="cart-message"></p>
+    </div>
+  </aside>
+
+</body>
+</html>
