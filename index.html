@@ -1,0 +1,356 @@
+
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#e4c9b3">
+  <meta name="description"
+        content="MIX COFFEE BRACELET — coffee-inspired bracelets.">
+
+  <title>MIX COFFEE BRACELET — Official Shop</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="products.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- ЖОҒАРҒЫ ЖІҢІШКЕ ЖОЛАҚ -->
+  <header class="header">
+
+    <a class="brand" href="#home">
+      MIX COFFEE BRACELET
+    </a>
+
+    <div class="header-right">
+
+      <nav class="navigation" aria-label="Main navigation">
+        <a href="#shop" class="shop-link">SHOP</a>
+        <span class="nav-dot">·</span>
+
+        <a href="#catalog" data-i18n="catalog">
+          Каталог
+        </a>
+        <span class="nav-dot">·</span>
+
+        <a href="#about" data-i18n="about">
+          Біз туралы
+        </a>
+        <span class="nav-dot">·</span>
+
+        <a href="#contact" data-i18n="contact">
+          Байланыс
+        </a>
+      </nav>
+
+      <!-- ТІЛ ТАҢДАУ РАМКАСЫ -->
+      <div class="language-switcher"
+           role="group"
+           aria-label="Choose language">
+
+        <button type="button"
+                class="lang-btn active"
+                data-lang="kz">
+          KZ
+        </button>
+
+        <button type="button"
+                class="lang-btn"
+                data-lang="ru">
+          RU
+        </button>
+
+        <button type="button"
+                class="lang-btn"
+                data-lang="en">
+          EN
+        </button>
+      </div>
+
+      <!-- СЕБЕТ -->
+      <button class="cart-trigger"
+              id="cartTrigger"
+              type="button"
+              aria-label="Себет"
+              aria-haspopup="dialog"
+              aria-controls="cartPanel">
+        <svg viewBox="0 0 24 24"
+             width="22"
+             height="22"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="1.8"
+             stroke-linecap="round"
+             stroke-linejoin="round"
+             aria-hidden="true">
+          <path d="M5 8h14l1 12H4L5 8Z"/>
+          <path d="M9 9V6a3 3 0 0 1 6 0v3"/>
+        </svg>
+        <span id="cartCount" class="cart-count">0</span>
+      </button>
+
+    </div>
+  </header>
+
+  <main>
+
+    <!-- БАСТЫ БЕТ -->
+    <section class="hero" id="home">
+
+      <div class="hero-content">
+
+        <p class="eyebrow">
+          COFFEE INSPIRED JEWELRY
+        </p>
+
+        <h1 class="hero-title">
+          MIX COFFEE
+          <span>BRACELET</span>
+        </h1>
+
+        <p class="hero-description"
+           data-i18n="heroDescription">
+          Кофе әрдайым жаныңда.
+          Кофеге деген махаббат – білегіңде.
+        </p>
+
+        <div class="hero-actions">
+
+          <a href="#shop"
+             class="primary-button"
+             data-i18n="explore">
+            Коллекцияны көру
+          </a>
+
+          <a href="#about"
+             class="text-button"
+             data-i18n="learnMore">
+            Толығырақ
+          </a>
+
+        </div>
+
+        <div class="hero-bottom">
+          <span class="hero-line"></span>
+          <span>01 / MIX COFFEE BRACELET</span>
+        </div>
+
+      </div>
+
+      <div class="hero-photo">
+        <span data-i18n="addPhoto">Фото қосу</span>
+      </div>
+
+    </section>
+
+    <!-- SHOP -->
+    <section class="section shop-section" id="shop">
+
+      <div class="section-heading">
+        <div>
+          <p class="section-label">MIX COFFEE BRACELET</p>
+          <h2 data-i18n="shopTitle">
+            Біздің коллекция
+          </h2>
+        </div>
+
+        <a href="#catalog"
+           class="outline-button"
+           data-i18n="viewAll">
+          Барлығын көру
+        </a>
+      </div>
+
+      <div id="featuredProducts" class="product-grid"></div>
+
+    </section>
+
+    <!-- КАТАЛОГ -->
+    <section class="section catalog-section" id="catalog">
+
+      <div class="section-heading">
+        <div>
+          <p class="section-label">THE COLLECTION</p>
+          <h2 data-i18n="catalogTitle">
+            Білезіктер каталогы
+          </h2>
+        </div>
+      </div>
+
+      <div class="catalog-tools">
+
+        <input id="searchInput"
+               type="search"
+               placeholder="Білезік іздеу..."
+               aria-label="Білезік іздеу">
+
+        <div class="filters">
+          <button type="button"
+                  class="filter-btn active"
+                  data-filter="all"
+                  data-i18n="all">
+            Барлығы
+          </button>
+
+          <button type="button"
+                  class="filter-btn"
+                  data-filter="classic"
+                  data-i18n="classic">
+            Классикалық
+          </button>
+
+          <button type="button"
+                  class="filter-btn"
+                  data-filter="special"
+                  data-i18n="special">
+            Ерекше
+          </button>
+
+          <button type="button"
+                  class="filter-btn"
+                  data-filter="favorites"
+                  data-i18n="favorites">
+            Таңдаулылар
+          </button>
+        </div>
+
+      </div>
+
+      <p id="productCount"
+         class="product-count"
+         aria-live="polite"></p>
+
+      <div id="catalogProducts" class="product-grid"></div>
+
+      <p id="emptyMessage"
+         class="empty-message"
+         data-i18n="noProducts"
+         hidden>
+        Тауар табылмады.
+      </p>
+
+    </section>
+
+    <!-- БІЗ ТУРАЛЫ -->
+    <section class="section about-section" id="about">
+
+      <div class="about-inner">
+        <div>
+          <p class="section-label">OUR STORY</p>
+
+          <h2 data-i18n="aboutTitle">
+            Кофеден шабыт алған әшекей
+          </h2>
+        </div>
+
+        <div>
+          <p data-i18n="aboutText">
+            MIX COFFEE BRACELET — кофе атмосферасынан
+            шабыт алған білезіктер дүкені.
+            Біз күнделікті стильге ерекше көңіл күй
+            сыйлайтын аксессуарларды ұсынамыз.
+          </p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- БАЙЛАНЫС -->
+    <section class="section contact-section" id="contact">
+
+      <p class="section-label">GET IN TOUCH</p>
+
+      <h2 data-i18n="contactTitle">
+        Бізбен байланысыңыз
+      </h2>
+
+      <p data-i18n="contactText">
+        Сұрақтарыңыз болса, бізге хабарласыңыз.
+      </p>
+
+      <p class="contact-note" data-i18n="contactNote">
+        WhatsApp және Instagram байланыстары кейін қосылады.
+      </p>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-brand">MIX COFFEE BRACELET</div>
+
+    <p data-i18n="footerText">
+      Кофеге деген махаббат – білегіңде.
+    </p>
+
+    <small>
+      © <span id="year"></span> MIX COFFEE BRACELET
+    </small>
+  </footer>
+
+  <!-- СЕБЕТТІҢ ҚАРАҢҒЫ ФОНЫ -->
+  <div class="cart-overlay"
+       id="cartOverlay"
+       hidden></div>
+
+  <!-- ОҢ ЖАҚТАН АШЫЛАТЫН СЕБЕТ -->
+  <aside class="cart-panel"
+         id="cartPanel"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="cartTitle"
+         aria-hidden="true"
+         tabindex="-1">
+
+    <div class="cart-header">
+      <h2 id="cartTitle">Себет</h2>
+
+      <button id="closeCart"
+              type="button"
+              class="close-cart"
+              aria-label="Close cart">
+        ×
+      </button>
+    </div>
+
+    <div class="cart-items"
+         id="cartItems"
+         aria-live="polite"></div>
+
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span id="cartTotalLabel">Жалпы сома</span>
+        <strong id="cartTotal">0 ₸</strong>
+      </div>
+
+      <button id="checkoutBtn"
+              type="button"
+              class="checkout-btn">
+        Тапсырыс мәтінін көшіру
+      </button>
+
+      <p id="checkoutStatus"
+         class="checkout-status"
+         role="status"></p>
+    </div>
+
+  </aside>
+
+  <button id="backToTop"
+          class="back-to-top"
+          type="button"
+          aria-label="Back to top">
+    ↑
+  </button>
+
+</body>
+</html>
