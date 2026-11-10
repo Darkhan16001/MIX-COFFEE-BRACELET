@@ -1,11 +1,9 @@
 
 "use strict";
 
-/* ==========================================
-   MIX BRACELET — SCRIPT.JS
-========================================== */
-
-/* 1. АУДАРМАЛАР */
+/* ================================
+   1. АУДАРМАЛАР
+================================ */
 
 const TEXTS = {
   kz: {
@@ -26,8 +24,9 @@ const TEXTS = {
     productCount: "білезік",
     favorites: "Таңдаулылар",
     favoritesEmpty: "Таңдаулы тауарлар жоқ.",
+    noProducts: "Тауарлар жоқ.",
     addFavorite: "Таңдаулыға қосу",
-    removeFavorite: "Таңдаулыдан алып тастау",
+    removeFavorite: "Таңдаулыдан алу",
     addToCart: "Себетке қосу",
     cart: "Себет",
     cartEmpty: "Себет бос",
@@ -39,7 +38,7 @@ const TEXTS = {
     whatsappOrder: "WhatsApp арқылы тапсырыс беру",
     copyOrder: "Тізімді көшіру",
     copied: "Тапсырыс тізімі көшірілді!",
-    copyError: "Тізімді көшіру мүмкін болмады.",
+    copyError: "Көшіру мүмкін болмады.",
     photoMissing: "Фото табылмады"
   },
 
@@ -60,6 +59,7 @@ const TEXTS = {
     productCount: "браслетов",
     favorites: "Избранное",
     favoritesEmpty: "Избранных товаров пока нет.",
+    noProducts: "Товары отсутствуют.",
     addFavorite: "Добавить в избранное",
     removeFavorite: "Убрать из избранного",
     addToCart: "В корзину",
@@ -73,7 +73,7 @@ const TEXTS = {
     whatsappOrder: "Заказать через WhatsApp",
     copyOrder: "Скопировать список",
     copied: "Список заказа скопирован!",
-    copyError: "Не удалось скопировать список.",
+    copyError: "Не удалось скопировать.",
     photoMissing: "Фото не найдено"
   },
 
@@ -84,16 +84,16 @@ const TEXTS = {
     viewCollection: "Explore collection",
     collectionTitle: "Our collection",
     classicShort: "Bracelet with an elastic cord",
-    premiumShort:
-      "Bracelet with a special durable cord",
+    premiumShort: "Bracelet with a special durable cord",
     classicDescription:
-      "A classic coffee bracelet made with an elastic cord, making it comfortable to put on and take off.",
+      "A classic coffee bracelet made with an elastic cord, making it easy and comfortable to put on and take off.",
     premiumDescription:
       "A classic coffee bracelet crafted with a special durable cord designed for bracelet making.",
     back: "← Back",
     productCount: "bracelets",
     favorites: "Favorites",
     favoritesEmpty: "No favorites yet.",
+    noProducts: "No products available.",
     addFavorite: "Add to favorites",
     removeFavorite: "Remove from favorites",
     addToCart: "Add to cart",
@@ -112,12 +112,17 @@ const TEXTS = {
   }
 };
 
-/* 2. LOCAL STORAGE */
+/* ================================
+   2. БРАУЗЕР ЖАДЫ
+================================ */
 
 function loadData(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
-    return raw === null ? fallback : JSON.parse(raw);
+
+    return raw === null
+      ? fallback
+      : JSON.parse(raw);
   } catch {
     return fallback;
   }
@@ -125,21 +130,30 @@ function loadData(key, fallback) {
 
 function saveData(key, value) {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    localStorage.setItem(
+      key,
+      JSON.stringify(value)
+    );
   } catch {
-    // Сайт сақтаусыз да жұмыс істейді.
+    // LocalStorage бұғатталса да жұмыс істейді
   }
 }
 
-/* 3. БАСТАПҚЫ МӘЛІМЕТ */
+/* ================================
+   3. САҚТАЛҒАН МӘЛІМЕТТЕР
+================================ */
 
-const savedLanguage = loadData("mix-language-v7", "kz");
+const savedLanguage =
+  loadData("mix-language-v7", "kz");
 
-let language = Object.hasOwn(TEXTS, savedLanguage)
-  ? savedLanguage
-  : "kz";
+let language = Object.prototype.hasOwnProperty.call(
+  TEXTS,
+  savedLanguage
+) ? savedLanguage : "kz";
 
-const validIds = new Set(PRODUCTS.map(p => p.id));
+const validIds = new Set(
+  PRODUCTS.map(product => product.id)
+);
 
 const savedFavorites =
   loadData("mix-favorites-v7", []);
@@ -150,7 +164,8 @@ const favorites = new Set(
     : []
 );
 
-const savedCart = loadData("mix-cart-v7", []);
+const savedCart =
+  loadData("mix-cart-v7", []);
 
 let cart = [];
 
@@ -162,7 +177,9 @@ if (Array.isArray(savedCart)) {
       Number.isInteger(item.quantity) &&
       item.quantity > 0
     ) {
-      const existing = cart.find(x => x.id === item.id);
+      const existing = cart.find(
+        row => row.id === item.id
+      );
 
       if (existing) {
         existing.quantity = Math.min(
@@ -183,7 +200,9 @@ let currentView = "classic";
 let cartOpen = false;
 let lastFocusedElement = null;
 
-/* 4. HTML ЭЛЕМЕНТТЕР */
+/* ================================
+   4. HTML ЭЛЕМЕНТТЕР
+================================ */
 
 const $ = id => document.getElementById(id);
 
@@ -203,19 +222,24 @@ const cartCount = $("cartCount");
 const cartPanel = $("cartPanel");
 const cartBackdrop = $("cartBackdrop");
 const cartItems = $("cartItems");
+
 const totalPrice = $("totalPrice");
 const orderWhatsApp = $("orderWhatsApp");
 const copyOrderButton = $("copyOrder");
 const cartMessage = $("cartMessage");
 
-/* 5. КӨМЕКШІ ФУНКЦИЯЛАР */
+/* ================================
+   5. КӨМЕКШІ ФУНКЦИЯЛАР
+================================ */
 
 function t(key) {
   return TEXTS[language][key] || key;
 }
 
 function getProduct(id) {
-  return PRODUCTS.find(product => product.id === id);
+  return PRODUCTS.find(
+    product => product.id === id
+  );
 }
 
 function categoryName(category) {
@@ -229,14 +253,16 @@ function formatPrice(amount) {
     .format(amount) + " ₸";
 }
 
-function scrollTo(element) {
+function scrollToSection(element) {
   element.scrollIntoView({
     behavior: "smooth",
     block: "start"
   });
 }
 
-/* 6. ФОТОНЫ КӨРСЕТУ */
+/* ================================
+   6. ФОТОЛАР
+================================ */
 
 function displayImage(container, product) {
   container.replaceChildren();
@@ -251,28 +277,41 @@ function displayImage(container, product) {
   img.decoding = "async";
 
   img.onerror = () => {
-    const placeholder = document.createElement("span");
-    placeholder.textContent = t("photoMissing");
+    const placeholder =
+      document.createElement("span");
+
+    placeholder.textContent =
+      t("photoMissing");
+
     container.replaceChildren(placeholder);
   };
 
   container.appendChild(img);
 }
 
-/* 7. КОЛЛЕКЦИЯ МҰҚАБАЛАРЫ */
-
 function renderCollectionCovers() {
-  const classic = getProduct(COLLECTION_COVERS.classic);
-  const premium = getProduct(COLLECTION_COVERS.premium);
+  displayImage(
+    $("classicCover"),
+    getProduct(COLLECTION_COVERS.classic)
+  );
 
-  displayImage($("classicCover"), classic);
-  displayImage($("premiumCover"), premium);
+  displayImage(
+    $("premiumCover"),
+    getProduct(COLLECTION_COVERS.premium)
+  );
 }
 
-/* 8. ТІЛ АУЫСТЫРУ */
+/* ================================
+   7. ТІЛ АУЫСТЫРУ
+================================ */
 
 function setLanguage(nextLanguage) {
-  if (!Object.hasOwn(TEXTS, nextLanguage)) return;
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      TEXTS,
+      nextLanguage
+    )
+  ) return;
 
   language = nextLanguage;
   saveData("mix-language-v7", language);
@@ -282,17 +321,21 @@ function setLanguage(nextLanguage) {
 
   document.querySelectorAll("[data-i18n]")
     .forEach(element => {
-      element.textContent = t(element.dataset.i18n);
+      element.textContent = t(
+        element.dataset.i18n
+      );
     });
 
   document.querySelectorAll(".lang-btn")
     .forEach(button => {
-      const selected = button.dataset.lang === language;
+      const active =
+        button.dataset.lang === language;
 
-      button.classList.toggle("active", selected);
+      button.classList.toggle("active", active);
+
       button.setAttribute(
         "aria-pressed",
-        String(selected)
+        String(active)
       );
     });
 
@@ -301,7 +344,11 @@ function setLanguage(nextLanguage) {
     t("favorites")
   );
 
-  cartButton.setAttribute("aria-label", t("cart"));
+  cartButton.setAttribute(
+    "aria-label",
+    t("cart")
+  );
+
   $("cartTitle").textContent = t("cart");
   $("totalLabel").textContent = t("total");
 
@@ -310,8 +357,12 @@ function setLanguage(nextLanguage) {
     t("closeCart")
   );
 
-  orderWhatsApp.textContent = t("whatsappOrder");
-  copyOrderButton.textContent = t("copyOrder");
+  orderWhatsApp.textContent =
+    t("whatsappOrder");
+
+  copyOrderButton.textContent =
+    t("copyOrder");
+
   cartMessage.textContent = "";
 
   renderCollectionCovers();
@@ -319,10 +370,13 @@ function setLanguage(nextLanguage) {
   renderCart();
 }
 
-/* 9. САНАУЫШТАР */
+/* ================================
+   8. САНАУЫШТАР
+================================ */
 
 function updateCounters() {
-  favoritesCount.textContent = favorites.size;
+  favoritesCount.textContent =
+    favorites.size;
 
   cartCount.textContent = cart.reduce(
     (sum, item) => sum + item.quantity,
@@ -330,29 +384,42 @@ function updateCounters() {
   );
 }
 
-/* 10. ТАУАР КАРТОЧКАСЫ */
+/* ================================
+   9. ТАУАР КАРТОЧКАСЫ
+================================ */
 
 function createProductCard(product) {
-  const card = document.createElement("article");
+  const card =
+    document.createElement("article");
+
   card.className = "product-card";
 
-  const photo = document.createElement("div");
+  const photo =
+    document.createElement("div");
+
   photo.className = "product-photo";
 
-  // Фото үлкеймейді, тек көрсетіледі.
   displayImage(photo, product);
 
-  // ЖҮРЕК
-  const heart = document.createElement("button");
+  // FAVORITE
+  const heart =
+    document.createElement("button");
+
   heart.type = "button";
   heart.className = "favorite-btn";
 
   const liked = favorites.has(product.id);
 
-  heart.textContent = liked ? "♥" : "♡";
+  heart.textContent =
+    liked ? "♥" : "♡";
+
   heart.classList.toggle("active", liked);
 
-  heart.setAttribute("aria-pressed", String(liked));
+  heart.setAttribute(
+    "aria-pressed",
+    String(liked)
+  );
+
   heart.setAttribute(
     "aria-label",
     liked ? t("removeFavorite") : t("addFavorite")
@@ -364,14 +431,22 @@ function createProductCard(product) {
 
   photo.appendChild(heart);
 
-  const info = document.createElement("div");
+  // PRICE
+  const info =
+    document.createElement("div");
+
   info.className = "product-info";
 
-  const price = document.createElement("p");
+  const price =
+    document.createElement("p");
+
   price.className = "product-price";
   price.textContent = formatPrice(product.price);
 
-  const addButton = document.createElement("button");
+  // ADD TO CART
+  const addButton =
+    document.createElement("button");
+
   addButton.type = "button";
   addButton.className = "add-to-cart";
   addButton.textContent = t("addToCart");
@@ -380,14 +455,16 @@ function createProductCard(product) {
     addToCart(product.id);
   });
 
-  // Карточкада жеке атау және сипаттама жоқ.
+  // Жеке атау да, сипаттама да жоқ
   info.append(price, addButton);
   card.append(photo, info);
 
   return card;
 }
 
-/* 11. КОЛЛЕКЦИЯНЫ АШУ */
+/* ================================
+   10. КОЛЛЕКЦИЯ
+================================ */
 
 function openCategory(category) {
   if (!["classic", "premium"].includes(category)) {
@@ -398,18 +475,20 @@ function openCategory(category) {
   productsSection.hidden = false;
 
   renderProducts();
-  scrollTo(productsSection);
+  scrollToSection(productsSection);
 }
-
-/* 12. ТАҢДАУЛЫЛАР */
 
 function openFavorites() {
   currentView = "favorites";
   productsSection.hidden = false;
 
   renderProducts();
-  scrollTo(productsSection);
+  scrollToSection(productsSection);
 }
+
+/* ================================
+   11. ТАҢДАУЛЫЛАР
+================================ */
 
 function toggleFavorite(id) {
   if (favorites.has(id)) {
@@ -418,14 +497,21 @@ function toggleFavorite(id) {
     favorites.add(id);
   }
 
-  saveData("mix-favorites-v7", [...favorites]);
+  saveData(
+    "mix-favorites-v7",
+    [...favorites]
+  );
+
   renderProducts();
 }
 
-/* 13. ТАУАРЛАРДЫ КӨРСЕТУ */
+/* ================================
+   12. ӨНІМДЕРДІ ШЫҒАРУ
+================================ */
 
 function renderProducts() {
-  const isFavorites = currentView === "favorites";
+  const isFavorites =
+    currentView === "favorites";
 
   productsTitle.textContent = isFavorites
     ? t("favorites")
@@ -451,13 +537,14 @@ function renderProducts() {
         button.dataset.category === currentView;
 
       button.classList.toggle("active", active);
+
       button.setAttribute(
         "aria-pressed",
         String(active)
       );
     });
 
-  const visibleProducts = PRODUCTS.filter(product =>
+  const visible = PRODUCTS.filter(product =>
     isFavorites
       ? favorites.has(product.id)
       : product.category === currentView
@@ -465,22 +552,27 @@ function renderProducts() {
 
   productGrid.replaceChildren();
 
-  for (const product of visibleProducts) {
+  visible.forEach(product => {
     productGrid.appendChild(
       createProductCard(product)
     );
-  }
+  });
 
   productCount.textContent =
-    visibleProducts.length + " " + t("productCount");
+    visible.length + " " + t("productCount");
 
-  emptyMessage.hidden = visibleProducts.length > 0;
-  emptyMessage.textContent = t("favoritesEmpty");
+  emptyMessage.textContent = isFavorites
+    ? t("favoritesEmpty")
+    : t("noProducts");
+
+  emptyMessage.hidden = visible.length > 0;
 
   updateCounters();
 }
 
-/* 14. СЕБЕТКЕ ҚОСУ */
+/* ================================
+   13. СЕБЕТ
+================================ */
 
 function saveCart() {
   saveData("mix-cart-v7", cart);
@@ -489,15 +581,20 @@ function saveCart() {
 function addToCart(id) {
   if (!getProduct(id)) return;
 
-  const existing = cart.find(item => item.id === id);
+  const existing = cart.find(
+    item => item.id === id
+  );
 
   if (existing) {
     existing.quantity = Math.min(
-      99,
-      existing.quantity + 1
+      existing.quantity + 1,
+      99
     );
   } else {
-    cart.push({ id, quantity: 1 });
+    cart.push({
+      id,
+      quantity: 1
+    });
   }
 
   saveCart();
@@ -506,15 +603,23 @@ function addToCart(id) {
 }
 
 function changeQuantity(id, delta) {
-  const item = cart.find(row => row.id === id);
+  const item = cart.find(
+    row => row.id === id
+  );
+
   if (!item) return;
 
   item.quantity += delta;
 
   if (item.quantity <= 0) {
-    cart = cart.filter(row => row.id !== id);
+    cart = cart.filter(
+      row => row.id !== id
+    );
   } else {
-    item.quantity = Math.min(99, item.quantity);
+    item.quantity = Math.min(
+      99,
+      item.quantity
+    );
   }
 
   saveCart();
@@ -522,12 +627,13 @@ function changeQuantity(id, delta) {
 }
 
 function removeFromCart(id) {
-  cart = cart.filter(row => row.id !== id);
+  cart = cart.filter(
+    item => item.id !== id
+  );
+
   saveCart();
   renderCart();
 }
-
-/* 15. ЖАЛПЫ БАҒА */
 
 function calculateTotal() {
   return cart.reduce((sum, item) => {
@@ -541,7 +647,9 @@ function calculateTotal() {
   }, 0);
 }
 
-/* 16. ФОТОСЫ БАР ТАПСЫРЫС СІЛТЕМЕСІ */
+/* ================================
+   14. WHATSAPP ТАПСЫРЫСЫ
+================================ */
 
 function buildOrderText() {
   const lines = [
@@ -555,7 +663,6 @@ function buildOrderText() {
     const product = getProduct(item.id);
     if (!product) return;
 
-    // Суретке толық интернет-сілтеме.
     const photoUrl = new URL(
       product.image,
       document.baseURI
@@ -597,8 +704,6 @@ function buildOrderText() {
   return lines.join("\n");
 }
 
-/* 17. WHATSAPP */
-
 function updateWhatsAppLink() {
   if (!cart.length) {
     orderWhatsApp.removeAttribute("href");
@@ -625,7 +730,9 @@ function updateWhatsAppLink() {
   );
 }
 
-/* 18. СЕБЕТ КӨРІНІСІ */
+/* ================================
+   15. СЕБЕТТІ КӨРСЕТУ
+================================ */
 
 function renderCart() {
   cartItems.replaceChildren();
@@ -637,9 +744,9 @@ function renderCart() {
     cartItems.appendChild(empty);
   }
 
-  for (const item of cart) {
+  cart.forEach(item => {
     const product = getProduct(item.id);
-    if (!product) continue;
+    if (!product) return;
 
     const row = document.createElement("div");
     row.className = "cart-item";
@@ -661,7 +768,6 @@ function renderCart() {
 
     const price = document.createElement("p");
     price.className = "cart-item-price";
-
     price.textContent = formatPrice(
       product.price * item.quantity
     );
@@ -679,8 +785,8 @@ function renderCart() {
       changeQuantity(product.id, -1);
     });
 
-    const quantity = document.createElement("strong");
-    quantity.textContent = item.quantity;
+    const amount = document.createElement("strong");
+    amount.textContent = item.quantity;
 
     const plus = document.createElement("button");
     plus.type = "button";
@@ -692,7 +798,7 @@ function renderCart() {
       changeQuantity(product.id, 1);
     });
 
-    quantityRow.append(minus, quantity, plus);
+    quantityRow.append(minus, amount, plus);
 
     const remove = document.createElement("button");
     remove.type = "button";
@@ -713,18 +819,21 @@ function renderCart() {
 
     row.append(photo, info);
     cartItems.appendChild(row);
-  }
+  });
 
   totalPrice.textContent =
     formatPrice(calculateTotal());
 
-  copyOrderButton.disabled = cart.length === 0;
+  copyOrderButton.disabled =
+    cart.length === 0;
 
   updateWhatsAppLink();
   updateCounters();
 }
 
-/* 19. СЕБЕТТІ АШУ */
+/* ================================
+   16. СЕБЕТТІ АШУ / ЖАБУ
+================================ */
 
 function openCart() {
   if (cartOpen) return;
@@ -744,13 +853,12 @@ function openCart() {
   $("closeCart").focus();
 }
 
-/* 20. СЕБЕТТІ ЖАБУ */
-
 function closeCart() {
   if (!cartOpen) return;
 
   cartOpen = false;
   cartBackdrop.hidden = true;
+
   cartPanel.classList.remove("open");
 
   cartPanel.setAttribute(
@@ -770,7 +878,9 @@ function closeCart() {
   }
 }
 
-/* 21. ТАПСЫРЫСТЫ КӨШІРУ */
+/* ================================
+   17. ТІЗІМДІ КӨШІРУ
+================================ */
 
 async function copyOrderText() {
   if (!cart.length) return;
@@ -779,10 +889,15 @@ async function copyOrderText() {
   let success = false;
 
   try {
+    if (!navigator.clipboard) {
+      throw new Error("Clipboard unavailable");
+    }
+
     await navigator.clipboard.writeText(text);
     success = true;
   } catch {
-    const textarea = document.createElement("textarea");
+    const textarea =
+      document.createElement("textarea");
 
     textarea.value = text;
     textarea.style.position = "fixed";
@@ -807,8 +922,11 @@ async function copyOrderText() {
     : t("copyError");
 }
 
-/* 22. ТІЛ БАТЫРМАЛАРЫ */
+/* ================================
+   18. БАТЫРМАЛАР
+================================ */
 
+// ТІЛДЕР
 document.querySelectorAll(".lang-btn")
   .forEach(button => {
     button.addEventListener("click", () => {
@@ -816,8 +934,7 @@ document.querySelectorAll(".lang-btn")
     });
   });
 
-/* 23. КОЛЛЕКЦИЯ АШУ */
-
+// КОЛЛЕКЦИЯЛАР
 document.querySelectorAll("[data-open-category]")
   .forEach(button => {
     button.addEventListener("click", () => {
@@ -825,8 +942,7 @@ document.querySelectorAll("[data-open-category]")
     });
   });
 
-/* 24. КОЛЛЕКЦИЯ АУЫСТЫРУ */
-
+// CLASSIC / PREMIUM
 document.querySelectorAll(".category-tab")
   .forEach(button => {
     button.addEventListener("click", () => {
@@ -834,28 +950,32 @@ document.querySelectorAll(".category-tab")
     });
   });
 
-/* 25. ТАҢДАУЛЫЛАР */
-
+// ТАҢДАУЛЫЛАР
 favoritesButton.addEventListener(
   "click",
   openFavorites
 );
 
-/* 26. АРТҚА */
-
+// АРТҚА
 $("backButton").addEventListener("click", () => {
   productsSection.hidden = true;
-  scrollTo($("collection"));
+  scrollToSection($("collection"));
 });
 
-/* 27. СЕБЕТ БАТЫРМАЛАРЫ */
-
+// СЕБЕТ
 cartButton.addEventListener("click", openCart);
-$("closeCart").addEventListener("click", closeCart);
-cartBackdrop.addEventListener("click", closeCart);
 
-/* 28. ESC / TAB */
+$("closeCart").addEventListener(
+  "click",
+  closeCart
+);
 
+cartBackdrop.addEventListener(
+  "click",
+  closeCart
+);
+
+// ESC / TAB
 document.addEventListener("keydown", event => {
   if (!cartOpen) return;
 
@@ -892,15 +1012,17 @@ document.addEventListener("keydown", event => {
   }
 });
 
-/* 29. КӨШІРУ */
-
+// ТАПСЫРЫСТЫ КӨШІРУ
 copyOrderButton.addEventListener(
   "click",
   copyOrderText
 );
 
-/* 30. БАСТАУ */
+/* ================================
+   19. САЙТТЫ ІСКЕ ҚОСУ
+================================ */
 
-$("year").textContent = new Date().getFullYear();
+$("year").textContent =
+  new Date().getFullYear();
 
 setLanguage(language);
