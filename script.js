@@ -1,158 +1,145 @@
 
+"use strict";
+
 // ========================================
-// MIX COFFEE BRACELET
+// НАСТРОЙКИ МАГАЗИНА
 // ========================================
 
-// ЗАМЕНИ названия и изображения на свои.
-// Фотографии нужно положить в папку images
-// и опубликовать вместе с сайтом.
-//
-// Это демонстрационные товары.
-// Реальные товары из прежней админ-панели
-// сюда автоматически не переносятся.
+// Вставь публичные данные из своего
+// прежнего проекта Supabase.
+// НЕ вставляй service_role или secret key.
 
-const products = [
-  {
-    id: 1,
-    name: "Coffee Classic",
-    category: "classic",
-    price: 3990,
-    images: [
-      "images/classic-1.jpg",
-      "images/classic-2.jpg",
-      "images/classic-3.jpg"
-    ]
-  },
-  {
-    id: 2,
-    name: "Coffee Classic №2",
-    category: "classic",
-    price: 3990,
-    images: [
-      "images/classic-4.jpg",
-      "images/classic-5.jpg",
-      "images/classic-6.jpg"
-    ]
-  },
-  {
-    id: 3,
-    name: "Coffee Premium",
-    category: "premium",
-    price: 5990,
-    images: [
-      "images/premium-1.jpg",
-      "images/premium-2.jpg",
-      "images/premium-3.jpg"
-    ]
-  },
-  {
-    id: 4,
-    name: "Coffee Premium №2",
-    category: "premium",
-    price: 5990,
-    images: [
-      "images/premium-4.jpg",
-      "images/premium-5.jpg",
-      "images/premium-6.jpg"
-    ]
-  }
-];
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+
+// Контакты магазина
+const INSTAGRAM_URL = "https://www.instagram.com/";
+const TIKTOK_URL = "https://www.tiktok.com/";
+const WHATSAPP_NUMBER = "77058038122";
 
 // ========================================
 // ПЕРЕВОДЫ
 // ========================================
 
-const translations = {
+const TEXTS = {
   ru: {
-    heroTitle: "Украшения с характером",
-    heroSubtitle: "Отборные кофейные зёрна 🤎",
-    explore: "Смотреть коллекции",
+    heroAccent: "Детали стиля.",
+    tagline: "Отборные кофейные зёрна 🤎",
+    heroDescription: "Любовь к кофе — на твоём запястье.",
+    explore: "Смотреть коллекцию",
     collections: "Наши коллекции",
-    choose: "Выберите коллекцию, чтобы увидеть браслеты",
-    selectCollection: "Нажмите на Classic или Premium",
-    aboutTitle: "Особенные детали",
-    aboutText:
-      "Тёплые оттенки, эстетика кофе и браслеты, созданные для вашего стиля.",
-    total: "Итого",
+    collectionHint: "Выберите коллекцию, чтобы посмотреть браслеты.",
+    classicShort: "Браслет на эластичной резинке",
+    premiumShort: "Браслет на прочной нити",
+    classicDescription: "Классический кофейный браслет на эластичной резинке.",
+    premiumDescription: "Кофейный браслет на специальной прочной нити.",
+    viewProducts: "Смотреть браслеты",
+    aboutTitle: "Кофе в каждой детали",
+    aboutText: "Украшения, вдохновлённые атмосферой кофе. Тёплые оттенки, особенный стиль и внимание к деталям.",
     add: "В корзину",
-    added: "Добавлено в корзину",
     cart: "Корзина",
     favorites: "Избранное",
-    empty: "Здесь пока пусто",
-    copy: "Скопировать заказ",
-    copied: "Заказ скопирован",
-    unavailable: "Не удалось скопировать заказ",
-    remove: "Удалить",
-    quantity: "Количество"
+    total: "Итого",
+    order: "Заказать через WhatsApp",
+    emptyProducts: "Пока нет опубликованных браслетов.",
+    emptyCart: "Корзина пуста.",
+    loading: "Загружаем браслеты...",
+    loadError: "Не удалось загрузить товары.",
+    added: "Добавлено в корзину",
+    item: "браслетов"
   },
 
   kz: {
-    heroTitle: "Ерекше сәндік бұйымдар",
-    heroSubtitle: "Таңдаулы кофе дәндері 🤎",
-    explore: "Топтамаларды көру",
+    heroAccent: "Стиль бөлшектері.",
+    tagline: "Іріктелген кофе дәндері 🤎",
+    heroDescription: "Кофеге деген махаббат – білегіңде.",
+    explore: "Топтаманы көру",
     collections: "Біздің топтамалар",
-    choose: "Білезіктерді көру үшін топтаманы таңдаңыз",
-    selectCollection: "Classic немесе Premium таңдаңыз",
-    aboutTitle: "Ерекше бөлшектер",
-    aboutText:
-      "Жылы түстер, кофе эстетикасы және сіздің стиліңізге арналған білезіктер.",
-    total: "Барлығы",
-    add: "Себетке салу",
-    added: "Себетке қосылды",
+    collectionHint: "Білезіктерді көру үшін топтаманы таңдаңыз.",
+    classicShort: "Серпімді резеңке жіптен жасалған білезік",
+    premiumShort: "Берік жіптен жасалған білезік",
+    classicDescription: "Серпімді резеңке жіптен жасалған классикалық кофе білезігі.",
+    premiumDescription: "Арнайы берік жіптен жасалған кофе білезігі.",
+    viewProducts: "Білезіктерді көру",
+    aboutTitle: "Әр бөлшектегі кофе",
+    aboutText: "Кофе атмосферасынан шабыт алған әшекейлер. Жылы түстер, ерекше стиль және әр бөлшекке назар.",
+    add: "Себетке қосу",
     cart: "Себет",
     favorites: "Таңдаулылар",
-    empty: "Әзірге бос",
-    copy: "Тапсырысты көшіру",
-    copied: "Тапсырыс көшірілді",
-    unavailable: "Тапсырысты көшіру мүмкін болмады",
-    remove: "Жою",
-    quantity: "Саны"
+    total: "Барлығы",
+    order: "WhatsApp арқылы тапсырыс беру",
+    emptyProducts: "Әзірге білезіктер жарияланбаған.",
+    emptyCart: "Себет бос.",
+    loading: "Білезіктер жүктелуде...",
+    loadError: "Тауарларды жүктеу мүмкін болмады.",
+    added: "Себетке қосылды",
+    item: "білезік"
+  },
+
+  en: {
+    heroAccent: "Details of Style.",
+    tagline: "Carefully Selected Coffee Beans 🤎",
+    heroDescription: "Wear your love for coffee on your wrist.",
+    explore: "Explore Collection",
+    collections: "Our Collections",
+    collectionHint: "Choose a collection to view bracelets.",
+    classicShort: "Bracelet with an elastic cord",
+    premiumShort: "Bracelet with a durable cord",
+    classicDescription: "A classic coffee bracelet with a comfortable elastic cord.",
+    premiumDescription: "A coffee bracelet made with a durable cord.",
+    viewProducts: "View Bracelets",
+    aboutTitle: "Coffee in Every Detail",
+    aboutText: "Jewelry inspired by the atmosphere of coffee. Warm shades, unique style and attention to detail.",
+    add: "Add to Cart",
+    cart: "Shopping Cart",
+    favorites: "Favorites",
+    total: "Total",
+    order: "Order via WhatsApp",
+    emptyProducts: "No published bracelets yet.",
+    emptyCart: "Your cart is empty.",
+    loading: "Loading bracelets...",
+    loadError: "Could not load products.",
+    added: "Added to cart",
+    item: "bracelets"
   }
 };
 
-let lang = "ru";
-let activeCategory = null;
-let activePanel = null;
+const $ = id => document.getElementById(id);
 
-// ========================================
-// БЕЗОПАСНОЕ ЛОКАЛЬНОЕ СОХРАНЕНИЕ
-// Только корзина и избранное.
-// Каталог хранится в коде сайта.
-// ========================================
-
-function readSavedArray(key) {
+function saved(key, fallback) {
   try {
-    const data = JSON.parse(
-      localStorage.getItem(key) || "[]"
-    );
-
-    return Array.isArray(data) ? data : [];
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
   } catch {
-    return [];
+    return fallback;
   }
 }
 
-let cart = readSavedArray("mix_cart");
-let favorites = readSavedArray("mix_favorites");
-
-function save() {
+function store(key, value) {
   try {
-    localStorage.setItem(
-      "mix_cart",
-      JSON.stringify(cart)
-    );
-
-    localStorage.setItem(
-      "mix_favorites",
-      JSON.stringify(favorites)
-    );
+    localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
-    console.warn("Ошибка сохранения:", error);
+    console.warn("Storage unavailable", error);
   }
 }
+
+let language = saved("mix-language-v8", "ru");
+if (!TEXTS[language]) language = "ru";
+
+let PRODUCTS = [];
+let loaded = false;
+let currentCategory = null;
+let panelMode = "cart";
+
+let cart = saved("mix-cart-v8", []);
+if (!Array.isArray(cart)) cart = [];
+
+let favorites = saved("mix-favorites-v8", []);
+if (!Array.isArray(favorites)) favorites = [];
+
+let db = null;
 
 function t(key) {
-  return translations[lang][key] || key;
+  return TEXTS[language]?.[key] || key;
 }
 
 function money(value) {
@@ -160,175 +147,284 @@ function money(value) {
     .format(value) + " ₸";
 }
 
+function getProduct(id) {
+  return PRODUCTS.find(p => String(p.id) === String(id));
+}
+
+function categoryName(category) {
+  return category === "premium"
+    ? "Coffee Premium"
+    : "Coffee Classic";
+}
+
+function notify(message) {
+  const toast = $("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  clearTimeout(notify.timer);
+  notify.timer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2300);
+}
+
 // ========================================
-// КАТЕГОРИИ
+// ЗАГРУЗКА ТОВАРОВ ИЗ SUPABASE
 // ========================================
 
-const productsSection =
-  document.getElementById("productsSection");
+async function loadProducts() {
+  loaded = false;
 
-const productsGrid =
-  document.getElementById("productsGrid");
+  if (!db) {
+    $("productCount").textContent =
+      "Supabase не настроен";
+    return;
+  }
 
-const productsTitle =
-  document.getElementById("productsTitle");
+  $("productCount").textContent = t("loading");
 
-const emptyMessage =
-  document.getElementById("emptyMessage");
+  try {
+    const { data, error } = await db
+      .from("bracelets")
+      .select(`
+        id,
+        category,
+        price,
+        published,
+        bracelet_photos (
+          id,
+          image_url,
+          position
+        )
+      `)
+      .eq("published", true)
+      .order("created_at", { ascending: false });
 
-const categoryButtons =
-  document.querySelectorAll(".collection-button");
+    if (error) throw error;
 
-function toggleCategory(category) {
+    PRODUCTS = (data || []).map(product => {
+      const photos = [...(product.bracelet_photos || [])]
+        .filter(photo => photo.image_url)
+        .sort((a, b) =>
+          (a.position || 0) - (b.position || 0)
+        );
 
-  // Повторное нажатие закрывает коллекцию
-  if (activeCategory === category) {
+      return {
+        ...product,
+        photos
+      };
+    });
+
+    loaded = true;
+
+    // Не показываем товары автоматически.
+    if (currentCategory) {
+      renderProducts();
+    }
+
+    renderCart();
+  } catch (error) {
+    console.error(error);
+    $("productCount").textContent = t("loadError");
+  }
+}
+
+// ========================================
+// ОТКРЫТИЕ КОЛЛЕКЦИЙ
+// ========================================
+
+function openCategory(category) {
+  if (!["classic", "premium"].includes(category)) {
+    return;
+  }
+
+  // Если нажали на уже открытую коллекцию,
+  // закрываем её.
+  if (currentCategory === category) {
     closeCategory();
     return;
   }
 
-  activeCategory = category;
+  currentCategory = category;
 
-  categoryButtons.forEach(button => {
-    const selected =
-      button.dataset.category === category;
+  document.querySelectorAll("[data-open]")
+    .forEach(button => {
+      const active = button.dataset.open === category;
 
-    button.classList.toggle(
-      "active",
-      selected
-    );
+      button.classList.toggle("selected", active);
+      button.setAttribute(
+        "aria-expanded",
+        String(active)
+      );
+    });
 
-    button.setAttribute(
-      "aria-expanded",
-      String(selected)
-    );
+  $("products").hidden = false;
+
+  $("productsTitle").textContent =
+    categoryName(category);
+
+  $("categoryDescription").textContent =
+    t(category + "Description");
+
+  renderProducts();
+
+  // Плавно прокручиваем к выбранным товарам
+  requestAnimationFrame(() => {
+    $("products").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
   });
-
-  emptyMessage.hidden = true;
-  productsSection.hidden = false;
-
-  productsTitle.textContent =
-    category === "classic"
-      ? "Coffee Classic"
-      : "Coffee Premium";
-
-  renderProducts(category);
 }
 
 function closeCategory() {
-  activeCategory = null;
+  currentCategory = null;
+  $("products").hidden = true;
 
-  productsSection.hidden = true;
-  emptyMessage.hidden = false;
-
-  categoryButtons.forEach(button => {
-    button.classList.remove("active");
-    button.setAttribute("aria-expanded", "false");
-  });
+  document.querySelectorAll("[data-open]")
+    .forEach(button => {
+      button.classList.remove("selected");
+      button.setAttribute("aria-expanded", "false");
+    });
 }
 
 // ========================================
-// КАРТОЧКИ ТОВАРОВ
+// ФОТОГРАФИИ И ТОВАРЫ
 // ========================================
 
-function renderProducts(category) {
+function createProductCard(product) {
+  const card = document.createElement("article");
+  card.className = "product-card";
 
-  productsGrid.replaceChildren();
+  const gallery = document.createElement("div");
+  gallery.className = "product-gallery";
 
-  const filtered = products.filter(
-    product => product.category === category
-  );
+  const photos = product.photos || [];
+  let photoIndex = 0;
 
-  if (filtered.length === 0) {
-    const message = document.createElement("p");
-    message.textContent = t("empty");
-    productsGrid.append(message);
-    return;
-  }
+  const image = document.createElement("img");
+  image.alt = categoryName(product.category);
+  image.loading = "lazy";
+  image.decoding = "async";
 
-  filtered.forEach(product => {
+  const placeholder = document.createElement("div");
+  placeholder.className = "photo-placeholder";
+  placeholder.textContent = "✦";
 
-    const card = document.createElement("article");
-    card.className = "product-card";
-
-    const picture = document.createElement("div");
-    picture.className = "product-image";
-
-    const placeholder = document.createElement("div");
-    placeholder.className = "image-placeholder";
-    placeholder.textContent = "✦";
-
-    picture.append(placeholder);
-
-    if (product.images.length > 0) {
-      const img = document.createElement("img");
-      img.alt = product.name;
-      img.loading = "lazy";
-      img.decoding = "async";
-
-      img.addEventListener("load", () => {
-        placeholder.hidden = true;
-      });
-
-      img.addEventListener("error", () => {
-        img.hidden = true;
-        placeholder.hidden = false;
-      });
-
-      img.src = product.images[0];
-      picture.append(img);
+  function updateImage() {
+    if (photos.length === 0) {
+      image.hidden = true;
+      placeholder.hidden = false;
+      return;
     }
 
-    const favoriteButton =
-      document.createElement("button");
+    image.hidden = false;
+    image.src = photos[photoIndex].image_url;
+  }
 
-    favoriteButton.className =
-      "favorite-button";
+  image.addEventListener("error", () => {
+    image.hidden = true;
+    placeholder.hidden = false;
+  });
 
-    favoriteButton.textContent =
-      favorites.includes(product.id)
-        ? "♥"
-        : "♡";
+  image.addEventListener("load", () => {
+    placeholder.hidden = true;
+    image.hidden = false;
+  });
 
-    favoriteButton.classList.toggle(
-      "selected",
-      favorites.includes(product.id)
-    );
+  gallery.append(placeholder, image);
 
-    favoriteButton.setAttribute(
-      "aria-label",
-      t("favorites")
-    );
+  if (photos.length > 1) {
+    const prev = document.createElement("button");
+    prev.className = "gallery-arrow prev";
+    prev.textContent = "‹";
+    prev.setAttribute("aria-label", "Предыдущее фото");
 
-    favoriteButton.addEventListener(
-      "click",
-      () => toggleFavorite(product.id)
-    );
+    const next = document.createElement("button");
+    next.className = "gallery-arrow next";
+    next.textContent = "›";
+    next.setAttribute("aria-label", "Следующее фото");
 
-    picture.append(favoriteButton);
-
-    const details = document.createElement("div");
-    details.className = "product-details";
-
-    const title = document.createElement("h4");
-    title.textContent = product.name;
-
-    const price = document.createElement("div");
-    price.className = "product-price";
-    price.textContent = money(product.price);
-
-    const addButton = document.createElement("button");
-    addButton.className = "add-to-cart";
-    addButton.textContent = t("add");
-
-    addButton.addEventListener("click", () => {
-      addToCart(product.id);
+    prev.addEventListener("click", () => {
+      photoIndex =
+        (photoIndex - 1 + photos.length) % photos.length;
+      updateImage();
     });
 
-    details.append(title, price, addButton);
-    card.append(picture, details);
-    productsGrid.append(card);
+    next.addEventListener("click", () => {
+      photoIndex = (photoIndex + 1) % photos.length;
+      updateImage();
+    });
+
+    gallery.append(prev, next);
+  }
+
+  const favorite = document.createElement("button");
+  favorite.className = "favorite-button";
+
+  function updateFavoriteButton() {
+    const liked = favorites.some(
+      id => String(id) === String(product.id)
+    );
+
+    favorite.textContent = liked ? "♥" : "♡";
+    favorite.classList.toggle("liked", liked);
+  }
+
+  favorite.addEventListener("click", () => {
+    toggleFavorite(product.id);
+    updateFavoriteButton();
   });
+
+  updateFavoriteButton();
+  gallery.append(favorite);
+  updateImage();
+
+  const info = document.createElement("div");
+  info.className = "product-info";
+
+  const title = document.createElement("h3");
+  title.textContent = categoryName(product.category);
+
+  const price = document.createElement("div");
+  price.className = "product-price";
+  price.textContent = money(product.price);
+
+  const add = document.createElement("button");
+  add.className = "add-button";
+  add.textContent = t("add");
+
+  add.addEventListener("click", () => {
+    addToCart(product.id);
+  });
+
+  info.append(title, price, add);
+  card.append(gallery, info);
+
+  return card;
+}
+
+function renderProducts() {
+  if (!currentCategory) return;
+
+  const filtered = PRODUCTS.filter(
+    product => product.category === currentCategory
+  );
+
+  const grid = $("productGrid");
+  grid.replaceChildren();
+
+  filtered.forEach(product => {
+    grid.append(createProductCard(product));
+  });
+
+  $("productCount").textContent = loaded
+    ? filtered.length + " " + t("item")
+    : t("loading");
+
+  $("emptyMessage").textContent = t("emptyProducts");
+  $("emptyMessage").hidden =
+    !loaded || filtered.length > 0;
 }
 
 // ========================================
@@ -336,23 +432,24 @@ function renderProducts(category) {
 // ========================================
 
 function toggleFavorite(id) {
-  if (favorites.includes(id)) {
+  const exists = favorites.some(
+    item => String(item) === String(id)
+  );
+
+  if (exists) {
     favorites = favorites.filter(
-      item => item !== id
+      item => String(item) !== String(id)
     );
   } else {
     favorites.push(id);
   }
 
-  save();
-  updateCounts();
+  store("mix-favorites-v8", favorites);
+  updateCounters();
 
-  if (activeCategory) {
-    renderProducts(activeCategory);
-  }
-
-  if (activePanel === "favorites") {
-    renderPanel();
+  if (panelMode === "favorites" &&
+      $("cartPanel").classList.contains("open")) {
+    renderCart();
   }
 }
 
@@ -361,302 +458,314 @@ function toggleFavorite(id) {
 // ========================================
 
 function addToCart(id) {
-  cart.push(id);
-  save();
-  updateCounts();
-  showToast(t("added"));
-}
+  const product = getProduct(id);
+  if (!product) return;
 
-function removeFromCart(id) {
-  const index = cart.indexOf(id);
+  const item = cart.find(
+    row => String(row.id) === String(id)
+  );
 
-  if (index !== -1) {
-    cart.splice(index, 1);
+  if (item) {
+    item.quantity = Math.min(99, item.quantity + 1);
+  } else {
+    cart.push({ id, quantity: 1 });
   }
 
-  save();
-  updateCounts();
-  renderPanel();
+  store("mix-cart-v8", cart);
+  updateCounters();
+  notify(t("added"));
 }
 
-function updateCounts() {
-  document.getElementById("cartCount")
-    .textContent = cart.length;
+function changeQuantity(id, amount) {
+  const item = cart.find(
+    row => String(row.id) === String(id)
+  );
 
-  document.getElementById("favoritesCount")
-    .textContent = favorites.length;
-}
+  if (!item) return;
 
-// ========================================
-// БОКОВАЯ ПАНЕЛЬ
-// ========================================
+  item.quantity += amount;
 
-const sidePanel =
-  document.getElementById("sidePanel");
-
-const overlay =
-  document.getElementById("overlay");
-
-const panelItems =
-  document.getElementById("panelItems");
-
-const panelFooter =
-  document.getElementById("panelFooter");
-
-function openPanel(type) {
-  activePanel = type;
-
-  sidePanel.classList.add("open");
-  sidePanel.setAttribute("aria-hidden", "false");
-
-  overlay.hidden = false;
-
-  renderPanel();
-}
-
-function closePanel() {
-  sidePanel.classList.remove("open");
-  sidePanel.setAttribute("aria-hidden", "true");
-
-  overlay.hidden = true;
-  activePanel = null;
-}
-
-function renderPanel() {
-  if (!activePanel) return;
-
-  document.getElementById("panelTitle")
-    .textContent = t(activePanel);
-
-  panelItems.replaceChildren();
-
-  const ids =
-    activePanel === "cart"
-      ? cart
-      : favorites;
-
-  const counts = new Map();
-
-  ids.forEach(id => {
-    if (products.some(p => p.id === id)) {
-      counts.set(id, (counts.get(id) || 0) + 1);
-    }
-  });
-
-  if (counts.size === 0) {
-    const empty = document.createElement("p");
-    empty.textContent = t("empty");
-    panelItems.append(empty);
-  }
-
-  let total = 0;
-
-  counts.forEach((quantity, id) => {
-
-    const product = products.find(
-      p => p.id === id
+  if (item.quantity <= 0) {
+    cart = cart.filter(
+      row => String(row.id) !== String(id)
     );
+  }
 
-    if (!product) return;
+  store("mix-cart-v8", cart);
+  updateCounters();
+  renderCart();
+}
 
-    if (activePanel === "cart") {
-      total += product.price * quantity;
-    }
+function updateCounters() {
+  $("cartCount").textContent = cart.reduce(
+    (sum, item) => sum + item.quantity, 0
+  );
+
+  $("favoritesCount").textContent = favorites.length;
+}
+
+function openPanel(mode) {
+  panelMode = mode;
+
+  $("cartTitle").textContent =
+    mode === "favorites" ? t("favorites") : t("cart");
+
+  $("cartPanel").classList.add("open");
+  $("cartPanel").setAttribute("aria-hidden", "false");
+  $("cartBackdrop").hidden = false;
+
+  document.querySelector(".cart-bottom").hidden =
+    mode === "favorites";
+
+  renderCart();
+}
+
+function closeCart() {
+  $("cartPanel").classList.remove("open");
+  $("cartPanel").setAttribute("aria-hidden", "true");
+  $("cartBackdrop").hidden = true;
+}
+
+function renderCart() {
+  const container = $("cartItems");
+  container.replaceChildren();
+
+  const items = panelMode === "cart"
+    ? cart.map(row => ({
+        id: row.id,
+        quantity: row.quantity
+      }))
+    : favorites.map(id => ({ id, quantity: 1 }));
+
+  const valid = items.filter(
+    item => getProduct(item.id)
+  );
+
+  if (!valid.length) {
+    const text = document.createElement("p");
+    text.textContent = t("emptyCart");
+    container.append(text);
+  }
+
+  valid.forEach(item => {
+    const product = getProduct(item.id);
 
     const row = document.createElement("div");
-    row.className = "panel-product";
+    row.className = "cart-item";
 
-    const info = document.createElement("div");
+    const details = document.createElement("div");
 
-    const name = document.createElement("strong");
-    name.textContent = product.name;
+    const title = document.createElement("strong");
+    title.textContent = categoryName(product.category);
 
     const price = document.createElement("p");
     price.textContent = money(
-      product.price * quantity
+      product.price * item.quantity
     );
 
-    info.append(name, price);
+    details.append(title, price);
 
-    if (activePanel === "cart") {
-      const qty = document.createElement("small");
-      qty.textContent =
-        `${t("quantity")}: ${quantity}`;
+    const controls = document.createElement("div");
 
-      info.append(qty);
+    if (panelMode === "cart") {
+      const minus = document.createElement("button");
+      minus.textContent = "−";
+
+      minus.onclick = () => {
+        changeQuantity(product.id, -1);
+      };
+
+      const count = document.createElement("span");
+      count.textContent = " " + item.quantity + " ";
+
+      const plus = document.createElement("button");
+      plus.textContent = "+";
+
+      plus.onclick = () => {
+        changeQuantity(product.id, 1);
+      };
+
+      controls.append(minus, count, plus);
+    } else {
+      const remove = document.createElement("button");
+      remove.textContent = "✕";
+
+      remove.onclick = () => {
+        toggleFavorite(product.id);
+        renderProducts();
+      };
+
+      controls.append(remove);
     }
 
-    const remove = document.createElement("button");
-    remove.className = "remove-button";
-    remove.textContent = t("remove");
-
-    remove.addEventListener("click", () => {
-      if (activePanel === "cart") {
-        removeFromCart(id);
-      } else {
-        toggleFavorite(id);
-      }
-    });
-
-    row.append(info, remove);
-    panelItems.append(row);
+    row.append(details, controls);
+    container.append(row);
   });
 
-  panelFooter.hidden = activePanel !== "cart";
+  const total = cart.reduce((sum, item) => {
+    const product = getProduct(item.id);
 
-  document.getElementById("cartTotal")
-    .textContent = money(total);
+    return sum + (
+      product ? product.price * item.quantity : 0
+    );
+  }, 0);
+
+  $("totalPrice").textContent = money(total);
+
+  updateWhatsAppOrder();
 }
 
-// ========================================
-// КОПИРОВАНИЕ ЗАКАЗА
-// ========================================
-
-async function copyOrder() {
-
-  if (cart.length === 0) {
-    showToast(t("empty"));
-    return;
-  }
-
-  const counts = new Map();
-
-  cart.forEach(id => {
-    if (products.some(p => p.id === id)) {
-      counts.set(id, (counts.get(id) || 0) + 1);
-    }
-  });
-
-  let total = 0;
-
+function updateWhatsAppOrder() {
   const lines = [
     "MIX COFFEE BRACELET",
-    "Заказ:",
-    ""
+    "",
+    "Заказ:"
   ];
 
-  counts.forEach((quantity, id) => {
-    const product = products.find(p => p.id === id);
-
-    const sum = product.price * quantity;
-    total += sum;
+  cart.forEach(item => {
+    const product = getProduct(item.id);
+    if (!product) return;
 
     lines.push(
-      `${product.name} × ${quantity} — ${money(sum)}`
+      categoryName(product.category) +
+      " × " + item.quantity +
+      " — " +
+      money(product.price * item.quantity)
     );
   });
 
+  const total = cart.reduce((sum, item) => {
+    const p = getProduct(item.id);
+    return sum + (p ? p.price * item.quantity : 0);
+  }, 0);
+
   lines.push("");
-  lines.push(`Итого: ${money(total)}`);
+  lines.push("Итого: " + money(total));
 
-  try {
-    await navigator.clipboard.writeText(
-      lines.join("\n")
-    );
+  const link = $("orderButton");
 
-    showToast(t("copied"));
+  link.href = "https://wa.me/" +
+    WHATSAPP_NUMBER +
+    "?text=" + encodeURIComponent(lines.join("\n"));
 
-  } catch {
-    showToast(t("unavailable"));
-  }
+  link.textContent = t("order");
+  link.style.pointerEvents = cart.length ? "auto" : "none";
+  link.style.opacity = cart.length ? "1" : ".5";
 }
 
 // ========================================
-// ЯЗЫК
+// ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА
 // ========================================
 
 function changeLanguage(value) {
-  lang = value;
+  if (!TEXTS[value]) return;
+
+  language = value;
+  store("mix-language-v8", value);
 
   document.documentElement.lang =
-    value === "kz" ? "kk" : "ru";
+    value === "kz" ? "kk" : value;
 
-  document.querySelectorAll(
-    "[data-i18n]"
-  ).forEach(element => {
-    element.textContent =
-      t(element.dataset.i18n);
+  document.querySelectorAll(".lang")
+    .forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.lang === value
+      );
+    });
+
+  document.querySelectorAll("[data-i18n]")
+    .forEach(element => {
+      element.textContent = t(element.dataset.i18n);
+    });
+
+  if (currentCategory) {
+    $("categoryDescription").textContent =
+      t(currentCategory + "Description");
+
+    renderProducts();
+  }
+
+  $("cartTitle").textContent =
+    panelMode === "favorites" ? t("favorites") : t("cart");
+
+  renderCart();
+}
+
+// ========================================
+// КНОПКИ
+// ========================================
+
+document.querySelectorAll(".lang")
+  .forEach(button => {
+    button.addEventListener("click", () => {
+      changeLanguage(button.dataset.lang);
+    });
   });
 
-  document.getElementById("copyOrder")
-    .textContent = t("copy");
+document.querySelectorAll("[data-open]")
+  .forEach(button => {
+    button.addEventListener("click", () => {
+      openCategory(button.dataset.open);
+    });
+  });
 
-  if (activeCategory) {
-    renderProducts(activeCategory);
-  }
+$("backButton").addEventListener("click", () => {
+  closeCategory();
 
-  if (activePanel) {
-    renderPanel();
-  }
-}
-
-// ========================================
-// УВЕДОМЛЕНИЯ
-// ========================================
-
-let toastTimeout;
-
-function showToast(message) {
-  const toast = document.getElementById("toast");
-
-  toast.textContent = message;
-  toast.classList.add("show");
-
-  clearTimeout(toastTimeout);
-
-  toastTimeout = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2200);
-}
-
-// ========================================
-// ОБРАБОТЧИКИ КНОПОК
-// ========================================
-
-categoryButtons.forEach(button => {
-  button.addEventListener("click", () => {
-    toggleCategory(button.dataset.category);
+  $("collection").scrollIntoView({
+    behavior: "smooth"
   });
 });
 
-document.getElementById("closeCollection")
-  .addEventListener("click", closeCategory);
+$("favoritesButton").addEventListener("click", () => {
+  openPanel("favorites");
+});
 
-document.getElementById("cartBtn")
-  .addEventListener("click", () => {
-    openPanel("cart");
-  });
+$("cartButton").addEventListener("click", () => {
+  openPanel("cart");
+});
 
-document.getElementById("favoritesBtn")
-  .addEventListener("click", () => {
-    openPanel("favorites");
-  });
-
-document.getElementById("closePanel")
-  .addEventListener("click", closePanel);
-
-overlay.addEventListener("click", closePanel);
+$("closeCart").addEventListener("click", closeCart);
+$("cartBackdrop").addEventListener("click", closeCart);
 
 document.addEventListener("keydown", event => {
-  if (event.key === "Escape") {
-    closePanel();
-  }
+  if (event.key === "Escape") closeCart();
 });
 
-document.getElementById("copyOrder")
-  .addEventListener("click", copyOrder);
-
-document.getElementById("language")
-  .addEventListener("change", event => {
-    changeLanguage(event.target.value);
-  });
-
 // ========================================
-// ЗАПУСК
+// ЗАПУСК МАГАЗИНА
 // ========================================
 
-updateCounts();
-changeLanguage("ru");
+async function startStore() {
+  $("instagramLink").href = INSTAGRAM_URL;
+  $("tiktokLink").href = TIKTOK_URL;
+  $("whatsappLink").href =
+    "https://wa.me/" + WHATSAPP_NUMBER;
 
-// При открытии сайта обе коллекции скрыты
-closeCategory();
+  // Главное изменение:
+  // товары не видны при открытии сайта.
+  closeCategory();
+
+  updateCounters();
+  changeLanguage(language);
+
+  if (
+    SUPABASE_URL.startsWith("https://") &&
+    !SUPABASE_ANON_KEY.startsWith("YOUR_") &&
+    window.supabase
+  ) {
+    db = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+    await loadProducts();
+  } else {
+    console.warn(
+      "Укажи публичный Supabase URL и anon key."
+    );
+  }
+}
+
+startStore();
