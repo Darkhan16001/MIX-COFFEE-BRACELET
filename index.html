@@ -6,221 +6,210 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1">
 
-  <meta name="theme-color" content="#efe0c7">
-
-  <title>MIX COFFEE BRACELET</title>
-
+  <title>Админ — MIX COFFEE BRACELET</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
 
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script defer src="supabase-config.js"></script>
   <script defer src="supabase-client.js"></script>
   <script defer src="products.js"></script>
-  <script defer src="script.js"></script>
+  <script defer src="admin.js"></script>
 </head>
 
 <body>
   <header class="topbar">
-    <a href="index.html" class="brand">
-      <span class="brand-star">✦</span>
-      MIX COFFEE BRACELET
+    <a class="brand" href="index.html">
+      ✦ MIX COFFEE BRACELET
     </a>
 
     <div class="top-actions">
-      <select id="language" aria-label="Язык">
-        <option value="ru">RU</option>
-        <option value="kz">KZ</option>
-        <option value="en">EN</option>
-      </select>
+      <a href="index.html" class="outline-button">
+        Магазин
+      </a>
 
-      <button id="favoritesButton"
-              class="icon-button"
-              aria-label="Избранное">
-        ♡ <small id="favoritesCount">0</small>
-      </button>
-
-      <button id="cartButton"
-              class="icon-button"
-              aria-label="Корзина">
-        🛒 <small id="cartCount">0</small>
+      <button id="logout"
+              class="outline-button"
+              hidden>
+        Выход
       </button>
     </div>
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="glow glow-one"></div>
-      <div class="glow glow-two"></div>
+  <main class="admin-wrap">
+    <h1>Управление магазином</h1>
+    <p>Товары сохраняются в Supabase.</p>
 
-      <div class="hero-content">
-        <div class="hero-icon">✦</div>
+    <section class="admin-box"
+             id="loginSection">
 
-        <p class="eyebrow">MIX COFFEE BRACELET</p>
+      <h2>Вход администратора</h2>
 
-        <h1>MIX</h1>
+      <form id="loginForm">
+        <label>
+          Email
+          <input id="email"
+                 type="email"
+                 autocomplete="username"
+                 required>
+        </label>
 
-        <div class="hero-subtitle">
-          COFFEE BRACELET
-        </div>
+        <label>
+          Пароль
+          <input id="password"
+                 type="password"
+                 autocomplete="current-password"
+                 required>
+        </label>
 
-        <p id="heroDescription">
-          Отборные кофейные зёрна 🤎
-        </p>
-
-        <button class="primary-button"
-                id="exploreButton">
-          Смотреть коллекции
+        <button class="primary-button">
+          Войти
         </button>
-      </div>
+      </form>
+
+      <p id="loginMessage"
+         class="status"></p>
     </section>
 
-    <section class="section" id="collection">
-      <div class="section-heading">
-        <p class="eyebrow">OUR COLLECTIONS</p>
-        <h2 id="collectionTitle">
-          Наши коллекции
-        </h2>
-      </div>
+    <div id="managerSection" hidden>
 
-      <div class="collection-grid">
-        <button class="collection-card"
-                data-open="classic">
-          <div class="collection-image"
-               id="classicCover">
-            <span>CLASSIC</span>
-          </div>
+      <section class="admin-box">
+        <h2>Браслеты</h2>
 
-          <div class="collection-info">
-            <h3>Coffee Classic</h3>
-            <p>3 990 ₸</p>
-            <span class="collection-link"
-                  data-i18n="view">
-              Смотреть браслеты
-            </span>
-          </div>
+        <button id="addProduct"
+                class="primary-button">
+          + Добавить браслет
         </button>
 
-        <button class="collection-card"
-                data-open="premium">
-          <div class="collection-image"
-               id="premiumCover">
-            <span>PREMIUM</span>
-          </div>
-
-          <div class="collection-info">
-            <h3>Coffee Premium</h3>
-            <p>5 990 ₸</p>
-            <span class="collection-link"
-                  data-i18n="view">
-              Смотреть браслеты
-            </span>
-          </div>
-        </button>
-      </div>
-    </section>
-
-    <section class="section products-section"
-             id="products">
-      <div class="products-header">
-        <div>
-          <p class="eyebrow">OUR BRACELETS</p>
-          <h2 id="productsTitle">
-            Coffee Classic
-          </h2>
-          <p id="productCount"></p>
-        </div>
-
-        <button id="refreshProducts"
+        <button id="reloadProducts"
                 class="outline-button">
-          ↻
-        </button>
-      </div>
-
-      <div class="category-tabs" id="categoryTabs">
-        <button class="category-tab active"
-                data-category="classic">
-          Classic
+          Обновить
         </button>
 
-        <button class="category-tab"
-                data-category="premium">
-          Premium
-        </button>
-      </div>
+        <p id="listMessage"
+           class="status"></p>
 
-      <p id="catalogStatus" role="status"></p>
+        <div class="product-list"
+             id="productList"></div>
+      </section>
 
-      <div class="product-grid"
-           id="productGrid"></div>
+      <section class="admin-box"
+               id="editorSection"
+               hidden>
 
-      <p class="empty-message"
-         id="emptyMessage"
-         hidden>
-      </p>
-    </section>
+        <h2 id="editorTitle">
+          Новый браслет
+        </h2>
+
+        <form id="productForm">
+          <div class="admin-grid">
+            <label>
+              Коллекция
+
+              <select id="category">
+                <option value="classic">
+                  Coffee Classic
+                </option>
+
+                <option value="premium">
+                  Coffee Premium
+                </option>
+              </select>
+            </label>
+
+            <label>
+              Цена, ₸
+
+              <input id="price"
+                     type="number"
+                     min="1"
+                     value="3990"
+                     required>
+            </label>
+          </div>
+
+          <label>
+            <input type="checkbox"
+                   id="published"
+                   checked>
+            Показывать покупателям
+          </label>
+
+          <h3>Фотографии</h3>
+
+          <p>
+            Максимум 6 фото, каждое до 25 МБ.
+            Форматы JPG, PNG, WEBP.
+          </p>
+
+          <input id="photoInput"
+                 type="file"
+                 accept="image/jpeg,image/png,image/webp"
+                 multiple>
+
+          <div class="photo-preview-list"
+               id="photoList"></div>
+
+          <p id="editorMessage"
+             class="status"></p>
+
+          <div class="top-actions">
+            <button id="saveProduct"
+                    type="submit"
+                    class="primary-button">
+              Сохранить браслет
+            </button>
+
+            <button id="cancelEdit"
+                    type="button"
+                    class="outline-button">
+              Отмена
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="admin-box">
+        <h2>Обложки коллекций</h2>
+
+        <div class="admin-grid">
+          <div>
+            <h3>Coffee Classic</h3>
+            <div id="coverPreviewClassic"
+                 class="cover-preview"></div>
+
+            <input id="coverFileClassic"
+                   type="file"
+                   accept="image/jpeg,image/png,image/webp">
+
+            <button id="saveCoverClassic"
+                    class="outline-button">
+              Сохранить обложку
+            </button>
+
+            <p id="coverStatusClassic"
+               class="status"></p>
+          </div>
+
+          <div>
+            <h3>Coffee Premium</h3>
+            <div id="coverPreviewPremium"
+                 class="cover-preview"></div>
+
+            <input id="coverFilePremium"
+                   type="file"
+                   accept="image/jpeg,image/png,image/webp">
+
+            <button id="saveCoverPremium"
+                    class="outline-button">
+              Сохранить обложку
+            </button>
+
+            <p id="coverStatusPremium"
+               class="status"></p>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
-
-  <div class="backdrop"
-       id="cartBackdrop"
-       hidden></div>
-
-  <aside class="cart-panel"
-         id="cartPanel"
-         aria-label="Корзина">
-
-    <div class="cart-heading">
-      <h2 id="cartTitle">Корзина</h2>
-      <button class="icon-button"
-              id="closeCart">×</button>
-    </div>
-
-    <div id="cartItems"
-         class="cart-items"></div>
-
-    <div class="cart-footer">
-      <div class="total-row">
-        <strong id="totalLabel">Итого</strong>
-        <strong id="totalPrice">0 ₸</strong>
-      </div>
-
-      <a id="orderWhatsApp"
-         class="primary-button"
-         href="#"
-         target="_blank"
-         rel="noopener">
-        Заказать через WhatsApp
-      </a>
-
-      <button id="copyOrder"
-              class="outline-button">
-        Скопировать заказ
-      </button>
-
-      <p id="cartMessage"></p>
-    </div>
-  </aside>
-
-  <footer>
-    <strong>MIX COFFEE BRACELET</strong>
-
-    <p>Made with coffee & love 🤎</p>
-
-    <div class="footer-links">
-      <a href="https://www.instagram.com/mix_coffee_bracelet/"
-         target="_blank"
-         rel="noopener">
-        Instagram
-      </a>
-
-      <a href="https://wa.me/77058038122"
-         target="_blank"
-         rel="noopener">
-        WhatsApp
-      </a>
-    </div>
-
-    <small>© <span id="year"></span></small>
-  </footer>
 </body>
 </html>
