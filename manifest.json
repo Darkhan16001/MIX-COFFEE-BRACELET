@@ -1,13 +1,12 @@
 
 {
   "name": "MIX COFFEE BRACELET",
-  "short_name": "MIX COFFEE",
-  "description": "Coffee inspired bracelet store",
+  "short_name": "MIX BRACELET",
+  "description": "Кофейные браслеты Classic и Premium",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#fff1da",
-  "theme_color": "#e4c9b3",
-  "lang": "kk"
+  "background_color": "#f8f1e6",
+  "theme_color": "#efe0c7",
+  "lang": "ru"
 }
-
