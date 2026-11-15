@@ -2,689 +2,908 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
-
-  <meta name="theme-color" content="#e4c9b3">
-
-  <title>MIX BRACELET | Панель управления</title>
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@400;500&display=swap"
-    rel="stylesheet">
-
-  <style>
-    :root {
-      --coffee: #543929;
-      --dark: #392419;
-      --beige: #e4c9b3;
-      --cream: #fffaf5;
-      --border: #e3d1c0;
-      --muted: #8b7767;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: var(--cream);
-      color: var(--coffee);
-      font-family: "Manrope", sans-serif;
-    }
-
-    [hidden] {
-      display: none !important;
-    }
-
-    header {
-      background: var(--beige);
-      padding: 17px 5%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .logo {
-      font-family: "Playfair Display", serif;
-      font-size: 21px;
-    }
-
-    main {
-      max-width: 900px;
-      margin: auto;
-      padding: 28px 16px 70px;
-    }
-
-    h1, h2, h3 {
-      font-family: "Playfair Display", serif;
-      font-weight: 400;
-    }
-
-    h1 {
-      font-size: 30px;
-      margin-top: 0;
-    }
-
-    h2 {
-      font-size: 25px;
-    }
-
-    h3 {
-      font-size: 21px;
-    }
-
-    .panel {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 22px;
-      margin-bottom: 22px;
-    }
-
-    .login-panel {
-      max-width: 460px;
-      margin: 40px auto;
-    }
-
-    .login-heading {
-      text-align: center;
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    label {
-      display: block;
-      margin: 14px 0 7px;
-      font-weight: 600;
-      font-size: 13px;
-    }
-
-    input, select {
-      width: 100%;
-      min-height: 46px;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: white;
-      color: var(--coffee);
-      font: inherit;
-    }
-
-    input:focus,
-    select:focus {
-      outline: 2px solid #c29c7f;
-      outline-offset: 1px;
-    }
-
-    button {
-      min-height: 43px;
-      padding: 10px 15px;
-      border-radius: 8px;
-      font: inherit;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
-
-    .primary {
-      background: var(--coffee);
-      color: white;
-      border: 1px solid var(--coffee);
-    }
-
-    .primary:hover:not(:disabled) {
-      background: var(--dark);
-    }
-
-    .outline {
-      background: white;
-      color: var(--coffee);
-      border: 1px solid var(--border);
-    }
-
-    .danger {
-      background: #fff4f1;
-      color: #a33f30;
-      border: 1px solid #e8b3a7;
-    }
-
-    .full {
-      width: 100%;
-      margin-top: 15px;
-    }
-
-    .status {
-      min-height: 18px;
-      margin: 12px 0;
-      font-size: 13px;
-      overflow-wrap: anywhere;
-    }
-
-    .status.error {
-      color: #b73b30;
-    }
-
-    .status.success {
-      color: #277448;
-    }
-
-    /* TWO MAIN COLLECTION COVERS */
-
-    .covers-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 15px;
-      margin-top: 20px;
-    }
-
-    .cover-editor {
-      min-width: 0;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: #fffdfb;
-    }
-
-    .cover-preview {
-      width: 100%;
-      aspect-ratio: 3 / 4;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      border-radius: 9px;
-      background: #f5eee6;
-      color: var(--muted);
-      text-align: center;
-      font-size: 12px;
-    }
-
-    .cover-preview img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    .cover-editor h3 {
-      margin: 14px 0;
-      text-align: center;
-    }
-
-    .cover-editor input[type="file"] {
-      width: 100%;
-      font-size: 12px;
-    }
-
-    .cover-editor .primary {
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    /* PRODUCT CARDS */
-
-    .toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin: 22px 0;
-    }
-
-    .product-list {
-      display: grid;
-      grid-template-columns: repeat(2,minmax(0,1fr));
-      gap: 14px;
-    }
-
-    .product-card {
-      overflow: hidden;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: white;
-    }
-
-    .product-photo {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 3 / 4;
-      display: grid;
-      place-items: center;
-      background: #f5eee6;
-      color: var(--muted);
-      overflow: hidden;
-    }
-
-    .product-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    .edit-corner {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      width: 42px;
-      height: 42px;
-      padding: 0;
-      border: 1px solid var(--border);
-      background: white;
-      color: var(--coffee);
-      border-radius: 50%;
-      font-size: 19px;
-    }
-
-    .product-content {
-      padding: 14px;
-    }
-
-    .product-content p {
-      margin: 8px 0;
-      font-size: 13px;
-    }
-
-    .product-content .remove-action {
-      width: 100%;
-      margin-top: 12px;
-    }
-
-    /* EDITOR */
-
-    .photos {
-      display: grid;
-      grid-template-columns: repeat(2,minmax(0,1fr));
-      gap: 12px;
-      margin: 15px 0;
-    }
-
-    .photo-item {
-      overflow: hidden;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-    }
-
-    .photo-item img {
-      display: block;
-      width: 100%;
-      aspect-ratio: 4 / 5;
-      object-fit: contain;
-      background: #f5eee6;
-    }
-
-    .photo-title {
-      padding: 8px;
-      text-align: center;
-      font-size: 12px;
-    }
-
-    .photo-controls {
-      display: flex;
-      gap: 5px;
-      padding: 7px;
-    }
-
-    .photo-controls button {
-      flex: 1;
-      min-width: 0;
-      padding: 8px 4px;
-      font-size: 14px;
-    }
-
-    .upload {
-      margin-top: 15px;
-      padding: 20px 14px;
-      text-align: center;
-      background: #f9f1e9;
-      border: 2px dashed #c5a992;
-      border-radius: 12px;
-    }
-
-    .upload input {
-      margin-top: 12px;
-    }
-
-    .switch-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .switch-row input {
-      width: 21px;
-      height: 21px;
-      min-height: auto;
-    }
-
-    .switch-row label {
-      margin: 0;
-    }
-
-    .section-separator {
-      border: 0;
-      border-top: 1px solid var(--border);
-      margin: 25px 0;
-    }
-
-    @media (max-width: 480px) {
-      main {
-        padding: 18px 10px 55px;
-      }
-
-      header {
-        padding: 14px 12px;
-      }
-
-      .logo {
-        font-size: 17px;
-      }
-
-      h1 {
-        font-size: 25px;
-      }
-
-      .panel {
-        padding: 14px;
-      }
-
-      .covers-grid,
-      .product-list {
-        gap: 9px;
-      }
-
-      .cover-editor {
-        padding: 8px;
-      }
-
-      .cover-editor h3 {
-        font-size: 17px;
-      }
-
-      .cover-editor input[type="file"] {
-        font-size: 11px;
-      }
-
-      .product-content {
-        padding: 10px;
-      }
-    }
-  </style>
-
-  <!-- LIBRARY + CONFIG -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    defer></script>
-
-  <script src="supabase-config.js" defer></script>
-  <script src="supabase-client.js" defer></script>
-  <script src="admin.js" defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ead3ad">
+<title>Управление — MIX COFFEE BRACELET</title>
+
+<style>
+* { box-sizing:border-box }
+body {
+  margin:0;
+  background:#f7f0e6;
+  color:#472c1f;
+  font-family:Arial,sans-serif;
+}
+[hidden] { display:none!important }
+button,input,select { font:inherit }
+button { cursor:pointer }
+button:disabled { opacity:.5;cursor:wait }
+a { color:inherit;text-decoration:none }
+header {
+  display:flex;align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px 5%;
+  background:#fffaf3;
+  border-bottom:1px solid #e6d5c0;
+}
+header strong { letter-spacing:1px }
+main { max-width:1100px;margin:auto;padding:25px 16px 80px }
+h1 { font-size:clamp(26px,5vw,38px) }
+h2 { font-size:24px }
+.panel {
+  background:white;
+  border:1px solid #e8d9c6;
+  border-radius:18px;
+  padding:23px;
+  margin:20px 0;
+  box-shadow:0 10px 30px #5d382013;
+}
+label { display:block;margin:14px 0;font-weight:600 }
+input:not([type=checkbox]),select {
+  display:block;
+  width:100%;
+  padding:13px;
+  margin-top:8px;
+  border-radius:11px;
+  border:1px solid #d7c2a9;
+  background:#fffdfa;
+}
+input[type=checkbox] { width:20px;height:20px;vertical-align:middle }
+.primary {
+  background:#4b2f21;
+  color:white;
+  border:0;
+  border-radius:11px;
+  padding:13px 20px;
+}
+.outline {
+  background:white;
+  border:1px solid #c9b29a;
+  color:#4b2f21;
+  border-radius:11px;
+  padding:12px 17px;
+}
+.actions { display:flex;flex-wrap:wrap;gap:10px;margin:15px 0 }
+.cols { display:grid;grid-template-columns:1fr 1fr;gap:20px }
+.status { padding:10px 0;white-space:pre-wrap }
+.error { color:#b22c2c }
+.success { color:#267548 }
+.products {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:15px;
+}
+.product {
+  border:1px solid #e1d0bc;
+  border-radius:14px;
+  overflow:hidden;
+  background:#fffdfa;
+}
+.product img {
+  width:100%;height:200px;
+  object-fit:contain;
+  background:#f0e7db;
+}
+.product-content { padding:15px }
+.product-content h3 { margin:0 0 10px }
+.product-content .actions button { flex:1 }
+.photo-list {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin:20px 0;
+}
+.photo-card {
+  border:1px solid #e1d0bc;
+  padding:9px;
+  border-radius:12px;
+}
+.photo-card img {
+  width:100%;height:145px;object-fit:contain;
+}
+.photo-card p { margin:7px 0 }
+.photo-buttons { display:flex;gap:5px }
+.photo-buttons button { padding:8px 11px }
+.cover-preview {
+  min-height:150px;
+  background:#f0e7db;
+  border-radius:12px;
+  display:grid;place-items:center;
+  overflow:hidden;
+  margin:15px 0;
+}
+.cover-preview img {
+  width:100%;height:190px;
+  object-fit:contain;
+}
+small { color:#876b56 }
+@media(max-width:750px) {
+  .products { grid-template-columns:repeat(2,minmax(0,1fr)) }
+}
+@media(max-width:500px) {
+  .cols,.products { grid-template-columns:1fr }
+  .photo-list { grid-template-columns:repeat(2,minmax(0,1fr)) }
+  .panel { padding:17px }
+}
+</style>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="supabase-config.js"></script>
 </head>
 
 <body>
-
 <header>
-  <span class="logo">MIX BRACELET</span>
-
-  <button id="logout"
-          class="outline"
-          type="button"
-          hidden>
-    Выйти
-  </button>
+  <strong>✦ MIX COFFEE BRACELET</strong>
+  <a href="./">← Магазин</a>
 </header>
 
 <main>
+<h1>Управление магазином</h1>
 
-  <!-- LOGIN -->
+<section class="panel" id="loginSection">
+  <h2>Вход продавца</h2>
+  <form id="loginForm">
+    <label>
+      Email
+      <input id="email" type="email" required autocomplete="username">
+    </label>
+    <label>
+      Пароль
+      <input id="password" type="password" required autocomplete="current-password">
+    </label>
+    <button class="primary">Войти</button>
+  </form>
+  <p class="status" id="loginStatus"></p>
+</section>
 
-  <section id="loginSection"
-           class="panel login-panel">
+<div id="manager" hidden>
+  <div class="actions">
+    <button class="outline" id="logout">Выйти</button>
+    <button class="outline" id="reload">Обновить товары</button>
+  </div>
 
-    <div class="login-heading">
-      <h1>Вход в панель управления</h1>
+  <section class="panel">
+    <h2>Мои браслеты</h2>
+    <button class="primary" id="add">+ Добавить браслет</button>
+    <p class="status" id="listStatus"></p>
+    <div class="products" id="productList"></div>
+  </section>
 
-      <p class="muted">
-        Управление каталогом MIX BRACELET
-      </p>
-    </div>
+  <section class="panel" id="editor" hidden>
+    <h2 id="editorTitle">Новый браслет</h2>
 
-    <form id="loginForm">
+    <form id="productForm">
+      <div class="cols">
+        <label>
+          Коллекция
+          <select id="category">
+            <option value="classic">Coffee Classic</option>
+            <option value="premium">Coffee Premium</option>
+          </select>
+        </label>
 
-      <label for="email">
-        Электронная почта
+        <label>
+          Цена в тенге
+          <input id="price" type="number" min="1" required>
+        </label>
+      </div>
+
+      <label>
+        <input type="checkbox" id="published" checked>
+        Опубликовать для покупателей
       </label>
 
-      <input id="email"
-             type="email"
-             autocomplete="username"
-             placeholder="Введите email"
-             required>
+      <h3>Фотографии</h3>
+      <p>Максимум 6 фотографий. Каждая до 25 МБ.</p>
+      <p>Разрешены JPG, PNG и WEBP.</p>
 
-      <label for="password">Пароль</label>
+      <input id="photoInput" type="file"
+             multiple accept="image/jpeg,image/png,image/webp">
 
-      <input id="password"
-             type="password"
-             autocomplete="current-password"
-             placeholder="Введите пароль"
-             required>
+      <div class="photo-list" id="photoList"></div>
 
-      <button class="primary full"
-              type="submit">
-        Войти
-      </button>
-    </form>
+      <p class="status" id="editorStatus"></p>
 
-    <p id="loginMessage"
-       class="status"
-       role="status"></p>
-  </section>
-
-  <!-- DASHBOARD -->
-
-  <section id="managerSection" hidden>
-
-    <h1>Управление магазином</h1>
-
-    <p class="muted">
-      Изменения сохраняются в Supabase.
-      Покупатели видят только опубликованные товары.
-    </p>
-
-    <!-- MAIN COLLECTION PHOTOS -->
-
-    <section class="panel" id="coversManager">
-      <h2>Главные фотографии коллекций</h2>
-
-      <p class="muted">
-        Эти фотографии отображаются на главной
-        странице магазина над списками браслетов.
-      </p>
-
-      <div class="covers-grid">
-
-        <div class="cover-editor">
-
-          <div class="cover-preview"
-               id="coverPreviewClassic">
-            Нет фотографии
-          </div>
-
-          <h3>Coffee Classic</h3>
-
-          <label for="coverFileClassic">
-            Выбрать фото из галереи
-          </label>
-
-          <input id="coverFileClassic"
-                 type="file"
-                 accept="image/jpeg,image/png,image/webp">
-
-          <button id="saveCoverClassic"
-                  class="primary"
-                  type="button">
-            Сохранить фото
-          </button>
-
-          <p class="status"
-             id="coverStatusClassic"
-             role="status"></p>
-        </div>
-
-        <div class="cover-editor">
-
-          <div class="cover-preview"
-               id="coverPreviewPremium">
-            Нет фотографии
-          </div>
-
-          <h3>Coffee Premium</h3>
-
-          <label for="coverFilePremium">
-            Выбрать фото из галереи
-          </label>
-
-          <input id="coverFilePremium"
-                 type="file"
-                 accept="image/jpeg,image/png,image/webp">
-
-          <button id="saveCoverPremium"
-                  class="primary"
-                  type="button">
-            Сохранить фото
-          </button>
-
-          <p class="status"
-             id="coverStatusPremium"
-             role="status"></p>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRODUCTS -->
-
-    <div class="toolbar">
-      <strong>Браслеты магазина</strong>
-
-      <button id="addProduct"
-              class="primary"
-              type="button">
-        + Добавить браслет
-      </button>
-    </div>
-
-    <p class="status"
-       id="listMessage"
-       role="status"></p>
-
-    <div id="productList"
-         class="product-list"></div>
-
-    <!-- PRODUCT EDITOR -->
-
-    <section id="editorSection"
-             class="panel"
-             hidden>
-
-      <h2 id="editorTitle">Новый браслет</h2>
-
-      <form id="productForm">
-
-        <label for="category">
-          Коллекция
-        </label>
-
-        <select id="category">
-          <option value="classic">
-            Coffee Classic
-          </option>
-          <option value="premium">
-            Coffee Premium
-          </option>
-        </select>
-
-        <label for="price">
-          Цена (₸)
-        </label>
-
-        <input id="price"
-               type="number"
-               min="1"
-               step="1"
-               value="3990"
-               required>
-
-        <hr class="section-separator">
-
-        <h2>Фотографии браслета</h2>
-
-        <p class="muted">
-          Загружайте любое необходимое количество
-          фотографий одного браслета.
-          Первое фото будет главным.
-          Стрелками можно изменить порядок.
-        </p>
-
-        <div id="photoList"
-             class="photos"></div>
-
-        <div class="upload">
-          <strong>+ Добавить фотографии</strong>
-
-          <input id="photoInput"
-                 type="file"
-                 accept="image/jpeg,image/png,image/webp"
-                 multiple>
-
-          <p class="muted">
-            JPG, PNG или WEBP.
-            Максимум 5 МБ на каждую фотографию.
-          </p>
-        </div>
-
-        <div class="switch-row">
-          <input id="published"
-                 type="checkbox"
-                 checked>
-
-          <label for="published">
-            Опубликовать в магазине
-          </label>
-        </div>
-
-        <button id="saveProduct"
-                type="submit"
-                class="primary full">
+      <div class="actions">
+        <button class="primary" id="saveProduct">
           Сохранить браслет
         </button>
-
-        <button id="cancelEdit"
-                type="button"
-                class="outline full">
+        <button type="button" class="outline" id="cancel">
           Отмена
         </button>
-      </form>
-
-      <p class="status"
-         id="editorMessage"
-         role="status"></p>
-    </section>
-
+      </div>
+    </form>
   </section>
+
+  <section class="panel">
+    <h2>Обложки коллекций</h2>
+    <div class="cols">
+      <div>
+        <h3>Classic</h3>
+        <div class="cover-preview" id="previewClassic">
+          Нет обложки
+        </div>
+        <input type="file" id="fileClassic"
+               accept="image/jpeg,image/png,image/webp">
+        <button class="outline" id="saveClassic">
+          Сохранить обложку
+        </button>
+        <p class="status" id="statusClassic"></p>
+      </div>
+
+      <div>
+        <h3>Premium</h3>
+        <div class="cover-preview" id="previewPremium">
+          Нет обложки
+        </div>
+        <input type="file" id="filePremium"
+               accept="image/jpeg,image/png,image/webp">
+        <button class="outline" id="savePremium">
+          Сохранить обложку
+        </button>
+        <p class="status" id="statusPremium"></p>
+      </div>
+    </div>
+  </section>
+</div>
 </main>
 
+<script>
+"use strict";
+
+const $ = id=>document.getElementById(id);
+
+let db=null;
+let staff=false;
+let products=[];
+let editing=null;
+let photos=[];
+let saving=false;
+
+const BUCKET="bracelet-photos";
+const MAX_PHOTOS=6;
+const MAX_SIZE=25*1024*1024;
+const MIME=["image/jpeg","image/png","image/webp"];
+
+const name=c=>c==="premium"?"Coffee Premium":"Coffee Classic";
+const money=n=>Number(n).toLocaleString("ru-RU")+" ₸";
+
+function message(id,text,bad=false) {
+  const e=$(id);
+  e.textContent=text;
+  e.className="status "+(bad?"error":"success");
+}
+
+function photoSort(list) {
+  return [...(list||[])].sort(
+    (a,b)=>(a.position||0)-(b.position||0)
+  );
+}
+
+function validate(file) {
+  if (!MIME.includes(file.type)) {
+    throw new Error(file.name+": нужен JPG, PNG или WEBP");
+  }
+  if (!file.size) {
+    throw new Error(file.name+": пустой файл");
+  }
+  if (file.size>MAX_SIZE) {
+    throw new Error(file.name+": превышен лимит 25 МБ");
+  }
+}
+
+function extension(file) {
+  if (file.type==="image/png") return "png";
+  if (file.type==="image/webp") return "webp";
+  return "jpg";
+}
+
+function initDb() {
+  if (!window.supabase?.createClient) {
+    throw new Error("Библиотека Supabase не загрузилась");
+  }
+  if (!window.MIX_SUPABASE?.key) {
+    throw new Error("Нет supabase-config.js");
+  }
+
+  db=window.supabase.createClient(
+    window.MIX_SUPABASE.url,
+    window.MIX_SUPABASE.key
+  );
+}
+
+async function isStaff() {
+  const {data,error}=await db.auth.getUser();
+  if (error || !data?.user) return false;
+
+  const result=await db.rpc("is_staff",{
+    uid:data.user.id
+  });
+
+  if (result.error) {
+    console.error(result.error);
+    return false;
+  }
+  return result.data===true;
+}
+
+async function show() {
+  staff=await isStaff();
+
+  $("loginSection").hidden=staff;
+  $("manager").hidden=!staff;
+
+  if (staff) {
+    await Promise.all([loadProducts(),loadCovers()]);
+  }
+}
+
+$("loginForm").onsubmit=async e=>{
+  e.preventDefault();
+  message("loginStatus","Проверяем вход...");
+
+  const {error}=await db.auth.signInWithPassword({
+    email:$("email").value.trim(),
+    password:$("password").value
+  });
+
+  if (error) {
+    message("loginStatus",error.message,true);
+    return;
+  }
+  if (!(await isStaff())) {
+    await db.auth.signOut();
+    message("loginStatus","Нет прав продавца",true);
+    return;
+  }
+  $("password").value="";
+  await show();
+};
+
+$("logout").onclick=async()=>{
+  await db.auth.signOut();
+  closeEditor();
+  await show();
+};
+
+/* ЗАГРУЗКА ТОВАРОВ */
+
+async function loadProducts() {
+  message("listStatus","Загружаем товары...");
+
+  const {data,error}=await db
+    .from("bracelets")
+    .select(`
+      id,category,price,published,created_at,
+      bracelet_photos(id,image_url,storage_path,position)
+    `)
+    .order("created_at",{ascending:false});
+
+  if (error) {
+    message("listStatus",error.message,true);
+    return;
+  }
+
+  products=(data||[]).map(p=>({
+    ...p,
+    bracelet_photos:photoSort(p.bracelet_photos)
+  }));
+
+  renderProducts();
+  message("listStatus","Всего товаров: "+products.length);
+}
+
+function renderProducts() {
+  const box=$("productList");
+  box.replaceChildren();
+
+  for (const p of products) {
+    const card=document.createElement("article");
+    card.className="product";
+
+    const img=document.createElement("img");
+    img.src=p.bracelet_photos[0]?.image_url||"";
+    img.alt=name(p.category);
+
+    const content=document.createElement("div");
+    content.className="product-content";
+
+    const title=document.createElement("h3");
+    title.textContent=name(p.category);
+
+    const price=document.createElement("p");
+    price.textContent=money(p.price);
+
+    const count=document.createElement("p");
+    count.textContent=p.bracelet_photos.length+" фото";
+
+    const state=document.createElement("p");
+    state.textContent=p.published?"Опубликован":"Скрыт";
+
+    const buttons=document.createElement("div");
+    buttons.className="actions";
+
+    const edit=document.createElement("button");
+    edit.className="outline";
+    edit.textContent="✏️ Изменить";
+    edit.onclick=()=>openEditor(p);
+
+    const toggle=document.createElement("button");
+    toggle.className="outline";
+    toggle.textContent=p.published?"− Скрыть":"+ Вернуть";
+
+    toggle.onclick=async()=>{
+      if (!confirm(
+        p.published?"Скрыть товар?":"Опубликовать товар?"
+      )) return;
+
+      toggle.disabled=true;
+
+      const {error}=await db.from("bracelets")
+        .update({published:!p.published})
+        .eq("id",p.id);
+
+      if (error) {
+        alert(error.message);
+        toggle.disabled=false;
+        return;
+      }
+      await loadProducts();
+    };
+
+    buttons.append(edit,toggle);
+    content.append(title,price,count,state,buttons);
+    card.append(img,content);
+    box.append(card);
+  }
+}
+
+/* РЕДАКТОР */
+
+function closeEditor() {
+  for (const p of photos) {
+    if (p.preview) URL.revokeObjectURL(p.preview);
+  }
+  photos=[];
+  editing=null;
+  $("editor").hidden=true;
+}
+
+function openEditor(p=null) {
+  closeEditor();
+  editing=p;
+
+  photos=(p?.bracelet_photos||[]).map(x=>({
+    ...x,kind:"existing"
+  }));
+
+  $("editorTitle").textContent=
+    p?"Изменить браслет":"Добавить браслет";
+  $("category").value=p?.category||"classic";
+  $("price").value=p?.price||3990;
+  $("published").checked=p?.published??true;
+  $("photoInput").value="";
+  message("editorStatus","");
+  $("editor").hidden=false;
+  renderPhotos();
+  $("editor").scrollIntoView({behavior:"smooth"});
+}
+
+$("add").onclick=()=>openEditor();
+$("cancel").onclick=closeEditor;
+$("reload").onclick=loadProducts;
+
+$("category").onchange=()=>{
+  if (editing) return;
+  $("price").value=$("category").value==="premium"
+    ?5990:3990;
+};
+
+$("photoInput").onchange=e=>{
+  let count=0;
+  const errors=[];
+
+  for (const file of [...e.target.files]) {
+    if (photos.length>=MAX_PHOTOS) {
+      errors.push("Максимум 6 фотографий");
+      break;
+    }
+    try {
+      validate(file);
+      photos.push({
+        kind:"new",
+        file,
+        preview:URL.createObjectURL(file)
+      });
+      count++;
+    } catch(error) {
+      errors.push(error.message);
+    }
+  }
+
+  e.target.value="";
+  renderPhotos();
+
+  message(
+    "editorStatus",
+    "Добавлено: "+count+
+    ". Всего: "+photos.length+"/6"+
+    (errors.length?"\n"+errors.join("\n"):""),
+    errors.length>0
+  );
+};
+
+function renderPhotos() {
+  const box=$("photoList");
+  box.replaceChildren();
+
+  photos.forEach((p,i)=>{
+    const item=document.createElement("div");
+    item.className="photo-card";
+
+    const img=document.createElement("img");
+    img.src=p.preview||p.image_url;
+
+    const text=document.createElement("p");
+    text.textContent=i===0?"Главное фото":"Фото "+(i+1);
+
+    const buttons=document.createElement("div");
+    buttons.className="photo-buttons";
+
+    const left=document.createElement("button");
+    left.type="button";
+    left.textContent="←";
+    left.disabled=i===0;
+    left.onclick=()=>move(i,-1);
+
+    const right=document.createElement("button");
+    right.type="button";
+    right.textContent="→";
+    right.disabled=i===photos.length-1;
+    right.onclick=()=>move(i,1);
+
+    const remove=document.createElement("button");
+    remove.type="button";
+    remove.textContent="×";
+    remove.onclick=()=>{
+      if (p.preview) URL.revokeObjectURL(p.preview);
+      photos.splice(i,1);
+      renderPhotos();
+    };
+
+    buttons.append(left,right,remove);
+    item.append(img,text,buttons);
+    box.append(item);
+  });
+}
+
+function move(i,step) {
+  const n=i+step;
+  if (n<0||n>=photos.length) return;
+  [photos[i],photos[n]]=[photos[n],photos[i]];
+  renderPhotos();
+}
+
+/* ЗАГРУЗКА ФОТО В STORAGE */
+
+async function upload(file,folder) {
+  validate(file);
+
+  const path=folder+"/"+crypto.randomUUID()+
+    "."+extension(file);
+
+  const {error}=await db.storage
+    .from(BUCKET)
+    .upload(path,file,{
+      contentType:file.type,
+      upsert:false
+    });
+
+  if (error) throw new Error(
+    file.name+": "+error.message
+  );
+
+  const {data}=db.storage
+    .from(BUCKET)
+    .getPublicUrl(path);
+
+  return {
+    image_url:data.publicUrl,
+    storage_path:path
+  };
+}
+
+/* СОХРАНЕНИЕ БРАСЛЕТА */
+
+$("productForm").onsubmit=async e=>{
+  e.preventDefault();
+  if (saving) return;
+
+  if (!(await isStaff())) {
+    message("editorStatus","Нет прав администратора",true);
+    return;
+  }
+
+  if (!photos.length||photos.length>MAX_PHOTOS) {
+    message(
+      "editorStatus",
+      "Нужно от 1 до 6 фотографий",
+      true
+    );
+    return;
+  }
+
+  const price=Number($("price").value);
+  if (!Number.isInteger(price)||price<=0) {
+    message("editorStatus","Проверь цену",true);
+    return;
+  }
+
+  saving=true;
+  $("saveProduct").disabled=true;
+
+  const category=$("category").value;
+  const published=$("published").checked;
+
+  const uploadedPaths=[];
+  let databaseChanged=false;
+
+  try {
+    const prepared=[];
+
+    // Сначала все файлы.
+    for (let i=0;i<photos.length;i++) {
+      const p=photos[i];
+
+      if (p.kind==="existing") {
+        prepared.push({...p});
+        continue;
+      }
+
+      message(
+        "editorStatus",
+        "Загружаем фото "+(i+1)+
+        " из "+photos.length+"..."
+      );
+
+      const file=await upload(p.file,"products");
+      uploadedPaths.push(file.storage_path);
+      prepared.push({kind:"new",...file});
+    }
+
+    message("editorStatus","Сохраняем товар...");
+
+    let id=editing?.id;
+
+    if (!id) {
+      const {data,error}=await db.from("bracelets")
+        .insert({
+          category,
+          price,
+          published:false
+        })
+        .select("id")
+        .single();
+
+      if (error) throw error;
+      id=data.id;
+      databaseChanged=true;
+    }
+
+    // Новые фото добавляем в БД.
+    const newPhotos=prepared.filter(
+      p=>p.kind==="new"
+    );
+
+    if (newPhotos.length) {
+      const rows=newPhotos.map((p,i)=>({
+        bracelet_id:id,
+        image_url:p.image_url,
+        storage_path:p.storage_path,
+        position:1000+i
+      }));
+
+      const {error}=await db
+        .from("bracelet_photos")
+        .insert(rows);
+
+      if (error) throw error;
+      databaseChanged=true;
+    }
+
+    const {data:saved,error:readError}=await db
+      .from("bracelet_photos")
+      .select("id,storage_path")
+      .eq("bracelet_id",id);
+
+    if (readError) throw readError;
+
+    const paths=new Map(
+      (saved||[]).map(p=>[p.storage_path,p.id])
+    );
+
+    // Устанавливаем порядок фото.
+    for (let i=0;i<prepared.length;i++) {
+      const p=prepared[i];
+
+      const photoId=p.kind==="existing"
+        ?p.id
+        :paths.get(p.storage_path);
+
+      if (!photoId) {
+        throw new Error("Не найдено фото №"+(i+1));
+      }
+
+      const {error}=await db
+        .from("bracelet_photos")
+        .update({position:i})
+        .eq("id",photoId);
+
+      if (error) throw error;
+      databaseChanged=true;
+    }
+
+    // Удаление только записей о снятых фото.
+    const keep=new Set(
+      prepared.filter(p=>p.kind==="existing")
+        .map(p=>p.id)
+    );
+
+    for (const old of editing?.bracelet_photos||[]) {
+      if (keep.has(old.id)) continue;
+
+      const {error}=await db
+        .from("bracelet_photos")
+        .delete()
+        .eq("id",old.id);
+
+      if (error) throw error;
+      databaseChanged=true;
+    }
+
+    // Публикация только после успешной
+    // загрузки и сохранения фотографий.
+    const {error:updateError}=await db
+      .from("bracelets")
+      .update({
+        category,price,published
+      })
+      .eq("id",id);
+
+    if (updateError) throw updateError;
+    databaseChanged=true;
+
+    closeEditor();
+    await loadProducts();
+    message("listStatus","Браслет сохранён!");
+
+  } catch(error) {
+    console.error(error);
+
+    // Файлы удаляем только если до ошибки
+    // ещё не было изменений в базе.
+    if (!databaseChanged&&uploadedPaths.length) {
+      const {error:cleanupError}=await db.storage
+        .from(BUCKET).remove(uploadedPaths);
+      if (cleanupError) console.warn(cleanupError);
+    }
+
+    message(
+      "editorStatus",
+      "Ошибка: "+error.message+
+      "\nПроверь товар перед повторным сохранением.",
+      true
+    );
+  } finally {
+    saving=false;
+    $("saveProduct").disabled=false;
+  }
+};
+
+/* ОБЛОЖКИ */
+
+async function loadCovers() {
+  const {data,error}=await db
+    .from("collection_covers")
+    .select("category,image_url");
+
+  if (error) {
+    console.warn(error);
+    return;
+  }
+
+  for (const c of ["classic","premium"]) {
+    const suffix=c==="classic"?"Classic":"Premium";
+    const box=$("preview"+suffix);
+    const cover=(data||[]).find(p=>p.category===c);
+
+    box.replaceChildren();
+
+    if (!cover?.image_url) {
+      box.textContent="Нет обложки";
+      continue;
+    }
+
+    const img=document.createElement("img");
+    img.src=cover.image_url;
+    img.alt=name(c);
+    box.append(img);
+  }
+}
+
+async function saveCover(category) {
+  const suffix=category==="classic"
+    ?"Classic":"Premium";
+
+  const input=$("file"+suffix);
+  const button=$("save"+suffix);
+  const file=input.files[0];
+
+  if (!file) {
+    message("status"+suffix,"Выбери фото",true);
+    return;
+  }
+
+  button.disabled=true;
+  let uploaded=null;
+
+  try {
+    if (!(await isStaff())) {
+      throw new Error("Нет прав продавца");
+    }
+
+    uploaded=await upload(file,"covers");
+
+    const {error}=await db.from("collection_covers")
+      .upsert({
+        category,
+        image_url:uploaded.image_url,
+        storage_path:uploaded.storage_path,
+        updated_at:new Date().toISOString()
+      },{onConflict:"category"});
+
+    if (error) throw error;
+
+    input.value="";
+    await loadCovers();
+    message("status"+suffix,"Обложка сохранена");
+
+  } catch(error) {
+    if (uploaded?.storage_path) {
+      const {error:cleanupError}=await db.storage
+        .from(BUCKET)
+        .remove([uploaded.storage_path]);
+      if (cleanupError) console.warn(cleanupError);
+    }
+    message("status"+suffix,error.message,true);
+
+  } finally {
+    button.disabled=false;
+  }
+}
+
+$("saveClassic").onclick=()=>saveCover("classic");
+$("savePremium").onclick=()=>saveCover("premium");
+
+/* START */
+
+async function startAdmin() {
+  try {
+    initDb();
+    await show();
+  } catch(error) {
+    console.error(error);
+    message("loginStatus",error.message,true);
+  }
+}
+
+document.addEventListener(
+  "DOMContentLoaded",
+  startAdmin,
+  {once:true}
+);
+</script>
 </body>
 </html>
