@@ -4,219 +4,237 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#f4e5d4">
+  <meta name="theme-color" content="#f3e3d0">
   <title>MIX COFFEE BRACELET</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" defer></script>
-  <script src="script.js" defer></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script defer src="script.js"></script>
 </head>
 <body>
 
-<header class="header">
-  <div class="header-inner">
-    <a class="brand" href="#">
-      <span class="brand-star">✦</span>
-      <span>
-        <strong>MIX</strong>
-        <small>COFFEE BRACELET</small>
-      </span>
-    </a>
+<header class="site-header">
+  <a class="brand" href="#home">
+    <span class="brand-mark">✦</span>
+    <span>
+      <strong>MIX</strong>
+      <small>COFFEE BRACELET</small>
+    </span>
+  </a>
 
-    <div class="header-controls">
-      <div class="languages">
-        <button class="lang active" data-lang="ru">RU</button>
-        <button class="lang" data-lang="kz">KZ</button>
-        <button class="lang" data-lang="en">EN</button>
-      </div>
-
-      <button class="header-icon" id="favoritesButton"
-              aria-label="Избранное">
-        ♡<sup id="favoritesCount">0</sup>
-      </button>
-
-      <button class="header-icon" id="cartButton"
-              aria-label="Корзина">
-        🛍<sup id="cartCount">0</sup>
-      </button>
+  <div class="header-actions">
+    <div class="language-switch">
+      <button class="lang-btn active" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="kz">KZ</button>
+      <button class="lang-btn" data-lang="en">EN</button>
     </div>
+
+    <button class="icon-btn" id="favoritesButton"
+            aria-label="Избранное">
+      ♡ <sup id="favoritesCount">0</sup>
+    </button>
+
+    <button class="icon-btn" id="cartButton"
+            aria-label="Корзина">
+      🛍 <sup id="cartCount">0</sup>
+    </button>
   </div>
 </header>
 
 <main>
 
-  <!-- ГЛАВНАЯ ЧАСТЬ -->
-  <section class="hero">
-    <span class="floating-star star-one">✦</span>
-    <span class="floating-star star-two">✧</span>
+  <!-- ГЛАВНЫЙ ЭКРАН -->
+  <section class="hero" id="home">
+    <div class="hero-light"></div>
+    <span class="star star-1">✦</span>
+    <span class="star star-2">✧</span>
+    <span class="star star-3">✦</span>
 
-    <div class="hero-content">
+    <div class="hero-inner">
       <p class="eyebrow">MIX COFFEE BRACELET</p>
 
-      <h1>Моменты кофе.<br>
-        <em data-i18n="heroAccent">Детали стиля.</em>
+      <h1>
+        MIX COFFEE
+        <em>BRACELET</em>
       </h1>
 
-      <p class="hero-subtitle" data-i18n="tagline">
+      <p class="hero-tagline" data-t="tagline">
         Отборные кофейные зёрна 🤎
       </p>
 
-      <p class="hero-description" data-i18n="heroDescription">
+      <p class="hero-description" data-t="heroDescription">
         Любовь к кофе — на твоём запястье.
       </p>
 
-      <a href="#collection" class="primary-button"
-         data-i18n="explore">
+      <a href="#collection" class="gold-button"
+         data-t="explore">
         Смотреть коллекцию
       </a>
     </div>
-
-    <div class="hero-decoration" aria-hidden="true">
-      <div class="orbit"></div>
-      <div class="coffee-symbol">☕</div>
-    </div>
   </section>
 
-  <!-- КОЛЛЕКЦИИ -->
-  <section class="collection-section" id="collection">
-    <div class="section-heading">
-      <p class="eyebrow">OUR COLLECTIONS</p>
-      <h2 data-i18n="collections">Наши коллекции</h2>
-      <p data-i18n="collectionHint">
-        Выберите коллекцию, чтобы посмотреть браслеты.
+  <!-- ДВЕ КОЛЛЕКЦИИ -->
+  <section class="collections section" id="collection">
+    <div class="section-title">
+      <span class="eyebrow">OUR COLLECTIONS</span>
+      <h2 data-t="collections">Наши коллекции</h2>
+      <p data-t="choose">
+        Выберите коллекцию, чтобы увидеть браслеты
       </p>
     </div>
 
     <div class="collection-grid">
+
       <button class="collection-card" data-open="classic"
               aria-expanded="false">
-        <div class="collection-art classic-art">
-          <span class="collection-emblem">✦</span>
+
+        <div class="collection-cover classic-cover"
+             id="classicCover">
+          <span>✦</span>
         </div>
 
-        <div class="collection-info">
-          <p class="collection-number">01 / CLASSIC</p>
+        <div class="collection-content">
+          <span class="eyebrow">01 — CLASSIC</span>
           <h3>Coffee Classic</h3>
-          <p data-i18n="classicShort">
+          <p data-t="classicShort">
             Браслет на эластичной резинке
           </p>
           <strong>3 990 ₸</strong>
-          <span class="view-label">
-            <span data-i18n="viewProducts">Смотреть браслеты</span>
-            <span>⌄</span>
+
+          <span class="collection-bottom">
+            <span data-t="viewProducts">
+              Смотреть браслеты
+            </span>
+            <span class="arrow">⌄</span>
           </span>
         </div>
       </button>
 
       <button class="collection-card" data-open="premium"
               aria-expanded="false">
-        <div class="collection-art premium-art">
-          <span class="collection-emblem">✧</span>
+
+        <div class="collection-cover premium-cover"
+             id="premiumCover">
+          <span>✧</span>
         </div>
 
-        <div class="collection-info">
-          <p class="collection-number">02 / PREMIUM</p>
+        <div class="collection-content">
+          <span class="eyebrow">02 — PREMIUM</span>
           <h3>Coffee Premium</h3>
-          <p data-i18n="premiumShort">
+          <p data-t="premiumShort">
             Браслет на прочной нити
           </p>
           <strong>5 990 ₸</strong>
-          <span class="view-label">
-            <span data-i18n="viewProducts">Смотреть браслеты</span>
-            <span>⌄</span>
+
+          <span class="collection-bottom">
+            <span data-t="viewProducts">
+              Смотреть браслеты
+            </span>
+            <span class="arrow">⌄</span>
           </span>
         </div>
       </button>
+
     </div>
 
-    <!-- СКРЫТЫЙ КАТАЛОГ -->
-    <section id="products" class="products-section" hidden>
-      <div class="products-heading">
+    <!-- СНАЧАЛА ТОВАРЫ СКРЫТЫ -->
+    <section class="product-section" id="products" hidden>
+
+      <div class="product-heading">
         <div>
-          <p class="eyebrow">SELECTED COLLECTION</p>
-          <h2 id="productsTitle"></h2>
+          <span class="eyebrow">SELECTED COLLECTION</span>
+          <h2 id="productsTitle">Coffee Classic</h2>
           <p id="categoryDescription"></p>
-          <span id="productCount"></span>
+          <small id="productCount"></small>
         </div>
 
-        <button id="backButton" class="outline-button">
+        <button class="close-products" id="closeProducts"
+                aria-label="Закрыть">
           ✕
         </button>
       </div>
 
-      <div class="products-grid" id="productGrid"></div>
+      <div class="product-grid" id="productGrid"></div>
 
-      <p id="emptyMessage" class="empty-message" hidden>
-        Пока нет опубликованных браслетов.
-      </p>
+      <p class="empty-message" id="emptyMessage" hidden></p>
+
     </section>
   </section>
 
-  <!-- О БРЕНДЕ -->
-  <section class="about">
+  <section class="about-section">
     <span class="about-star">✦</span>
-    <p class="eyebrow">ABOUT OUR BRAND</p>
-    <h2 data-i18n="aboutTitle">Кофе в каждой детали</h2>
-    <p data-i18n="aboutText">
+    <h2 data-t="aboutTitle">Кофе в каждой детали</h2>
+    <p data-t="aboutText">
       Украшения, вдохновлённые атмосферой кофе.
-      Тёплые оттенки, особенный стиль и внимание к деталям.
+      Особенный стиль и внимание к деталям.
     </p>
   </section>
 
 </main>
 
 <footer class="footer">
-  <div class="footer-brand">
-    <h2>MIX COFFEE BRACELET</h2>
-    <p data-i18n="tagline">Отборные кофейные зёрна 🤎</p>
-  </div>
+  <h2>MIX COFFEE BRACELET</h2>
+  <p data-t="tagline">Отборные кофейные зёрна 🤎</p>
 
   <div class="social-links">
-    <a id="instagramLink" target="_blank"
-       rel="noopener noreferrer">Instagram</a>
+    <a id="instagramLink" href="https://www.instagram.com/"
+       target="_blank" rel="noopener noreferrer">
+      Instagram
+    </a>
 
-    <a id="tiktokLink" target="_blank"
-       rel="noopener noreferrer">TikTok</a>
+    <a id="tiktokLink" href="https://www.tiktok.com/"
+       target="_blank" rel="noopener noreferrer">
+      TikTok
+    </a>
 
-    <a id="whatsappLink" target="_blank"
-       rel="noopener noreferrer">WhatsApp</a>
+    <a id="whatsappLink" href="https://wa.me/"
+       target="_blank" rel="noopener noreferrer">
+      WhatsApp
+    </a>
   </div>
 
   <small>© 2026 MIX COFFEE BRACELET</small>
 </footer>
 
-<!-- КОРЗИНА -->
-<div id="cartBackdrop" class="backdrop" hidden></div>
+<!-- ПАНЕЛЬ КОРЗИНЫ И ИЗБРАННОГО -->
+<div id="panelBackdrop" class="panel-backdrop" hidden></div>
 
-<aside id="cartPanel" class="cart-panel"
+<aside class="side-panel" id="sidePanel"
        role="dialog" aria-modal="true"
-       aria-label="Корзина" aria-hidden="true">
+       aria-hidden="true" aria-labelledby="panelTitle">
 
-  <div class="cart-header">
-    <h2 id="cartTitle">Корзина</h2>
-    <button id="closeCart" aria-label="Закрыть">✕</button>
+  <div class="panel-header">
+    <h2 id="panelTitle">Корзина</h2>
+
+    <button class="panel-close" id="closePanel"
+            aria-label="Закрыть">
+      ✕
+    </button>
   </div>
 
-  <div id="cartItems" class="cart-items"></div>
+  <div id="panelItems" class="panel-items"></div>
 
-  <div class="cart-bottom">
-    <div class="total">
-      <span data-i18n="total">Итого</span>
-      <strong id="totalPrice">0 ₸</strong>
+  <div id="panelFooter" class="panel-footer">
+    <div class="total-row">
+      <span data-t="total">Итого</span>
+      <strong id="cartTotal">0 ₸</strong>
     </div>
 
-    <a id="orderButton" class="primary-button" target="_blank"
+    <a class="gold-button checkout-button"
+       id="orderButton"
+       target="_blank"
        rel="noopener noreferrer">
       Заказать через WhatsApp
     </a>
   </div>
 </aside>
 
-<div id="toast" role="status"></div>
+<div class="toast" id="toast" role="status"></div>
 
 </body>
 </html>
