@@ -22,16 +22,7 @@
 
     if (!url || !key) {
       throw new Error(
-        "Не указан URL или публичный ключ Supabase"
-      );
-    }
-
-    if (
-      key.includes("ОСЫНДА_") ||
-      key.includes("ВСТАВЬ_")
-    ) {
-      throw new Error(
-        "В supabase-config.js нужно вставить настоящий публичный ключ"
+        "Отсутствует адрес или публичный ключ Supabase"
       );
     }
 
@@ -41,18 +32,15 @@
       {
         auth: {
           persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true
+          autoRefreshToken: true
         }
       }
     );
 
-    console.log(
-      "MIX COFFEE BRACELET: Supabase создан"
-    );
+    console.log("Supabase клиент создан успешно");
 
   } catch (error) {
     window.supabaseError = error.message;
-    console.error("Supabase:", error);
+    console.error("Ошибка Supabase:", error);
   }
 })();
