@@ -1,131 +1,78 @@
 
 "use strict";
 
-/* =========================================
-   MIX COFFEE BRACELET — ADMIN PANEL
-   Supabase + Gallery + Products
-   ========================================= */
-
 const el = id => document.getElementById(id);
+const cfg = MIX_STORE;
 
-const BUCKET = "bracelet-photos";
+let adminProducts = [];
+let editingProduct = null;
+let selectedPhotos = [];
+let saving = false;
 
-const MAX_FILE_SIZE = 25 * 1024 * 1024;
-const MAX_PHOTOS = 6;
-
-const ALLOWED_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp"
-];
-
-let products = [];
-let selectedProduct = null;
-let editingPhotos = [];
-let savingProduct = false;
-let staffAccess = false;
-
-const coverUrls = {
-  classic: "",
-  premium: ""
-};
-
-/* ========== HELPERS ========== */
-
-function setMessage(id, message, isError = false) {
+function message(id, text, error = false) {
   const target = el(id);
   if (!target) return;
 
-  target.textContent = message;
+  target.textContent = text;
   target.className =
-    "status " + (isError ? "error" : "success");
+    "status" + (error ? " error" : "");
 }
 
-function formatPrice(amount) {
-  return Number(amount).toLocaleString("ru-RU") + " ₸";
-}
+function validateFile(file) {
+  const allowed = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
 
-function categoryName(category) {
-  return category === "premium"
-    ? "Coffee Premium"
-    : "Coffee Classic";
-}
-
-function sortPhotos(photos) {
-  return [...(photos || [])].sort(
-    (a, b) => a.position - b.position
-  );
-}
-
-function formatSize(bytes) {
-  return (bytes / 1024 / 1024).toFixed(2) + " МБ";
-}
-
-function validateImage(file) {
-  if (!ALLOWED_TYPES.includes(file.type)) {
+  if (!allowed.includes(file.type)) {
     throw new Error(
-      "Разрешены только JPG, PNG и WEBP."
+      file.name + ": разрешены только JPG, PNG и WEBP."
     );
   }
 
-  if (file.size > MAX_FILE_SIZE) {
+  if (file.size > cfg.maxFileMB * 1024 * 1024) {
     throw new Error(
-      "Файл " + file.name +
-      " слишком большой (" +
-      formatSize(file.size) +
-      "). Максимум — 25 МБ."
+      file.name + ": размер больше 25 МБ."
     );
   }
 
-  if (file.size === 0) {
-    throw new Error("Фотография пустая.");
+  if (!file.size) {
+    throw new Error("Пустой файл: " + file.name);
   }
 }
 
-function fileExtension(file) {
+function fileExt(file) {
   if (file.type === "image/png") return "png";
   if (file.type === "image/webp") return "webp";
   return "jpg";
 }
 
-function friendlyError(error) {
-  const message = error?.message || String(error);
-
-  if (/maximum.*size|file.*size|too large|413/i.test(message)) {
-    return (
-      "Файл превышает лимит Supabase Storage. " +
-      "Проверь настройки размера файлов в Supabase. " +
-      "Подробности: " + message
-    );
-  }
-
-  return message;
-}
-
-/* ========== SUPABASE STORAGE ========== */
-
-async function uploadFile(file, folder) {
-  validateImage(file);
+async function uploadPhoto(file, folder) {
+  validateFile(file);
 
   const path =
     folder + "/" +
     crypto.randomUUID() + "." +
-    fileExtension(file);
+    fileExt(file);
 
   const { error } = await db.storage
-    .from(BUCKET)
+    .from(cfg.bucket)
     .upload(path, file, {
       contentType: file.type,
-      upsert: false,
-      cacheControl: "3600"
+      cacheControl: "3600",
+      upsert: false
     });
 
   if (error) {
-    throw new Error(friendlyError(error));
+    throw new Error(
+      "Не удалось загрузить " +
+      file.name + ": " + error.message
+    );
   }
 
   const { data } = db.storage
-    .from(BUCKET)
+    .from(cfg.bucket)
     .getPublicUrl(path);
 
   return {
@@ -134,9 +81,9 @@ async function uploadFile(file, folder) {
   };
 }
 
-/* ========== AUTHENTICATION ========== */
+/* ===== AUTH ===== */
 
-async function checkStaff() {
+async function isStaff() {
   const { data, error } = await db.auth.getUser();
 
   if (error || !data?.user) return false;
@@ -153,17 +100,17 @@ async function checkStaff() {
   return result.data === true;
 }
 
-async function showScreen() {
-  staffAccess = await checkStaff();
+async function showAdmin() {
+  const allowed = await isStaff();
 
-  el("loginSection").hidden = staffAccess;
-  el("managerSection").hidden = !staffAccess;
-  el("logout").hidden = !staffAccess;
+  el("loginSection").hidden = allowed;
+  el("managerSection").hidden = !allowed;
+  el("logout").hidden = !allowed;
 
-  if (staffAccess) {
+  if (allowed) {
     await Promise.all([
-      loadProducts(),
-      loadCollectionCovers()
+      loadAdminProducts(),
+      loadAdminCovers()
     ]);
   }
 }
@@ -173,42 +120,36 @@ el("loginForm").addEventListener(
   async event => {
     event.preventDefault();
 
-    const email = el("email").value.trim();
-    const password = el("password").value;
+    message("loginMessage", "Выполняется вход...");
 
-    setMessage(
-      "loginMessage",
-      "Проверяем данные..."
-    );
-
-    const { error } = await db.auth.signInWithPassword({
-      email,
-      password
-    });
+    const { error } = await db.auth
+      .signInWithPassword({
+        email: el("email").value.trim(),
+        password: el("password").value
+      });
 
     if (error) {
-      setMessage(
+      message(
         "loginMessage",
-        "Ошибка входа: " + error.message,
+        error.message,
+        true
+      );
+      return;
+    }
+
+    if (!(await isStaff())) {
+      await db.auth.signOut();
+
+      message(
+        "loginMessage",
+        "У аккаунта нет прав администратора.",
         true
       );
       return;
     }
 
     el("password").value = "";
-
-    if (!(await checkStaff())) {
-      await db.auth.signOut();
-
-      setMessage(
-        "loginMessage",
-        "У этого аккаунта нет прав администратора.",
-        true
-      );
-      return;
-    }
-
-    await showScreen();
+    await showAdmin();
   }
 );
 
@@ -217,221 +158,14 @@ el("logout").addEventListener(
   async () => {
     await db.auth.signOut();
     closeEditor();
-    await showScreen();
+    await showAdmin();
   }
 );
 
-/* ========== COLLECTION COVERS ========== */
+/* ===== PRODUCTS ===== */
 
-function previewCover(category, url) {
-  const target = el(
-    category === "classic"
-      ? "coverPreviewClassic"
-      : "coverPreviewPremium"
-  );
-
-  target.replaceChildren();
-
-  if (!url) {
-    target.textContent = "Нет фотографии";
-    return;
-  }
-
-  const image = document.createElement("img");
-
-  image.src = url;
-  image.alt = categoryName(category);
-
-  image.onerror = () => {
-    target.textContent =
-      "Не удалось открыть фотографию";
-  };
-
-  target.appendChild(image);
-}
-
-async function loadCollectionCovers() {
-  const { data, error } = await db
-    .from("collection_covers")
-    .select("category,image_url");
-
-  if (error) {
-    for (const category of ["Classic", "Premium"]) {
-      setMessage(
-        "coverStatus" + category,
-        "Ошибка: " + error.message,
-        true
-      );
-    }
-    return;
-  }
-
-  for (const category of ["classic", "premium"]) {
-    const found = (data || []).find(
-      item => item.category === category
-    );
-
-    coverUrls[category] = found?.image_url || "";
-
-    previewCover(
-      category,
-      coverUrls[category]
-    );
-  }
-}
-
-async function saveCover(category) {
-  if (!staffAccess) return;
-
-  const suffix =
-    category === "classic" ? "Classic" : "Premium";
-
-  const input = el("coverFile" + suffix);
-  const button = el("saveCover" + suffix);
-  const statusId = "coverStatus" + suffix;
-
-  const file = input.files?.[0];
-
-  if (!file) {
-    setMessage(
-      statusId,
-      "Сначала выберите фотографию.",
-      true
-    );
-    return;
-  }
-
-  button.disabled = true;
-  setMessage(statusId, "Загружаем фотографию...");
-
-  let uploaded = null;
-
-  try {
-    validateImage(file);
-
-    uploaded = await uploadFile(file, "covers");
-
-    const { data, error } = await db
-      .from("collection_covers")
-      .update({
-        image_url: uploaded.image_url,
-        storage_path: uploaded.storage_path,
-        updated_at: new Date().toISOString()
-      })
-      .eq("category", category)
-      .select("category")
-      .single();
-
-    if (error) throw error;
-
-    if (!data) {
-      throw new Error(
-        "Коллекция не найдена в базе данных."
-      );
-    }
-
-    coverUrls[category] = uploaded.image_url;
-
-    previewCover(category, uploaded.image_url);
-
-    input.value = "";
-
-    setMessage(
-      statusId,
-      "Фотография успешно опубликована!"
-    );
-
-  } catch (error) {
-    if (uploaded?.storage_path) {
-      await db.storage
-        .from(BUCKET)
-        .remove([uploaded.storage_path]);
-    }
-
-    setMessage(
-      statusId,
-      "Ошибка: " + friendlyError(error),
-      true
-    );
-
-  } finally {
-    button.disabled = false;
-  }
-}
-
-el("saveCoverClassic").addEventListener(
-  "click",
-  () => saveCover("classic")
-);
-
-el("saveCoverPremium").addEventListener(
-  "click",
-  () => saveCover("premium")
-);
-
-for (const category of ["classic", "premium"]) {
-  const suffix =
-    category === "classic" ? "Classic" : "Premium";
-
-  el("coverFile" + suffix).addEventListener(
-    "change",
-    event => {
-      const file = event.target.files?.[0];
-      if (!file) return;
-
-      try {
-        validateImage(file);
-
-      } catch (error) {
-        setMessage(
-          "coverStatus" + suffix,
-          error.message,
-          true
-        );
-
-        event.target.value = "";
-        return;
-      }
-
-      const url = URL.createObjectURL(file);
-
-      previewCover(category, url);
-
-      const image = el(
-        "coverPreview" + suffix
-      ).querySelector("img");
-
-      if (image) {
-        const cleanup = () => URL.revokeObjectURL(url);
-
-        image.addEventListener(
-          "load",
-          cleanup,
-          { once: true }
-        );
-
-        image.addEventListener(
-          "error",
-          cleanup,
-          { once: true }
-        );
-      }
-
-      setMessage(
-        "coverStatus" + suffix,
-        "Файл выбран. Нажмите «Сохранить фото»."
-      );
-    }
-  );
-}
-
-/* ========== LOAD PRODUCTS ========== */
-
-async function loadProducts() {
-  setMessage(
-    "listMessage",
-    "Загружаем браслеты..."
-  );
+async function loadAdminProducts() {
+  message("listMessage", "Загружаем товары...");
 
   const { data, error } = await db
     .from("bracelets")
@@ -453,195 +187,283 @@ async function loadProducts() {
     });
 
   if (error) {
-    setMessage(
+    message(
       "listMessage",
-      "Ошибка: " + error.message,
+      error.message,
       true
     );
     return;
   }
 
-  products = (data || []).map(product => ({
+  adminProducts = (data || []).map(product => ({
     ...product,
-    bracelet_photos:
-      sortPhotos(product.bracelet_photos)
+    bracelet_photos: mixPhotos(product)
   }));
 
-  renderProducts();
+  renderAdminProducts();
 
-  setMessage(
+  message(
     "listMessage",
-    "Всего браслетов: " + products.length
+    "Всего браслетов: " + adminProducts.length
   );
 }
 
-/* ========== PRODUCT CARDS ========== */
-
-function renderProducts() {
+function renderAdminProducts() {
   const container = el("productList");
   container.replaceChildren();
 
-  products.forEach(product => {
+  adminProducts.forEach(product => {
     const card = document.createElement("article");
-    card.className = "product-card";
+    card.className = "admin-product";
 
-    const photo = document.createElement("div");
-    photo.className = "product-photo";
-
-    const mainPhoto = product.bracelet_photos[0];
-
-    if (mainPhoto?.image_url) {
-      const image = document.createElement("img");
-
-      image.src = mainPhoto.image_url;
-      image.alt = categoryName(product.category);
-      image.loading = "lazy";
-
-      photo.appendChild(image);
-    } else {
-      photo.textContent = "Нет фотографии";
-    }
-
-    const edit = document.createElement("button");
-    edit.type = "button";
-    edit.className = "edit-corner";
-    edit.textContent = "✏️";
-    edit.setAttribute(
-      "aria-label",
-      "Редактировать браслет"
-    );
-
-    edit.addEventListener(
-      "click",
-      () => openEditor(product)
-    );
-
-    photo.appendChild(edit);
-
-    const content = document.createElement("div");
-    content.className = "product-content";
+    const photo = document.createElement("img");
+    photo.src = mixPhotos(product)[0]?.image_url || "";
+    photo.alt = mixCategory(product.category);
 
     const name = document.createElement("h3");
-    name.textContent = categoryName(product.category);
+    name.textContent = mixCategory(product.category);
 
     const price = document.createElement("p");
-    price.textContent = formatPrice(product.price);
+    price.textContent = mixMoney(product.price);
 
-    const photoCount = document.createElement("p");
-    photoCount.className = "muted";
-    photoCount.textContent =
-      product.bracelet_photos.length + " фото";
+    const count = document.createElement("p");
+    count.textContent =
+      mixPhotos(product).length + " фото";
 
     const status = document.createElement("p");
-    status.className = "muted";
     status.textContent = product.published
       ? "Опубликован"
       : "Скрыт";
 
+    const edit = document.createElement("button");
+    edit.className = "outline-button";
+    edit.textContent = "✏️ Редактировать";
+    edit.addEventListener("click", () => {
+      openEditor(product);
+    });
+
     const toggle = document.createElement("button");
-    toggle.type = "button";
-
-    toggle.className = product.published
-      ? "danger remove-action"
-      : "outline remove-action";
-
+    toggle.className = "outline-button";
     toggle.textContent = product.published
       ? "− Убрать"
       : "+ Вернуть";
 
     toggle.addEventListener("click", async () => {
-      const nextStatus = !product.published;
+      const next = !product.published;
 
-      const question = nextStatus
-        ? "Опубликовать этот браслет?"
-        : "Скрыть этот браслет от покупателей?";
-
-      if (!confirm(question)) return;
+      if (!confirm(
+        next
+          ? "Опубликовать браслет?"
+          : "Скрыть браслет?"
+      )) return;
 
       toggle.disabled = true;
 
       const { error } = await db
         .from("bracelets")
-        .update({
-          published: nextStatus
-        })
+        .update({ published: next })
         .eq("id", product.id);
 
       if (error) {
-        alert("Ошибка: " + error.message);
+        alert(error.message);
         toggle.disabled = false;
         return;
       }
 
-      await loadProducts();
+      await loadAdminProducts();
     });
 
-    content.append(
+    card.append(
+      photo,
       name,
       price,
-      photoCount,
+      count,
       status,
+      edit,
       toggle
     );
 
-    card.append(photo, content);
     container.appendChild(card);
   });
 }
 
-/* ========== OPEN EDITOR ========== */
+/* ===== EDITOR ===== */
+
+function closeEditor() {
+  selectedPhotos.forEach(photo => {
+    if (photo.preview) {
+      URL.revokeObjectURL(photo.preview);
+    }
+  });
+
+  selectedPhotos = [];
+  editingProduct = null;
+  el("editorSection").hidden = true;
+}
 
 function openEditor(product = null) {
   closeEditor();
 
-  selectedProduct = product;
+  editingProduct = product;
 
-  editingPhotos = (
+  selectedPhotos = (
     product?.bracelet_photos || []
   ).map(photo => ({
-    ...photo,
-    kind: "existing"
+    kind: "existing",
+    ...photo
   }));
 
   el("editorTitle").textContent = product
     ? "Редактировать браслет"
-    : "Новый браслет";
+    : "Добавить браслет";
 
   el("category").value =
     product?.category || "classic";
 
   el("price").value =
-    product?.price || 3990;
+    product?.price ||
+    cfg.prices.classic;
 
   el("published").checked =
     product?.published ?? true;
 
   el("photoInput").value = "";
-
-  setMessage("editorMessage", "");
-
-  renderPhotos();
+  message("editorMessage", "");
 
   el("editorSection").hidden = false;
+  renderEditorPhotos();
 
   el("editorSection").scrollIntoView({
-    behavior: "smooth",
-    block: "start"
+    behavior: "smooth"
   });
 }
 
-function closeEditor() {
-  editingPhotos.forEach(photo => {
-    if (photo.previewUrl) {
-      URL.revokeObjectURL(photo.previewUrl);
+function renderEditorPhotos() {
+  const list = el("photoList");
+  list.replaceChildren();
+
+  selectedPhotos.forEach((photo, index) => {
+    const item = document.createElement("div");
+    item.className = "photo-preview-item";
+
+    const image = document.createElement("img");
+    image.src = photo.preview || photo.image_url;
+    image.alt = "Фото " + (index + 1);
+
+    const label = document.createElement("p");
+    label.textContent = index === 0
+      ? "Главное фото"
+      : "Фото " + (index + 1);
+
+    const controls = document.createElement("div");
+    controls.className = "photo-buttons";
+
+    const left = document.createElement("button");
+    left.type = "button";
+    left.textContent = "←";
+    left.disabled = index === 0;
+
+    left.addEventListener("click", () => {
+      movePhoto(index, -1);
+    });
+
+    const right = document.createElement("button");
+    right.type = "button";
+    right.textContent = "→";
+    right.disabled =
+      index === selectedPhotos.length - 1;
+
+    right.addEventListener("click", () => {
+      movePhoto(index, 1);
+    });
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "×";
+
+    remove.addEventListener("click", () => {
+      removePhoto(index);
+    });
+
+    controls.append(left, right, remove);
+    item.append(image, label, controls);
+    list.appendChild(item);
+  });
+}
+
+function movePhoto(index, step) {
+  const next = index + step;
+
+  if (next < 0 || next >= selectedPhotos.length) {
+    return;
+  }
+
+  [
+    selectedPhotos[index],
+    selectedPhotos[next]
+  ] = [
+    selectedPhotos[next],
+    selectedPhotos[index]
+  ];
+
+  renderEditorPhotos();
+}
+
+function removePhoto(index) {
+  const photo = selectedPhotos[index];
+
+  if (photo.preview) {
+    URL.revokeObjectURL(photo.preview);
+  }
+
+  selectedPhotos.splice(index, 1);
+  renderEditorPhotos();
+}
+
+el("photoInput").addEventListener(
+  "change",
+  event => {
+    const files = [...(event.target.files || [])];
+    const errors = [];
+    let added = 0;
+
+    for (const file of files) {
+      if (selectedPhotos.length >= cfg.maxPhotos) {
+        errors.push(
+          "Максимум 6 фотографий на браслет."
+        );
+        break;
+      }
+
+      try {
+        validateFile(file);
+
+        selectedPhotos.push({
+          kind: "new",
+          file,
+          preview: URL.createObjectURL(file)
+        });
+
+        added++;
+
+      } catch (error) {
+        errors.push(error.message);
+      }
     }
-  });
 
-  editingPhotos = [];
-  selectedProduct = null;
+    event.target.value = "";
+    renderEditorPhotos();
 
-  el("editorSection").hidden = true;
-}
+    message(
+      "editorMessage",
+      "Добавлено: " + added +
+      ". Всего: " + selectedPhotos.length +
+      "/6." +
+      (errors.length ? "\n" + errors.join("\n") : ""),
+      errors.length > 0
+    );
+  }
+);
 
 el("addProduct").addEventListener(
   "click",
@@ -653,190 +475,40 @@ el("cancelEdit").addEventListener(
   closeEditor
 );
 
-/* ========== SELECT PHOTOS ========== */
-
-el("photoInput").addEventListener(
-  "change",
-  event => {
-    const files = Array.from(
-      event.target.files || []
-    );
-
-    const errors = [];
-    let added = 0;
-
-    for (const file of files) {
-      if (editingPhotos.length >= MAX_PHOTOS) {
-        errors.push(
-          "Можно добавить максимум " +
-          MAX_PHOTOS + " фотографий."
-        );
-        break;
-      }
-
-      try {
-        validateImage(file);
-
-        editingPhotos.push({
-          kind: "new",
-          file,
-          previewUrl: URL.createObjectURL(file)
-        });
-
-        added++;
-
-      } catch (error) {
-        errors.push(
-          file.name + ": " + friendlyError(error)
-        );
-      }
-    }
-
-    event.target.value = "";
-
-    renderPhotos();
-
-    if (errors.length > 0) {
-      setMessage(
-        "editorMessage",
-        "Добавлено: " + added +
-        ". Ошибки: " + errors.join(" | "),
-        true
-      );
-    } else {
-      setMessage(
-        "editorMessage",
-        "Фотографии выбраны: " +
-        editingPhotos.length +
-        " из " + MAX_PHOTOS +
-        ". Нажмите «Сохранить браслет»."
-      );
-    }
-  }
+el("reloadProducts").addEventListener(
+  "click",
+  loadAdminProducts
 );
 
-/* ========== PHOTO ORDER ========== */
+el("category").addEventListener("change", () => {
+  if (editingProduct) return;
 
-function movePhoto(index, direction) {
-  const next = index + direction;
+  el("price").value =
+    cfg.prices[el("category").value];
+});
 
-  if (
-    next < 0 ||
-    next >= editingPhotos.length
-  ) {
-    return;
-  }
-
-  [
-    editingPhotos[index],
-    editingPhotos[next]
-  ] = [
-    editingPhotos[next],
-    editingPhotos[index]
-  ];
-
-  renderPhotos();
-}
-
-function removePhoto(index) {
-  const photo = editingPhotos[index];
-
-  if (photo.previewUrl) {
-    URL.revokeObjectURL(photo.previewUrl);
-  }
-
-  editingPhotos.splice(index, 1);
-  renderPhotos();
-}
-
-/* ========== PHOTO PREVIEW ========== */
-
-function renderPhotos() {
-  const container = el("photoList");
-  container.replaceChildren();
-
-  editingPhotos.forEach((photo, index) => {
-    const item = document.createElement("div");
-    item.className = "photo-item";
-
-    const image = document.createElement("img");
-    image.src =
-      photo.previewUrl || photo.image_url;
-
-    image.alt = "Фото " + (index + 1);
-
-    const label = document.createElement("div");
-    label.className = "photo-title";
-
-    label.textContent = index === 0
-      ? "Главное фото"
-      : "Фото " + (index + 1);
-
-    const controls = document.createElement("div");
-    controls.className = "photo-controls";
-
-    const left = document.createElement("button");
-    left.type = "button";
-    left.className = "outline";
-    left.textContent = "←";
-    left.disabled = index === 0;
-
-    left.addEventListener(
-      "click",
-      () => movePhoto(index, -1)
-    );
-
-    const right = document.createElement("button");
-    right.type = "button";
-    right.className = "outline";
-    right.textContent = "→";
-    right.disabled =
-      index === editingPhotos.length - 1;
-
-    right.addEventListener(
-      "click",
-      () => movePhoto(index, 1)
-    );
-
-    const remove = document.createElement("button");
-    remove.type = "button";
-    remove.className = "danger";
-    remove.textContent = "×";
-
-    remove.addEventListener(
-      "click",
-      () => removePhoto(index)
-    );
-
-    controls.append(left, right, remove);
-
-    item.append(image, label, controls);
-    container.appendChild(item);
-  });
-}
-
-/* ========== SAVE PRODUCT ========== */
+/* ===== SAVE ===== */
 
 el("productForm").addEventListener(
   "submit",
   async event => {
     event.preventDefault();
 
-    if (savingProduct || !staffAccess) return;
+    if (saving) return;
 
-    if (!editingPhotos.length) {
-      setMessage(
+    if (!(await isStaff())) {
+      message(
         "editorMessage",
-        "Добавьте хотя бы одну фотографию.",
+        "Нет прав администратора.",
         true
       );
       return;
     }
 
-    if (editingPhotos.length > MAX_PHOTOS) {
-      setMessage(
+    if (!selectedPhotos.length) {
+      message(
         "editorMessage",
-        "Максимум 6 фотографий.",
+        "Добавьте хотя бы одну фотографию.",
         true
       );
       return;
@@ -845,7 +517,7 @@ el("productForm").addEventListener(
     const price = Number(el("price").value);
 
     if (!Number.isInteger(price) || price <= 0) {
-      setMessage(
+      message(
         "editorMessage",
         "Укажите правильную цену.",
         true
@@ -853,74 +525,58 @@ el("productForm").addEventListener(
       return;
     }
 
-    savingProduct = true;
+    saving = true;
     el("saveProduct").disabled = true;
 
-    let productId = selectedProduct?.id;
-    const newProduct = !productId;
-    const previousPublished =
-      selectedProduct?.published ?? false;
+    const category = el("category").value;
+    const published = el("published").checked;
 
     const uploadedPaths = [];
-    let dbPhotosWritten = false;
+    let recordsStarted = false;
 
     try {
-      const category = el("category").value;
-      const published = el("published").checked;
+      const prepared = [];
 
-      // Проверяем все новые изображения.
-      for (const photo of editingPhotos) {
-        if (photo.kind === "new") {
-          validateImage(photo.file);
-        }
-      }
-
-      setMessage(
-        "editorMessage",
-        "Подготавливаем браслет..."
-      );
-
-      // Сначала загружаем новые фотографии.
-      // Старый товар пока не изменяется.
-      const orderedPhotos = [];
-
-      for (let i = 0; i < editingPhotos.length; i++) {
-        const photo = editingPhotos[i];
+      // Сначала загружаем новые файлы,
+      // не меняя существующий товар.
+      for (let i = 0; i < selectedPhotos.length; i++) {
+        const photo = selectedPhotos[i];
 
         if (photo.kind === "existing") {
-          orderedPhotos.push({
+          prepared.push({
             kind: "existing",
-            id: photo.id
+            ...photo
           });
-
-        } else {
-          setMessage(
-            "editorMessage",
-            "Загружаем фото " +
-            (i + 1) + " из " +
-            editingPhotos.length + "..."
-          );
-
-          const uploaded = await uploadFile(
-            photo.file,
-            "products"
-          );
-
-          uploadedPaths.push(uploaded.storage_path);
-
-          orderedPhotos.push({
-            kind: "new",
-            ...uploaded
-          });
+          continue;
         }
+
+        message(
+          "editorMessage",
+          "Загружаем фото " + (i + 1) +
+          " из " + selectedPhotos.length + "..."
+        );
+
+        const uploaded = await uploadPhoto(
+          photo.file,
+          "products"
+        );
+
+        uploadedPaths.push(uploaded.storage_path);
+
+        prepared.push({
+          kind: "new",
+          ...uploaded
+        });
       }
 
-      setMessage(
+      message(
         "editorMessage",
-        "Сохраняем данные в Supabase..."
+        "Сохраняем браслет в базе..."
       );
 
-      if (newProduct) {
+      let id = editingProduct?.id;
+
+      if (!id) {
         const { data, error } = await db
           .from("bracelets")
           .insert({
@@ -932,140 +588,255 @@ el("productForm").addEventListener(
           .single();
 
         if (error) throw error;
-
-        productId = data.id;
+        id = data.id;
+        recordsStarted = true;
 
       } else {
+        // При редактировании не скрываем
+        // уже опубликованный товар.
         const { error } = await db
           .from("bracelets")
-          .update({
-            category,
-            price,
-            published: false
-          })
-          .eq("id", productId);
+          .update({ category, price })
+          .eq("id", id);
+
+        if (error) throw error;
+        recordsStarted = true;
+      }
+
+      // Промежуточные позиции для новых фото.
+      const newEntries = prepared.filter(
+        photo => photo.kind === "new"
+      );
+
+      if (newEntries.length) {
+        const rows = newEntries.map((photo, index) => ({
+          bracelet_id: id,
+          image_url: photo.image_url,
+          storage_path: photo.storage_path,
+          position: 1000 + index
+        }));
+
+        const { error } = await db
+          .from("bracelet_photos")
+          .insert(rows);
 
         if (error) throw error;
       }
 
-      const oldPhotos =
-        selectedProduct?.bracelet_photos || [];
+      // Получаем новые ID фотографий.
+      const { data: saved, error: readError } = await db
+        .from("bracelet_photos")
+        .select(
+          "id,image_url,storage_path,position"
+        )
+        .eq("bracelet_id", id);
 
+      if (readError) throw readError;
+
+      const newIdsByPath = new Map(
+        (saved || []).map(photo => [
+          photo.storage_path,
+          photo.id
+        ])
+      );
+
+      for (let i = 0; i < prepared.length; i++) {
+        const photo = prepared[i];
+
+        const photoId = photo.kind === "existing"
+          ? photo.id
+          : newIdsByPath.get(photo.storage_path);
+
+        if (!photoId) {
+          throw new Error(
+            "Не удалось определить фото №" + (i + 1)
+          );
+        }
+
+        const { error } = await db
+          .from("bracelet_photos")
+          .update({ position: i })
+          .eq("id", photoId);
+
+        if (error) throw error;
+      }
+
+      // Удаляем из галереи записи об удалённых фото.
       const retainedIds = new Set(
-        editingPhotos
+        prepared
           .filter(photo => photo.kind === "existing")
           .map(photo => photo.id)
       );
 
-      // Сохраняем порядок фотографий.
-      for (let i = 0; i < orderedPhotos.length; i++) {
-        const photo = orderedPhotos[i];
-
-        if (photo.kind === "existing") {
-          const { error } = await db
-            .from("bracelet_photos")
-            .update({ position: i })
-            .eq("id", photo.id);
-
-          if (error) throw error;
-
-        } else {
-          const { error } = await db
-            .from("bracelet_photos")
-            .insert({
-              bracelet_id: productId,
-              image_url: photo.image_url,
-              storage_path: photo.storage_path,
-              position: i
-            });
-
-          if (error) throw error;
-        }
-
-        dbPhotosWritten = true;
-      }
-
-      // Удаляем записи о снятых фотографиях.
-      for (const photo of oldPhotos) {
-        if (retainedIds.has(photo.id)) continue;
+      for (const old of editingProduct?.bracelet_photos || []) {
+        if (retainedIds.has(old.id)) continue;
 
         const { error } = await db
           .from("bracelet_photos")
           .delete()
-          .eq("id", photo.id);
+          .eq("id", old.id);
 
         if (error) throw error;
       }
 
-      // Публикуем товар только после сохранения.
+      // Публикуем после сохранения фото.
       const { error: publishError } = await db
         .from("bracelets")
         .update({ published })
-        .eq("id", productId);
+        .eq("id", id);
 
       if (publishError) throw publishError;
 
-      await loadProducts();
-
       closeEditor();
+      await loadAdminProducts();
 
-      setMessage(
+      message(
         "listMessage",
-        "Браслет успешно сохранён! " +
-        "Фотографий: " + orderedPhotos.length
+        "Браслет сохранён! Фото: " +
+        prepared.length
       );
 
     } catch (error) {
-      console.error("Ошибка сохранения:", error);
+      console.error(error);
 
-      // Если новые фотографии уже записаны
-      // в таблицу, не удаляем их из Storage:
-      // так мы не создадим битые ссылки.
-      if (!dbPhotosWritten && uploadedPaths.length) {
-        const { error: cleanupError } = await db.storage
-          .from(BUCKET)
+      // Не удаляем файлы, если записи
+      // уже могли быть созданы в базе.
+      if (!recordsStarted && uploadedPaths.length) {
+        await db.storage
+          .from(cfg.bucket)
           .remove(uploadedPaths);
-
-        if (cleanupError) {
-          console.error(
-            "Ошибка очистки файлов:",
-            cleanupError
-          );
-        }
       }
 
-      // Пытаемся вернуть прежний статус товара.
-      if (!newProduct && productId) {
-        const { error: restoreError } = await db
-          .from("bracelets")
-          .update({ published: previousPublished })
-          .eq("id", productId);
-
-        if (restoreError) {
-          console.error(
-            "Ошибка восстановления статуса:",
-            restoreError
-          );
-        }
-      }
-
-      setMessage(
+      message(
         "editorMessage",
-        "Ошибка сохранения: " +
-        friendlyError(error) +
-        ". Проверьте данные перед повторной попыткой.",
+        "Ошибка сохранения: " + error.message +
+        "\nПроверьте товар перед повторной загрузкой.",
         true
       );
 
     } finally {
-      savingProduct = false;
+      saving = false;
       el("saveProduct").disabled = false;
     }
   }
 );
 
-/* ========== START ========== */
+/* ===== COVERS ===== */
 
-showScreen().catch(error => {
-  console.error("Ошибка запуска админ-панели:", error);
+async function loadAdminCovers() {
+  const { data, error } = await db
+    .from("collection_covers")
+    .select("category,image_url");
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  for (const category of ["classic", "premium"]) {
+    const suffix =
+      category === "classic" ? "Classic" : "Premium";
+
+    const element = el("coverPreview" + suffix);
+    element.replaceChildren();
+
+    const cover = (data || []).find(
+      item => item.category === category
+    );
+
+    if (cover?.image_url) {
+      const img = document.createElement("img");
+      img.src = cover.image_url;
+      img.alt = category;
+
+      element.appendChild(img);
+    } else {
+      element.textContent = "Нет обложки";
+    }
+  }
+}
+
+async function saveCover(category) {
+  const suffix =
+    category === "classic" ? "Classic" : "Premium";
+
+  const input = el("coverFile" + suffix);
+  const button = el("saveCover" + suffix);
+  const file = input.files?.[0];
+
+  if (!file) {
+    message(
+      "coverStatus" + suffix,
+      "Выберите фотографию.",
+      true
+    );
+    return;
+  }
+
+  button.disabled = true;
+
+  let uploaded = null;
+
+  try {
+    if (!(await isStaff())) {
+      throw new Error("Нет прав администратора");
+    }
+
+    uploaded = await uploadPhoto(file, "covers");
+
+    const { error } = await db
+      .from("collection_covers")
+      .upsert({
+        category,
+        image_url: uploaded.image_url,
+        storage_path: uploaded.storage_path,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: "category"
+      });
+
+    if (error) throw error;
+
+    input.value = "";
+
+    await loadAdminCovers();
+
+    message(
+      "coverStatus" + suffix,
+      "Обложка сохранена!"
+    );
+
+  } catch (error) {
+    if (uploaded?.storage_path) {
+      await db.storage
+        .from(cfg.bucket)
+        .remove([uploaded.storage_path]);
+    }
+
+    message(
+      "coverStatus" + suffix,
+      error.message,
+      true
+    );
+
+  } finally {
+    button.disabled = false;
+  }
+}
+
+el("saveCoverClassic").addEventListener(
+  "click",
+  () => saveCover("classic")
+);
+
+el("saveCoverPremium").addEventListener(
+  "click",
+  () => saveCover("premium")
+);
+
+/* ===== START ===== */
+
+showAdmin().catch(error => {
+  console.error(error);
+  message("loginMessage", error.message, true);
 });
