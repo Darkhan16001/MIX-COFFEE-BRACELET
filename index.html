@@ -1,84 +1,125 @@
 
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1"
+    content="width=device-width, initial-scale=1.0"
   >
 
-  <meta name="theme-color" content="#efe0c7">
+  <meta
+    name="theme-color"
+    content="#efe0c7"
+  >
+
   <meta
     name="description"
-    content="MIX COFFEE BRACELET — кофейные браслеты Classic и Premium."
+    content="MIX COFFEE BRACELET — кофейные браслеты Classic и Premium. Отборные кофейные зёрна."
   >
 
-  <title>MIX COFFEE BRACELET — Магазин</title>
+  <title>MIX COFFEE BRACELET | Официальный магазин</title>
 
+  <!-- STYLES -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
 
-  <!-- Подключение Supabase -->
+  <!-- SUPABASE LIBRARY -->
   <script
     defer
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js">
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
   </script>
 
+  <!-- SUPABASE CONFIG -->
   <script defer src="supabase-config.js"></script>
+
+  <!-- SUPABASE CLIENT -->
   <script defer src="supabase-client.js"></script>
+
+  <!-- STORE SETTINGS -->
   <script defer src="products.js"></script>
+
+  <!-- MAIN SCRIPT -->
   <script defer src="script.js"></script>
+
 </head>
 
 <body>
 
-  <!-- HEADER -->
+  <!-- ================================
+       HEADER
+  ================================= -->
 
   <header class="topbar">
 
-    <a href="./index.html" class="brand">
+    <a
+      href="./index.html"
+      class="brand"
+      aria-label="MIX COFFEE BRACELET"
+    >
+
       <span class="brand-star">✦</span>
-      MIX COFFEE BRACELET
+
+      <span>MIX COFFEE BRACELET</span>
+
     </a>
 
     <div class="top-actions">
 
-      <select id="language" aria-label="Язык">
+      <!-- LANGUAGES -->
+      <select
+        id="language"
+        aria-label="Выберите язык"
+      >
         <option value="ru">RU</option>
         <option value="kz">KZ</option>
         <option value="en">EN</option>
       </select>
 
+      <!-- FAVORITES -->
       <button
-        id="favoritesButton"
-        class="icon-button"
         type="button"
+        class="icon-button"
+        id="favoritesButton"
         aria-label="Избранное"
       >
-        ♡ <small id="favoritesCount">0</small>
+        ♡
+        <small id="favoritesCount">0</small>
       </button>
 
+      <!-- CART -->
       <button
-        id="cartButton"
-        class="icon-button"
         type="button"
+        class="icon-button"
+        id="cartButton"
         aria-label="Корзина"
       >
-        🛒 <small id="cartCount">0</small>
+        🛒
+        <small id="cartCount">0</small>
       </button>
 
     </div>
 
   </header>
 
+  <!-- ================================
+       MAIN
+  ================================= -->
+
   <main>
 
-    <!-- HERO -->
+    <!-- ============================
+         HERO SECTION
+    ============================= -->
 
-    <section class="hero">
+    <section class="hero" id="home">
 
       <div class="glow glow-one"></div>
+
       <div class="glow glow-two"></div>
 
       <div class="hero-content">
@@ -101,8 +142,8 @@
 
         <button
           id="exploreButton"
-          class="primary-button"
           type="button"
+          class="primary-button"
         >
           Смотреть коллекции
         </button>
@@ -111,9 +152,14 @@
 
     </section>
 
-    <!-- COLLECTIONS -->
+    <!-- ============================
+         COLLECTIONS
+    ============================= -->
 
-    <section class="section" id="collection">
+    <section
+      class="section"
+      id="collection"
+    >
 
       <div class="section-heading">
 
@@ -130,11 +176,10 @@
       <div class="collection-grid">
 
         <!-- CLASSIC -->
-
         <button
+          type="button"
           class="collection-card"
           data-open="classic"
-          type="button"
         >
 
           <div
@@ -162,11 +207,10 @@
         </button>
 
         <!-- PREMIUM -->
-
         <button
+          type="button"
           class="collection-card"
           data-open="premium"
-          type="button"
         >
 
           <div
@@ -197,9 +241,14 @@
 
     </section>
 
-    <!-- PRODUCTS -->
+    <!-- ============================
+         PRODUCTS
+    ============================= -->
 
-    <section class="section products-section" id="products">
+    <section
+      class="section products-section"
+      id="products"
+    >
 
       <div class="products-header">
 
@@ -214,55 +263,62 @@
           </h2>
 
           <p id="productCount">
-            Загрузка...
+            Загрузка браслетов...
           </p>
 
         </div>
 
+        <!-- REFRESH -->
         <button
           id="refreshProducts"
           class="outline-button"
           type="button"
           aria-label="Обновить товары"
+          title="Обновить товары"
         >
           ↻
         </button>
 
       </div>
 
-      <!-- CATEGORY BUTTONS -->
-
-      <div class="category-tabs" id="categoryTabs">
+      <!-- CATEGORY SWITCHER -->
+      <div
+        class="category-tabs"
+        id="categoryTabs"
+      >
 
         <button
+          type="button"
           class="category-tab active"
           data-category="classic"
-          type="button"
         >
-          Coffee Classic
+          Classic
         </button>
 
         <button
+          type="button"
           class="category-tab"
           data-category="premium"
-          type="button"
         >
-          Coffee Premium
+          Premium
         </button>
 
       </div>
 
-      <!-- DATABASE STATUS -->
+      <!-- SUPABASE STATUS -->
+      <p
+        id="catalogStatus"
+        role="status"
+        aria-live="polite"
+      ></p>
 
-      <p id="catalogStatus" role="status"></p>
-
-      <!-- SUPABASE PRODUCTS -->
-
+      <!-- DYNAMIC PRODUCTS -->
       <div
         class="product-grid"
         id="productGrid"
       ></div>
 
+      <!-- EMPTY STATE -->
       <p
         class="empty-message"
         id="emptyMessage"
@@ -275,7 +331,9 @@
 
   </main>
 
-  <!-- CART BACKDROP -->
+  <!-- ================================
+       CART BACKDROP
+  ================================= -->
 
   <div
     class="backdrop"
@@ -283,12 +341,16 @@
     hidden
   ></div>
 
-  <!-- SHOPPING CART -->
+  <!-- ================================
+       SHOPPING CART
+  ================================= -->
 
   <aside
     class="cart-panel"
     id="cartPanel"
-    aria-label="Корзина"
+    aria-label="Корзина покупателя"
+    aria-modal="true"
+    role="dialog"
   >
 
     <div class="cart-heading">
@@ -298,9 +360,9 @@
       </h2>
 
       <button
+        type="button"
         class="icon-button"
         id="closeCart"
-        type="button"
         aria-label="Закрыть корзину"
       >
         ×
@@ -308,6 +370,7 @@
 
     </div>
 
+    <!-- CART ITEMS -->
     <div
       id="cartItems"
       class="cart-items"
@@ -327,6 +390,7 @@
 
       </div>
 
+      <!-- WHATSAPP -->
       <a
         id="orderWhatsApp"
         class="primary-button"
@@ -337,21 +401,27 @@
         Заказать через WhatsApp
       </a>
 
+      <!-- COPY ORDER -->
       <button
+        type="button"
         id="copyOrder"
         class="outline-button"
-        type="button"
       >
         Скопировать заказ
       </button>
 
-      <p id="cartMessage"></p>
+      <p
+        id="cartMessage"
+        role="status"
+      ></p>
 
     </div>
 
   </aside>
 
-  <!-- FOOTER -->
+  <!-- ================================
+       FOOTER
+  ================================= -->
 
   <footer>
 
@@ -365,6 +435,7 @@
 
     <div class="footer-links">
 
+      <!-- INSTAGRAM -->
       <a
         href="https://www.instagram.com/mix_coffee_bracelet/"
         target="_blank"
@@ -373,6 +444,16 @@
         Instagram
       </a>
 
+      <!-- TIKTOK -->
+      <a
+        href="https://www.tiktok.com/@mix_coffee_bracelet"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        TikTok
+      </a>
+
+      <!-- WHATSAPP -->
       <a
         href="https://wa.me/77058038122"
         target="_blank"
