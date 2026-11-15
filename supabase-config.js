@@ -1,6 +1,10 @@
 
-const SUPABASE_URL =
+"use strict";
+
+/* MIX COFFEE BRACELET — SUPABASE CONFIG */
+
+window.SUPABASE_URL =
   "https://zvancvqgwsqzrqestovd.supabase.co";
 
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_ixGxOe65UcmtWQHW2Bxh5w_qZepizp2";
+window.SUPABASE_ANON_KEY =
+  "ОСЫНДА_ӨЗІҢНІҢ_PUBLIC_KEY_ҚОЙ";
