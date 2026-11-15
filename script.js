@@ -530,10 +530,27 @@ async function loadProducts() {
    COLLECTION COVER PHOTOS
 ========================================== */
 
-function renderCollectionCovers() {
+// 01 — Загружаем обложки из Supabase
+async function renderCollectionCovers() {
+
+  // 02 — Проверяем подключение
+  if (!db) return;
+
+  // 03 — Получаем фотографии Classic и Premium
+  const { data, error } = await db
+    .from("collection_covers")
+    .select("category,image_url");
+
+  // 04 — Проверяем ошибки
+  if (error) {
+    console.error("Ошибка загрузки обложек:", error);
+    return;
+  }
+
+  // 05 — Обновляем обе коллекции
   for (const category of ["classic", "premium"]) {
 
-    const element = $(
+    const element = document.getElementById(
       category === "classic"
         ? "classicCover"
         : "premiumCover"
@@ -541,26 +558,35 @@ function renderCollectionCovers() {
 
     if (!element) continue;
 
-    const product = PRODUCTS.find(item =>
-      item.category === category &&
-      item.photos.length > 0
+    // 06 — Находим сохранённую обложку
+    const cover = (data || []).find(
+      item => item.category === category
     );
 
-    // Если фото нет, звезда остаётся.
-    if (!product) continue;
+    // 07 — Если обложки нет, показываем звезду
+    if (!cover?.image_url) {
+      const symbol = document.createElement("span");
+      symbol.className = "cover-symbol";
+      symbol.textContent =
+        category === "classic" ? "✦" : "✧";
 
+      element.replaceChildren(symbol);
+      continue;
+    }
+
+    // 08 — Показываем фотографию
     const image = document.createElement("img");
 
-    image.src = getPhotoUrl(product);
-    image.alt = categoryTitle(category);
+    image.src = cover.image_url;
+    image.alt = category === "classic"
+      ? "Coffee Classic"
+      : "Coffee Premium";
+
     image.decoding = "async";
 
+    // 09 — Если изображение недоступно
     image.onerror = () => {
-      image.remove();
-
-      const symbol =
-        document.createElement("span");
-
+      const symbol = document.createElement("span");
       symbol.className = "cover-symbol";
       symbol.textContent =
         category === "classic" ? "✦" : "✧";
@@ -568,9 +594,11 @@ function renderCollectionCovers() {
       element.replaceChildren(symbol);
     };
 
+    // 10 — Устанавливаем новую обложку
     element.replaceChildren(image);
   }
 }
+
 
 /* ==========================================
    PHOTO GALLERY
