@@ -1,10 +1,12 @@
 
 "use strict";
 
-/* =========================================
+/* ==========================================
    MIX COFFEE BRACELET
-   PREMIUM SHOP — 2026
-========================================= */
+   STORE SCRIPT
+========================================== */
+
+/* SUPABASE */
 
 const SUPABASE_URL =
   "https://zvancvqgwsqzrqestovd.supabase.co";
@@ -12,158 +14,261 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_ixGxOe65UcmtWQHW2Bxh5w_qZepizp2";
 
-// Контакты. Instagram и TikTok замени
-// на ссылки своего магазина.
-const WHATSAPP = "77058038122";
-const INSTAGRAM = "https://www.instagram.com/";
-const TIKTOK = "https://www.tiktok.com/";
+/*
+  Контакты магазина.
+
+  Здесь нужно указать свои настоящие
+  номер WhatsApp и ссылки на профили.
+
+  Не вводи здесь Supabase Secret Key.
+*/
+
+const WHATSAPP_NUMBER = "";
+const INSTAGRAM_URL = "";
+const TIKTOK_URL = "";
+
+/* ==========================================
+   ELEMENTS
+========================================== */
 
 const $ = id => document.getElementById(id);
 
-/* =========================================
-   TRANSLATIONS
-========================================= */
+const elements = {
+  products: $("products"),
+  productGrid: $("productGrid"),
+  productsTitle: $("productsTitle"),
+  categoryDescription: $("categoryDescription"),
+  productCount: $("productCount"),
+  emptyMessage: $("emptyMessage"),
 
-const TEXTS = {
+  cartCount: $("cartCount"),
+  favoritesCount: $("favoritesCount"),
+
+  sidePanel: $("sidePanel"),
+  panelBackdrop: $("panelBackdrop"),
+  panelTitle: $("panelTitle"),
+  panelItems: $("panelItems"),
+  panelFooter: $("panelFooter"),
+  cartTotal: $("cartTotal"),
+  orderButton: $("orderButton"),
+
+  toast: $("toast")
+};
+
+/* ==========================================
+   TRANSLATIONS
+========================================== */
+
+const LANG = {
+
   ru: {
-    tagline: "Отборные кофейные зёрна 🤎",
-    heroDescription: "Любовь к кофе — на твоём запястье.",
-    explore: "Смотреть коллекции",
+    tagline: "Отборные кофейные зёрна",
+    heroDescription:
+      "Любовь к кофе — на твоём запястье.",
+
     collections: "Наши коллекции",
-    choose: "Выберите коллекцию, чтобы посмотреть браслеты",
-    classicShort: "Браслет на эластичной резинке",
-    premiumShort: "Браслет на прочной нити",
-    viewProducts: "Смотреть браслеты",
-    classicDescription: "Коллекция Coffee Classic",
-    premiumDescription: "Коллекция Coffee Premium",
-    aboutTitle: "Элегантность в каждой детали",
-    aboutText: "Браслеты, вдохновлённые эстетикой кофе: глубокие оттенки, утончённые детали и особенный характер.",
-    add: "В корзину",
+
+    classicShort:
+      "Браслет на эластичной резинке",
+
+    premiumShort:
+      "Браслет на прочной нити",
+
+    viewProducts: "Посмотреть браслеты",
+
+    classicDescription:
+      "Коллекция Coffee Classic",
+
+    premiumDescription:
+      "Коллекция Coffee Premium",
+
+    aboutTitle: "Красота в деталях",
+
+    aboutText:
+      "Кофейные браслеты с особенным характером. Сдержанная элегантность на каждый день.",
+
     cart: "Корзина",
     favorites: "Избранное",
+    add: "В корзину",
     total: "Итого",
     order: "Заказать через WhatsApp",
-    loading: "Загружаем браслеты...",
-    empty: "Пока нет опубликованных браслетов.",
-    error: "Не удалось загрузить каталог. Проверь подключение Supabase.",
-    noPhotos: "Фотографии пока недоступны",
-    emptyCart: "Корзина пуста",
-    emptyFavorites: "В избранном пока пусто",
-    added: "Добавлено в корзину",
     remove: "Удалить",
-    count: "браслетов"
+
+    loading: "Загрузка браслетов...",
+    empty: "В этой коллекции пока нет товаров.",
+    error: "Не удалось загрузить товары.",
+    noPhotos: "Фото пока не добавлены",
+    emptyCart: "Корзина пуста",
+    emptyFavorites: "Избранное пусто",
+    added: "Добавлено в корзину",
+    contactMissing: "Укажите номер WhatsApp в script.js",
+    productsCount: "браслетов"
   },
 
   kz: {
-    tagline: "Іріктелген кофе дәндері 🤎",
-    heroDescription: "Кофеге деген махаббат – білегіңде.",
-    explore: "Топтамаларды көру",
+    tagline: "Іріктелген кофе дәндері",
+
+    heroDescription:
+      "Кофеге деген махаббат – білегіңде.",
+
     collections: "Біздің топтамалар",
-    choose: "Білезіктерді көру үшін топтаманы таңдаңыз",
-    classicShort: "Серпімді резеңке жіптен жасалған білезік",
-    premiumShort: "Берік жіптен жасалған білезік",
+
+    classicShort:
+      "Серпімді резеңке жіптен жасалған білезік",
+
+    premiumShort:
+      "Берік жіптен жасалған білезік",
+
     viewProducts: "Білезіктерді көру",
-    classicDescription: "Coffee Classic топтамасы",
-    premiumDescription: "Coffee Premium топтамасы",
-    aboutTitle: "Әр бөлшектегі әсемдік",
-    aboutText: "Кофе эстетикасынан шабыт алған білезіктер: қанық реңктер, нәзік бөлшектер және ерекше стиль.",
-    add: "Себетке қосу",
+
+    classicDescription:
+      "Coffee Classic топтамасы",
+
+    premiumDescription:
+      "Coffee Premium топтамасы",
+
+    aboutTitle: "Әсемдік әр бөлшекте",
+
+    aboutText:
+      "Ерекше кофелік білезіктер. Күнделікті сәнділік пен нәзік талғам.",
+
     cart: "Себет",
     favorites: "Таңдаулылар",
+    add: "Себетке қосу",
     total: "Барлығы",
     order: "WhatsApp арқылы тапсырыс беру",
+    remove: "Өшіру",
+
     loading: "Білезіктер жүктелуде...",
-    empty: "Әзірге жарияланған білезіктер жоқ.",
-    error: "Каталог жүктелмеді. Supabase қосылымын тексеріңіз.",
-    noPhotos: "Фотосуреттер қолжетімсіз",
+    empty: "Бұл топтамада әзірге тауар жоқ.",
+    error: "Тауарларды жүктеу мүмкін болмады.",
+    noPhotos: "Фото әлі қосылмаған",
     emptyCart: "Себет бос",
     emptyFavorites: "Таңдаулылар бос",
     added: "Себетке қосылды",
-    remove: "Өшіру",
-    count: "білезік"
+    contactMissing: "script.js ішінде WhatsApp нөмірін көрсетіңіз",
+    productsCount: "білезік"
   },
 
   en: {
-    tagline: "Carefully Selected Coffee Beans 🤎",
-    heroDescription: "Wear your love for coffee on your wrist.",
-    explore: "Explore Collections",
+    tagline: "Carefully Selected Coffee Beans",
+
+    heroDescription:
+      "Wear your love for coffee on your wrist.",
+
     collections: "Our Collections",
-    choose: "Select a collection to discover bracelets",
-    classicShort: "Bracelet with an elastic cord",
-    premiumShort: "Bracelet with a durable cord",
+
+    classicShort:
+      "Bracelet with an elastic cord",
+
+    premiumShort:
+      "Bracelet with a durable cord",
+
     viewProducts: "View Bracelets",
-    classicDescription: "Coffee Classic Collection",
-    premiumDescription: "Coffee Premium Collection",
-    aboutTitle: "Elegance in Every Detail",
-    aboutText: "Bracelets inspired by coffee aesthetics: rich shades, refined details and a distinctive character.",
-    add: "Add to Cart",
-    cart: "Shopping Cart",
+
+    classicDescription:
+      "Coffee Classic Collection",
+
+    premiumDescription:
+      "Coffee Premium Collection",
+
+    aboutTitle: "Beauty in Every Detail",
+
+    aboutText:
+      "Distinctive coffee-inspired bracelets. Understated elegance for every day.",
+
+    cart: "Cart",
     favorites: "Favorites",
+    add: "Add to Cart",
     total: "Total",
     order: "Order via WhatsApp",
+    remove: "Remove",
+
     loading: "Loading bracelets...",
-    empty: "No published bracelets yet.",
-    error: "Unable to load the catalog. Check your Supabase connection.",
-    noPhotos: "Photos are unavailable",
+    empty: "No products in this collection yet.",
+    error: "Unable to load products.",
+    noPhotos: "No photos available",
     emptyCart: "Your cart is empty",
     emptyFavorites: "No favorites yet",
     added: "Added to cart",
-    remove: "Remove",
-    count: "bracelets"
+    contactMissing: "Set the WhatsApp number in script.js",
+    productsCount: "bracelets"
   }
 };
 
-/* =========================================
+/* ==========================================
    STORAGE
-========================================= */
+========================================== */
 
-function readSaved(key, fallback) {
+function readStorage(key, fallback) {
   try {
-    const raw = localStorage.getItem(key);
-    return raw === null ? fallback : JSON.parse(raw);
+    const value = localStorage.getItem(key);
+
+    return value === null
+      ? fallback
+      : JSON.parse(value);
+
   } catch {
     return fallback;
   }
 }
 
-function save(key, value) {
+function saveStorage(key, value) {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    localStorage.setItem(
+      key,
+      JSON.stringify(value)
+    );
   } catch (error) {
-    console.warn("Storage:", error);
+    console.warn("Local storage:", error);
   }
 }
 
-let language = readSaved("mix-language-v9", "ru");
-if (!TEXTS[language]) language = "ru";
+/*
+  Сохраняем совместимость с
+  предыдущей версией магазина.
+*/
 
-// Восстанавливаем корзину старого магазина.
-let cart = readSaved(
-  "mix-cart-v9",
-  readSaved("mix-cart-v8", [])
+let language = readStorage(
+  "mix-language-v9",
+  readStorage("mix-language-v8", "ru")
 );
 
-let favorites = readSaved(
+if (!LANG[language]) language = "ru";
+
+let cart = readStorage(
+  "mix-cart-v9",
+  readStorage("mix-cart-v8", [])
+);
+
+let favorites = readStorage(
   "mix-favorites-v9",
-  readSaved("mix-favorites-v8", [])
+  readStorage("mix-favorites-v8", [])
 );
 
 if (!Array.isArray(cart)) cart = [];
 if (!Array.isArray(favorites)) favorites = [];
 
+/* ==========================================
+   APP STATE
+========================================== */
+
 let PRODUCTS = [];
 let db = null;
-let activeCategory = null;
-let activePanel = null;
-let loadState = "loading";
+
+let currentCategory = null;
+let currentPanel = null;
+
+let loadingState = "loading";
+let databaseError = null;
 
 function t(key) {
-  return TEXTS[language]?.[key] || key;
+  return LANG[language]?.[key] || key;
 }
 
-function money(value) {
+function money(amount) {
   return new Intl.NumberFormat("ru-RU")
-    .format(Number(value) || 0) + " ₸";
+    .format(Number(amount) || 0) + " ₸";
 }
 
 function getProduct(id) {
@@ -172,7 +277,7 @@ function getProduct(id) {
   );
 }
 
-function productName(category) {
+function categoryTitle(category) {
   return category === "premium"
     ? "Coffee Premium"
     : "Coffee Classic";
@@ -184,40 +289,62 @@ function isFavorite(id) {
   );
 }
 
-/* =========================================
+function getPhotoUrl(product) {
+  return product.photos?.[0]?.image_url || "";
+}
+
+/* ==========================================
    LANGUAGE
-========================================= */
+========================================== */
 
-function changeLanguage(value) {
-  if (!TEXTS[value]) return;
+function changeLanguage(nextLanguage) {
+  if (!LANG[nextLanguage]) return;
 
-  language = value;
+  language = nextLanguage;
+
+  saveStorage("mix-language-v9", language);
+  saveStorage("mix-language-v8", language);
 
   document.documentElement.lang =
-    value === "kz" ? "kk" : value;
-
-  save("mix-language-v9", value);
+    language === "kz" ? "kk" : language;
 
   document.querySelectorAll("[data-i18n]")
     .forEach(element => {
-      const translation =
-        TEXTS[value][element.dataset.i18n];
+      const key = element.dataset.i18n;
 
-      if (translation !== undefined) {
-        element.textContent = translation;
+      if (LANG[language][key] !== undefined) {
+        element.textContent = t(key);
       }
     });
 
   document.querySelectorAll(".lang-btn")
     .forEach(button => {
-      const selected = button.dataset.lang === value;
+      const active =
+        button.dataset.lang === language;
 
-      button.classList.toggle("active", selected);
-      button.setAttribute("aria-pressed", String(selected));
+      button.classList.toggle(
+        "active",
+        active
+      );
+
+      button.setAttribute(
+        "aria-pressed",
+        String(active)
+      );
     });
 
-  if (activeCategory) renderProducts();
-  if (activePanel) renderPanel();
+  $("cartButton").setAttribute(
+    "aria-label",
+    t("cart")
+  );
+
+  $("favoritesButton").setAttribute(
+    "aria-label",
+    t("favorites")
+  );
+
+  if (currentCategory) renderProducts();
+  if (currentPanel) renderPanel();
 }
 
 document.querySelectorAll(".lang-btn")
@@ -227,36 +354,42 @@ document.querySelectorAll(".lang-btn")
     });
   });
 
-/* =========================================
-   OPEN / CLOSE COLLECTION
-========================================= */
+/* ==========================================
+   CATEGORY SWITCHING
+========================================== */
 
-function openCategory(name) {
-  if (!["classic", "premium"].includes(name)) return;
+function openCategory(category) {
+  if (!["classic", "premium"].includes(category)) {
+    return;
+  }
 
-  if (activeCategory === name) {
+  // Повторное нажатие закрывает коллекцию
+  if (currentCategory === category) {
     closeCategory();
     return;
   }
 
-  activeCategory = name;
-  $("products").hidden = false;
+  currentCategory = category;
+
+  elements.products.hidden = false;
 
   document.querySelectorAll("[data-open]")
     .forEach(button => {
-      const selected = button.dataset.open === name;
+      const active =
+        button.dataset.open === category;
 
-      button.classList.toggle("active", selected);
+      button.classList.toggle("active", active);
+
       button.setAttribute(
         "aria-expanded",
-        String(selected)
+        String(active)
       );
     });
 
   renderProducts();
 
   requestAnimationFrame(() => {
-    $("products").scrollIntoView({
+    elements.products.scrollIntoView({
       behavior: "smooth",
       block: "start"
     });
@@ -264,13 +397,18 @@ function openCategory(name) {
 }
 
 function closeCategory() {
-  activeCategory = null;
-  $("products").hidden = true;
+  currentCategory = null;
+
+  elements.products.hidden = true;
 
   document.querySelectorAll("[data-open]")
     .forEach(button => {
       button.classList.remove("active");
-      button.setAttribute("aria-expanded", "false");
+
+      button.setAttribute(
+        "aria-expanded",
+        "false"
+      );
     });
 }
 
@@ -286,16 +424,20 @@ $("closeProducts").addEventListener(
   closeCategory
 );
 
-/* =========================================
-   SUPABASE PRODUCTS
-========================================= */
+/* ==========================================
+   SUPABASE DATABASE
+========================================== */
 
 async function loadProducts() {
-  loadState = "loading";
+  loadingState = "loading";
+
+  if (currentCategory) renderProducts();
 
   try {
-    if (!window.supabase) {
-      throw new Error("Supabase library unavailable");
+    if (!window.supabase?.createClient) {
+      throw new Error(
+        "Supabase JavaScript library not loaded"
+      );
     }
 
     db = window.supabase.createClient(
@@ -317,74 +459,116 @@ async function loadProducts() {
         )
       `)
       .eq("published", true)
-      .order("created_at", { ascending: false });
+      .order("created_at", {
+        ascending: false
+      });
 
     if (error) throw error;
 
-    PRODUCTS = (data || []).map(product => ({
-      ...product,
-      photos: [...(product.bracelet_photos || [])]
-        .filter(photo => photo.image_url)
-        .sort((a, b) =>
-          Number(a.position || 0) -
-          Number(b.position || 0)
-        )
-    }));
+    PRODUCTS = (data || []).map(product => {
+      const images = Array.isArray(
+        product.bracelet_photos
+      )
+        ? product.bracelet_photos
+        : [];
 
-    loadState = "ready";
+      return {
+        ...product,
+
+        category: String(
+          product.category || ""
+        ).toLowerCase(),
+
+        price: Number(product.price) || 0,
+
+        photos: images
+          .filter(photo => photo.image_url)
+          .sort((a, b) =>
+            Number(a.position || 0) -
+            Number(b.position || 0)
+          )
+      };
+    });
+
+    loadingState = "ready";
+    databaseError = null;
 
     renderCollectionCovers();
 
-    if (activeCategory) renderProducts();
-    if (activePanel) renderPanel();
+    updateCounts();
 
-    console.log(
-      "MIX catalog loaded:",
+    if (currentCategory) renderProducts();
+    if (currentPanel) renderPanel();
+
+    console.info(
+      "MIX COFFEE BRACELET:",
       PRODUCTS.length,
-      "products"
+      "products loaded"
     );
 
   } catch (error) {
-    console.error("MIX Supabase error:", error);
+    loadingState = "error";
+    databaseError = error;
 
-    loadState = "error";
+    console.error(
+      "Supabase catalog error:",
+      databaseError
+    );
 
-    if (activeCategory) renderProducts();
+    if (currentCategory) renderProducts();
+    if (currentPanel) renderPanel();
   }
 }
 
-/* =========================================
-   COLLECTION COVERS
-========================================= */
+/* ==========================================
+   COLLECTION COVER PHOTOS
+========================================== */
 
 function renderCollectionCovers() {
-  for (const type of ["classic", "premium"]) {
+  for (const category of ["classic", "premium"]) {
+
     const element = $(
-      type === "classic" ? "classicCover" : "premiumCover"
+      category === "classic"
+        ? "classicCover"
+        : "premiumCover"
     );
 
-    const product = PRODUCTS.find(p =>
-      p.category === type && p.photos.length > 0
+    if (!element) continue;
+
+    const product = PRODUCTS.find(item =>
+      item.category === category &&
+      item.photos.length > 0
     );
 
-    if (!element || !product) continue;
+    // Если фото нет, звезда остаётся.
+    if (!product) continue;
 
     const image = document.createElement("img");
-    image.alt = productName(type);
+
+    image.src = getPhotoUrl(product);
+    image.alt = categoryTitle(category);
     image.decoding = "async";
-    image.src = product.photos[0].image_url;
 
     image.onerror = () => {
       image.remove();
+
+      const symbol =
+        document.createElement("span");
+
+      symbol.className = "cover-symbol";
+      symbol.textContent =
+        category === "classic" ? "✦" : "✧";
+
+      element.replaceChildren(symbol);
     };
 
     element.replaceChildren(image);
   }
 }
 
-/* =========================================
+/* ==========================================
    PHOTO GALLERY
-========================================= */
+========================================== */
 
 function createGallery(product) {
   const gallery = document.createElement("div");
@@ -393,13 +577,18 @@ function createGallery(product) {
   const track = document.createElement("div");
   track.className = "gallery-track";
 
-  const photos = product.photos;
-  let active = 0;
+  gallery.append(track);
+
+  const photos = product.photos || [];
+  let activePhoto = 0;
 
   if (photos.length === 0) {
-    const placeholder = document.createElement("div");
+    const placeholder =
+      document.createElement("div");
+
     placeholder.className = "photo-placeholder";
     placeholder.textContent = t("noPhotos");
+
     track.append(placeholder);
   }
 
@@ -408,99 +597,145 @@ function createGallery(product) {
     slide.className = "gallery-slide";
 
     const image = document.createElement("img");
+
     image.src = photo.image_url;
-    image.alt = `${productName(product.category)} ${index + 1}`;
-    image.loading = index === 0 ? "eager" : "lazy";
+
+    image.alt =
+      categoryTitle(product.category) +
+      " — " +
+      (index + 1);
+
+    image.loading = index === 0
+      ? "eager"
+      : "lazy";
+
     image.decoding = "async";
 
     image.onerror = () => {
-      slide.replaceChildren();
+      const placeholder =
+        document.createElement("div");
 
-      const fallback = document.createElement("div");
-      fallback.className = "photo-placeholder";
-      fallback.textContent = t("noPhotos");
+      placeholder.className =
+        "photo-placeholder";
 
-      slide.append(fallback);
+      placeholder.textContent =
+        t("noPhotos");
+
+      slide.replaceChildren(placeholder);
     };
 
     slide.append(image);
     track.append(slide);
   });
 
-  gallery.append(track);
-
   if (photos.length > 1) {
     const prev = document.createElement("button");
     const next = document.createElement("button");
-    const counter = document.createElement("div");
+    const counter = document.createElement("span");
 
-    prev.className = "gallery-nav gallery-prev";
-    next.className = "gallery-nav gallery-next";
+    prev.type = "button";
+    next.type = "button";
+
+    prev.className =
+      "gallery-nav gallery-prev";
+
+    next.className =
+      "gallery-nav gallery-next";
+
     counter.className = "gallery-counter";
 
     prev.textContent = "‹";
     next.textContent = "›";
 
-    prev.setAttribute("aria-label", "Previous photo");
-    next.setAttribute("aria-label", "Next photo");
+    prev.setAttribute(
+      "aria-label",
+      "Предыдущая фотография"
+    );
+
+    next.setAttribute(
+      "aria-label",
+      "Следующая фотография"
+    );
 
     function updateCounter() {
       counter.textContent =
-        `${active + 1} / ${photos.length}`;
+        `${activePhoto + 1} / ${photos.length}`;
     }
 
     function goToPhoto(index) {
-      active = (index + photos.length) % photos.length;
+      activePhoto = (
+        index + photos.length
+      ) % photos.length;
 
       track.scrollTo({
-        left: track.clientWidth * active,
+        left: track.clientWidth * activePhoto,
         behavior: "smooth"
       });
 
       updateCounter();
     }
 
-    prev.onclick = () => goToPhoto(active - 1);
-    next.onclick = () => goToPhoto(active + 1);
+    prev.addEventListener("click", () => {
+      goToPhoto(activePhoto - 1);
+    });
+
+    next.addEventListener("click", () => {
+      goToPhoto(activePhoto + 1);
+    });
 
     track.addEventListener("scroll", () => {
-      active = Math.max(0, Math.min(
-        photos.length - 1,
-        Math.round(
-          track.scrollLeft / (track.clientWidth || 1)
+      const width = track.clientWidth || 1;
+
+      activePhoto = Math.max(
+        0,
+        Math.min(
+          photos.length - 1,
+          Math.round(track.scrollLeft / width)
         )
-      ));
+      );
 
       updateCounter();
+
     }, { passive: true });
 
     updateCounter();
     gallery.append(prev, next, counter);
   }
 
-  const heart = document.createElement("button");
-  heart.className = "favorite-btn";
+  /* Favorite heart */
 
-  function refreshHeart() {
-    const liked = isFavorite(product.id);
-    heart.textContent = liked ? "♥" : "♡";
-    heart.classList.toggle("active", liked);
+  const favorite = document.createElement("button");
+
+  favorite.type = "button";
+  favorite.className = "favorite-btn";
+
+  function refreshFavorite() {
+    const active = isFavorite(product.id);
+
+    favorite.textContent =
+      active ? "♥" : "♡";
+
+    favorite.classList.toggle(
+      "active",
+      active
+    );
   }
 
-  heart.onclick = () => {
+  favorite.addEventListener("click", () => {
     toggleFavorite(product.id);
-    refreshHeart();
-  };
+    refreshFavorite();
+  });
 
-  refreshHeart();
-  gallery.append(heart);
+  refreshFavorite();
+
+  gallery.append(favorite);
 
   return gallery;
 }
 
-/* =========================================
-   PRODUCT CARDS
-========================================= */
+/* ==========================================
+   PRODUCT CARD
+========================================== */
 
 function createProductCard(product) {
   const card = document.createElement("article");
@@ -512,94 +747,136 @@ function createProductCard(product) {
   info.className = "product-info";
 
   const title = document.createElement("h3");
-  title.textContent = productName(product.category);
+  title.textContent =
+    categoryTitle(product.category);
 
   const price = document.createElement("p");
   price.className = "product-price";
   price.textContent = money(product.price);
 
-  const button = document.createElement("button");
-  button.className = "add-to-cart";
-  button.textContent = t("add");
+  const addButton = document.createElement("button");
 
-  button.onclick = () => addToCart(product.id);
+  addButton.type = "button";
+  addButton.className = "add-to-cart";
+  addButton.textContent = t("add");
 
-  info.append(title, price, button);
+  addButton.addEventListener("click", () => {
+    addToCart(product.id);
+  });
+
+  info.append(title, price, addButton);
   card.append(gallery, info);
 
   return card;
 }
 
+/* ==========================================
+   RENDER PRODUCTS
+========================================== */
+
 function renderProducts() {
-  if (!activeCategory) return;
+  if (!currentCategory) return;
 
-  $("productsTitle").textContent =
-    productName(activeCategory);
+  elements.productsTitle.textContent =
+    categoryTitle(currentCategory);
 
-  $("categoryDescription").textContent =
-    t(activeCategory + "Description");
+  elements.categoryDescription.textContent =
+    t(currentCategory + "Description");
 
-  const grid = $("productGrid");
-  const count = $("productCount");
-  const empty = $("emptyMessage");
+  elements.productGrid.replaceChildren();
 
-  grid.replaceChildren();
-  empty.hidden = true;
+  elements.emptyMessage.hidden = true;
 
-  if (loadState === "loading") {
-    count.textContent = t("loading");
+  if (loadingState === "loading") {
+    elements.productCount.textContent =
+      t("loading");
     return;
   }
 
-  if (loadState === "error") {
-    count.textContent = t("error");
-    empty.textContent = t("error");
-    empty.hidden = false;
+  if (loadingState === "error") {
+    elements.productCount.textContent = "";
+
+    elements.emptyMessage.textContent =
+      t("error");
+
+    elements.emptyMessage.hidden = false;
     return;
   }
 
   const visible = PRODUCTS.filter(
-    product => product.category === activeCategory
+    product => product.category === currentCategory
   );
 
-  count.textContent =
-    `${visible.length} ${t("count")}`;
+  elements.productCount.textContent =
+    `${visible.length} ${t("productsCount")}`;
 
   visible.forEach(product => {
-    grid.append(createProductCard(product));
+    elements.productGrid.append(
+      createProductCard(product)
+    );
   });
 
   if (visible.length === 0) {
-    empty.textContent = t("empty");
-    empty.hidden = false;
+    elements.emptyMessage.textContent =
+      t("empty");
+
+    elements.emptyMessage.hidden = false;
   }
 }
 
-/* =========================================
+/* ==========================================
    FAVORITES
-========================================= */
+========================================== */
 
 function toggleFavorite(id) {
   if (isFavorite(id)) {
     favorites = favorites.filter(
       item => String(item) !== String(id)
     );
+
   } else {
     favorites.push(id);
   }
 
-  save("mix-favorites-v9", favorites);
+  saveStorage("mix-favorites-v9", favorites);
+  saveStorage("mix-favorites-v8", favorites);
+
   updateCounts();
 
-  if (activePanel) renderPanel();
+  if (currentPanel) renderPanel();
 }
 
-/* =========================================
+/* ==========================================
    CART
-========================================= */
+========================================== */
+
+function normalizeCart() {
+  cart = cart
+    .filter(item =>
+      item &&
+      item.id !== undefined &&
+      item.id !== null
+    )
+    .map(item => ({
+      id: item.id,
+
+      quantity: Math.max(
+        1,
+        Math.min(
+          99,
+          Math.floor(
+            Number(item.quantity) || 1
+          )
+        )
+      )
+    }));
+}
+
+normalizeCart();
 
 function addToCart(id) {
   const product = getProduct(id);
+
   if (!product) return;
 
   const existing = cart.find(
@@ -608,11 +885,15 @@ function addToCart(id) {
 
   if (existing) {
     existing.quantity = Math.min(
-      99,
-      existing.quantity + 1
+      existing.quantity + 1,
+      99
     );
+
   } else {
-    cart.push({ id, quantity: 1 });
+    cart.push({
+      id,
+      quantity: 1
+    });
   }
 
   saveCart();
@@ -620,166 +901,260 @@ function addToCart(id) {
 }
 
 function saveCart() {
-  save("mix-cart-v9", cart);
+  saveStorage("mix-cart-v9", cart);
+  saveStorage("mix-cart-v8", cart);
+
   updateCounts();
 
-  if (activePanel) renderPanel();
+  if (currentPanel) renderPanel();
 }
 
 function changeQuantity(id, amount) {
-  const row = cart.find(
-    item => String(item.id) === String(id)
+  const item = cart.find(
+    row => String(row.id) === String(id)
   );
 
-  if (!row) return;
+  if (!item) return;
 
-  row.quantity += amount;
+  item.quantity += amount;
 
-  if (row.quantity <= 0) {
+  if (item.quantity <= 0) {
     cart = cart.filter(
-      item => String(item.id) !== String(id)
+      row => String(row.id) !== String(id)
     );
   } else {
-    row.quantity = Math.min(row.quantity, 99);
+    item.quantity = Math.min(
+      99,
+      item.quantity
+    );
   }
 
   saveCart();
 }
 
-function updateCounts() {
-  $("cartCount").textContent = cart.reduce(
-    (sum, item) => sum + item.quantity,
-    0
+function removeFromCart(id) {
+  cart = cart.filter(
+    item => String(item.id) !== String(id)
   );
 
-  $("favoritesCount").textContent = favorites.length;
+  saveCart();
 }
 
-function calculateTotal() {
+function cartTotal() {
   return cart.reduce((sum, item) => {
     const product = getProduct(item.id);
 
-    return sum + (
-      product
-        ? Number(product.price) * item.quantity
-        : 0
-    );
+    if (!product) return sum;
+
+    return sum +
+      product.price * item.quantity;
   }, 0);
 }
 
-/* =========================================
+function updateCounts() {
+  elements.cartCount.textContent =
+    cart.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+
+  elements.favoritesCount.textContent =
+    favorites.length;
+}
+
+/* ==========================================
    PANEL
-========================================= */
+========================================== */
 
 function openPanel(type) {
-  activePanel = type;
+  currentPanel = type;
 
-  $("panelBackdrop").hidden = false;
-  $("sidePanel").classList.add("open");
-  $("sidePanel").setAttribute("aria-hidden", "false");
+  elements.panelBackdrop.hidden = false;
+
+  elements.sidePanel.classList.add("open");
+
+  elements.sidePanel.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  document.body.style.overflow = "hidden";
 
   renderPanel();
 }
 
 function closePanel() {
-  activePanel = null;
+  currentPanel = null;
 
-  $("panelBackdrop").hidden = true;
-  $("sidePanel").classList.remove("open");
-  $("sidePanel").setAttribute("aria-hidden", "true");
+  elements.panelBackdrop.hidden = true;
+
+  elements.sidePanel.classList.remove("open");
+
+  elements.sidePanel.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  document.body.style.overflow = "";
+}
+
+function createPanelItem(item, isCart) {
+  const product = getProduct(item.id);
+
+  if (!product) return null;
+
+  const row = document.createElement("div");
+  row.className = "panel-item";
+
+  const photoUrl = getPhotoUrl(product);
+
+  if (photoUrl) {
+    const img = document.createElement("img");
+
+    img.className = "panel-item-photo";
+    img.src = photoUrl;
+    img.alt = categoryTitle(product.category);
+    img.loading = "lazy";
+
+    img.onerror = () => img.remove();
+
+    row.append(img);
+  }
+
+  const body = document.createElement("div");
+  body.className = "panel-item-body";
+
+  const title = document.createElement("strong");
+  title.textContent =
+    categoryTitle(product.category);
+
+  const price = document.createElement("p");
+  price.textContent = money(
+    product.price * item.quantity
+  );
+
+  const remove = document.createElement("button");
+
+  remove.type = "button";
+  remove.className = "remove-btn";
+  remove.textContent = t("remove");
+
+  remove.addEventListener("click", () => {
+    if (isCart) {
+      removeFromCart(item.id);
+
+    } else {
+      toggleFavorite(item.id);
+
+      if (currentCategory) {
+        renderProducts();
+      }
+    }
+  });
+
+  body.append(title, price, remove);
+
+  if (isCart) {
+    const controls = document.createElement("div");
+    controls.className = "quantity-controls";
+
+    const minus = document.createElement("button");
+    minus.type = "button";
+    minus.textContent = "−";
+
+    minus.addEventListener("click", () => {
+      changeQuantity(item.id, -1);
+    });
+
+    const number = document.createElement("span");
+    number.textContent = item.quantity;
+
+    const plus = document.createElement("button");
+    plus.type = "button";
+    plus.textContent = "+";
+
+    plus.addEventListener("click", () => {
+      changeQuantity(item.id, 1);
+    });
+
+    controls.append(minus, number, plus);
+    body.append(controls);
+  }
+
+  row.append(body);
+
+  return row;
 }
 
 function renderPanel() {
-  if (!activePanel) return;
+  if (!currentPanel) return;
 
-  const isCart = activePanel === "cart";
-  const container = $("panelItems");
+  const isCart = currentPanel === "cart";
 
-  $("panelTitle").textContent =
+  elements.panelTitle.textContent =
     t(isCart ? "cart" : "favorites");
 
-  $("panelFooter").hidden = !isCart;
+  elements.panelFooter.hidden = !isCart;
 
-  container.replaceChildren();
+  elements.panelItems.replaceChildren();
 
   const rows = isCart
     ? cart
-    : favorites.map(id => ({ id, quantity: 1 }));
+    : favorites.map(id => ({
+        id,
+        quantity: 1
+      }));
 
-  const valid = rows.filter(
+  const visible = rows.filter(
     item => getProduct(item.id)
   );
 
-  if (valid.length === 0) {
+  if (visible.length === 0) {
     const message = document.createElement("p");
 
     message.textContent = t(
       isCart ? "emptyCart" : "emptyFavorites"
     );
 
-    container.append(message);
+    elements.panelItems.append(message);
   }
 
-  valid.forEach(item => {
-    const product = getProduct(item.id);
+  visible.forEach(item => {
+    const row = createPanelItem(item, isCart);
 
-    const row = document.createElement("div");
-    row.className = "panel-item";
-
-    const title = document.createElement("strong");
-    title.textContent = productName(product.category);
-
-    const price = document.createElement("p");
-    price.textContent = money(
-      product.price * item.quantity
-    );
-
-    const remove = document.createElement("button");
-    remove.textContent = t("remove");
-
-    remove.onclick = () => {
-      if (isCart) {
-        cart = cart.filter(
-          x => String(x.id) !== String(item.id)
-        );
-        saveCart();
-      } else {
-        toggleFavorite(item.id);
-        if (activeCategory) renderProducts();
-      }
-    };
-
-    row.append(title, price, remove);
-
-    if (isCart) {
-      const controls = document.createElement("div");
-      controls.className = "quantity-controls";
-
-      const minus = document.createElement("button");
-      minus.textContent = "−";
-      minus.onclick = () =>
-        changeQuantity(item.id, -1);
-
-      const amount = document.createElement("span");
-      amount.textContent = item.quantity;
-
-      const plus = document.createElement("button");
-      plus.textContent = "+";
-      plus.onclick = () =>
-        changeQuantity(item.id, 1);
-
-      controls.append(minus, amount, plus);
-      row.append(controls);
+    if (row) {
+      elements.panelItems.append(row);
     }
-
-    container.append(row);
   });
 
-  $("cartTotal").textContent = money(calculateTotal());
+  elements.cartTotal.textContent =
+    money(cartTotal());
+
   updateOrderLink();
 }
 
+/* ==========================================
+   WHATSAPP ORDER
+========================================== */
+
 function updateOrderLink() {
+  const link = elements.orderButton;
+
+  link.textContent = t("order");
+
+  const phone = WHATSAPP_NUMBER.replace(/\D/g, "");
+
+  if (!phone || cartTotal() === 0) {
+    link.removeAttribute("href");
+
+    link.setAttribute(
+      "aria-disabled",
+      "true"
+    );
+
+    return;
+  }
+
   const lines = [
     "MIX COFFEE BRACELET",
     "",
@@ -788,54 +1163,48 @@ function updateOrderLink() {
 
   cart.forEach(item => {
     const product = getProduct(item.id);
+
     if (!product) return;
 
     lines.push(
-      `${productName(product.category)} × ${item.quantity} — ` +
+      `${categoryTitle(product.category)} × ${item.quantity} — ` +
       money(product.price * item.quantity)
     );
   });
 
   lines.push("");
-  lines.push("Итого: " + money(calculateTotal()));
-
-  const link = $("orderButton");
+  lines.push("Итого: " + money(cartTotal()));
 
   link.href =
     "https://wa.me/" +
-    WHATSAPP +
+    phone +
     "?text=" +
     encodeURIComponent(lines.join("\n"));
 
-  link.textContent = t("order");
-
-  link.style.opacity = cart.length ? "1" : ".5";
-  link.style.pointerEvents =
-    cart.length ? "auto" : "none";
+  link.removeAttribute("aria-disabled");
 }
 
-/* =========================================
-   TOAST
-========================================= */
+/* ==========================================
+   NOTIFICATION
+========================================== */
 
-let toastTimer;
+let toastTimer = null;
 
 function showToast(message) {
-  const toast = $("toast");
+  elements.toast.textContent = message;
 
-  toast.textContent = message;
-  toast.classList.add("show");
+  elements.toast.classList.add("show");
 
   clearTimeout(toastTimer);
 
   toastTimer = setTimeout(() => {
-    toast.classList.remove("show");
+    elements.toast.classList.remove("show");
   }, 2200);
 }
 
-/* =========================================
-   EVENTS
-========================================= */
+/* ==========================================
+   BUTTONS
+========================================== */
 
 $("cartButton").addEventListener("click", () => {
   openPanel("cart");
@@ -845,33 +1214,65 @@ $("favoritesButton").addEventListener("click", () => {
   openPanel("favorites");
 });
 
-$("closePanel").addEventListener("click", closePanel);
+$("closePanel").addEventListener(
+  "click",
+  closePanel
+);
 
-$("panelBackdrop").addEventListener(
+elements.panelBackdrop.addEventListener(
   "click",
   closePanel
 );
 
 document.addEventListener("keydown", event => {
-  if (event.key === "Escape") closePanel();
+  if (event.key === "Escape" && currentPanel) {
+    closePanel();
+  }
 });
 
-/* =========================================
+/* ==========================================
+   SOCIAL LINKS
+========================================== */
+
+function setupSocialLinks() {
+  const links = [
+    ["instagramLink", INSTAGRAM_URL],
+    ["tiktokLink", TIKTOK_URL],
+    [
+      "whatsappLink",
+      WHATSAPP_NUMBER
+        ? "https://wa.me/" +
+          WHATSAPP_NUMBER.replace(/\D/g, "")
+        : ""
+    ]
+  ];
+
+  links.forEach(([id, url]) => {
+    const element = $(id);
+
+    if (!element) return;
+
+    if (url) {
+      element.href = url;
+    } else {
+      element.hidden = true;
+    }
+  });
+}
+
+/* ==========================================
    START
-========================================= */
+========================================== */
 
 function startStore() {
-  $("instagramLink").href = INSTAGRAM;
-  $("tiktokLink").href = TIKTOK;
-  $("whatsappLink").href = "https://wa.me/" + WHATSAPP;
-
-  // Товары не показываются сразу.
   closeCategory();
 
   changeLanguage(language);
+
   updateCounts();
 
-  // Загружаем настоящие товары.
+  setupSocialLinks();
+
   loadProducts();
 }
 
