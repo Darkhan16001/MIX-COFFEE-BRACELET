@@ -530,10 +530,18 @@ async function loadProducts() {
    COLLECTION COVER PHOTOS
 ========================================== */
 
+// 532 — Обложки главной страницы
+const COLLECTION_COVER_URLS = {
+  classic: "ССЫЛКА_НА_ФОТО_CLASSIC",
+  premium: "ССЫЛКА_НА_ФОТО_PREMIUM"
+};
+
+// 538 — Показываем обложки
 function renderCollectionCovers() {
   for (const category of ["classic", "premium"]) {
 
-    const element = $(
+    // 542 — Находим блок обложки
+    const element = document.getElementById(
       category === "classic"
         ? "classicCover"
         : "premiumCover"
@@ -541,26 +549,25 @@ function renderCollectionCovers() {
 
     if (!element) continue;
 
-    const product = PRODUCTS.find(item =>
-      item.category === category &&
-      item.photos.length > 0
-    );
+    // 551 — Используем выбранную фотографию
+    const imageUrl = COLLECTION_COVER_URLS[category];
 
-    // Если фото нет, звезда остаётся.
-    if (!product) continue;
+    // 554 — Проверяем, установлена ли ссылка
+    if (!imageUrl || imageUrl.startsWith("ССЫЛКА_")) {
+      continue;
+    }
 
+    // 559 — Создаём фотографию
     const image = document.createElement("img");
-
-    image.src = getPhotoUrl(product);
-    image.alt = categoryTitle(category);
+    image.src = imageUrl;
+    image.alt = category === "classic"
+      ? "Coffee Classic"
+      : "Coffee Premium";
     image.decoding = "async";
 
+    // 568 — Если фото не открылось
     image.onerror = () => {
-      image.remove();
-
-      const symbol =
-        document.createElement("span");
-
+      const symbol = document.createElement("span");
       symbol.className = "cover-symbol";
       symbol.textContent =
         category === "classic" ? "✦" : "✧";
@@ -568,9 +575,11 @@ function renderCollectionCovers() {
       element.replaceChildren(symbol);
     };
 
+    // 577 — Показываем новую обложку
     element.replaceChildren(image);
   }
 }
+
 
 /* ==========================================
    PHOTO GALLERY
