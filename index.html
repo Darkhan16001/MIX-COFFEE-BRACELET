@@ -3,21 +3,23 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#ead3ad">
-<title>MIX COFFEE BRACELET — Магазин</title>
-<meta name="description" content="MIX COFFEE BRACELET — браслеты Classic и Premium">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ead5b6">
+<meta name="description" content="MIX COFFEE BRACELET — стильные браслеты из кофейных зёрен. Classic и Premium.">
+<title>MIX COFFEE BRACELET | Магазин</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap");
 
 :root {
-  --brown:#492d20;
-  --brown2:#79543b;
-  --gold:#bc914e;
-  --cream:#faf2e6;
+  --brown:#4a2c20;
+  --gold:#b78b4d;
+  --cream:#faf2e7;
   --white:#fffdf9;
+  --muted:#8a6a54;
+  --line:#e8d7c3;
 }
+
 * { box-sizing:border-box }
 html { scroll-behavior:smooth }
 body {
@@ -28,8 +30,8 @@ body {
 }
 button,select { font:inherit }
 button { cursor:pointer }
-button:disabled { opacity:.55;cursor:not-allowed }
-a { color:inherit;text-decoration:none }
+button:disabled { opacity:.5;cursor:not-allowed }
+a { text-decoration:none;color:inherit }
 [hidden] { display:none!important }
 
 header {
@@ -37,122 +39,123 @@ header {
   top:0;
   z-index:20;
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  gap:12px;
-  padding:14px 5%;
-  background:#fffaf1f2;
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid #dfccb3;
+  justify-content:space-between;
+  gap:10px;
+  padding:13px 5%;
+  border-bottom:1px solid var(--line);
+  background:rgba(255,251,244,.95);
+  backdrop-filter:blur(15px);
 }
+
 .brand {
-  font-size:14px;
   font-weight:700;
   letter-spacing:1px;
+  font-size:13px;
 }
-.brand i {
-  font-style:normal;
-  font-size:26px;
+.brand span {
   color:var(--gold);
+  font-size:24px;
+  vertical-align:middle;
 }
-.actions {
-  display:flex;
-  gap:7px;
-  align-items:center;
-}
+
+.actions { display:flex;align-items:center;gap:6px }
 .actions button,.actions select {
-  border:1px solid #ddc8af;
-  border-radius:12px;
   background:white;
-  padding:10px;
+  border:1px solid var(--line);
+  border-radius:11px;
   color:var(--brown);
+  padding:9px;
 }
 .actions button { font-size:20px }
-.actions small { font-size:10px }
+.actions small { font-size:11px }
 
 .hero {
-  position:relative;
   min-height:540px;
-  padding:75px 20px;
   display:grid;
   place-items:center;
+  position:relative;
   overflow:hidden;
   text-align:center;
+  padding:75px 20px;
   background:
-    radial-gradient(ellipse at 25% 17%,#fff8e7 0,transparent 45%),
-    radial-gradient(ellipse at 85% 84%,#c89a5f 0,transparent 50%),
-    linear-gradient(135deg,#f8e6ca,#e0bd91,#f7ead6);
+    radial-gradient(ellipse at 15% 18%,#fff8e6 0,transparent 48%),
+    radial-gradient(ellipse at 85% 80%,#c89b64 0,transparent 52%),
+    linear-gradient(130deg,#f8e8d2,#e2c59f,#f6e8d4);
 }
-.hero:before {
+.hero:after {
   content:"";
   position:absolute;
   inset:17px;
-  border:1px solid #9f744a66;
+  border:1px solid #a8805166;
   pointer-events:none;
 }
 .glow {
   position:absolute;
-  width:230px;height:230px;
+  width:220px;
+  height:220px;
   border-radius:50%;
-  background:#fff0be99;
-  filter:blur(55px);
+  background:#fff2c6a6;
+  filter:blur(50px);
   animation:float 7s ease-in-out infinite alternate;
 }
-.glow.a { left:-50px;top:10px }
-.glow.b { right:-60px;bottom:-30px;animation-delay:-3s }
+.glow.one { top:0;left:0 }
+.glow.two { right:0;bottom:0;animation-delay:-3s }
 @keyframes float {
   to { transform:translateY(65px) }
 }
-.hero-inner { position:relative;z-index:1 }
-.star { font-size:78px;color:#b5843f }
+.hero-content { position:relative;z-index:1 }
+.big-star { font-size:78px;color:var(--gold) }
 .eyebrow {
-  letter-spacing:3px;
   font-size:11px;
+  letter-spacing:3px;
   font-weight:700;
-  color:#926945;
+  color:#96714b;
 }
 .hero h1 {
   margin:0;
-  font:700 clamp(110px,23vw,210px)/1 "Playfair Display",serif;
-  text-shadow:3px 5px 3px #d1ae85;
+  font:700 clamp(105px,23vw,195px)/1 "Playfair Display",serif;
+  text-shadow:3px 5px 3px #d3b48e;
 }
 .hero-sub {
   letter-spacing:6px;
-  font-size:clamp(15px,3vw,23px);
+  font-size:clamp(15px,3vw,24px);
 }
-.hero p { margin:25px 0;color:#62442e }
+.hero-desc { margin:28px 0;color:#76533b }
+
 .primary {
+  display:inline-block;
   border:0;
   border-radius:13px;
+  padding:14px 22px;
   background:var(--brown);
   color:white;
-  padding:14px 22px;
   font-weight:700;
-  display:inline-block;
   text-align:center;
 }
+
 .section {
   max-width:1150px;
   margin:auto;
   padding:65px 18px;
 }
 .section h2 {
-  font:600 clamp(30px,5vw,43px) "Playfair Display",serif;
+  font:600 clamp(30px,5vw,44px) "Playfair Display",serif;
 }
 .center { text-align:center }
 .collections {
   display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:20px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:22px;
   margin-top:30px;
 }
 .collection {
-  overflow:hidden;
-  border:1px solid #e5d5c2;
-  border-radius:21px;
-  background:white;
-  text-align:left;
+  border:1px solid var(--line);
+  border-radius:20px;
   padding:0;
+  overflow:hidden;
+  text-align:left;
+  background:white;
   color:var(--brown);
   box-shadow:0 12px 35px #57351b16;
 }
@@ -160,13 +163,16 @@ header {
   height:300px;
   display:grid;
   place-items:center;
-  overflow:hidden;
-  background:linear-gradient(125deg,#e8cca6,#bd936b);
+  background:linear-gradient(130deg,#e8ccaa,#bd956f);
 }
-.cover img { width:100%;height:100%;object-fit:cover }
+.cover img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
 .cover span {
   color:white;
-  font:600 40px "Playfair Display",serif;
+  font:600 39px "Playfair Display",serif;
   letter-spacing:4px;
 }
 .collection-info { padding:20px }
@@ -175,31 +181,35 @@ header {
   margin:0;
 }
 .collection-info p { font-weight:700 }
-.collection-info small { color:#99714d }
+.collection-info small { color:#92704e }
 
-.head-row {
+.products-head {
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  gap:15px;
+  justify-content:space-between;
+  gap:12px;
 }
-.tabs { display:flex;gap:10px;margin:25px 0 }
+.tabs { display:flex;gap:10px;margin:22px 0 }
 .tab {
+  padding:12px 24px;
+  border-radius:26px;
   background:white;
+  border:1px solid #d7c2a8;
   color:var(--brown);
-  border:1px solid #d7c1a7;
-  border-radius:24px;
-  padding:12px 22px;
 }
 .tab.active { background:var(--brown);color:white }
 .outline {
-  background:white;
-  border:1px solid #cbb296;
-  border-radius:12px;
   padding:11px 16px;
+  background:white;
+  border:1px solid #ceb79c;
+  border-radius:11px;
   color:var(--brown);
 }
-#status { color:#9d3030;white-space:pre-wrap }
+#status {
+  color:#a22a2a;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
 .grid {
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -207,11 +217,11 @@ header {
 }
 .product {
   min-width:0;
-  border-radius:20px;
-  background:white;
-  border:1px solid #e8d8c5;
   overflow:hidden;
-  box-shadow:0 12px 35px #57351b13;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:19px;
+  box-shadow:0 12px 30px #57351b13;
 }
 .gallery {
   position:relative;
@@ -220,8 +230,8 @@ header {
   background:#f3e8da;
 }
 .track {
-  display:flex;
   height:100%;
+  display:flex;
   overflow-x:auto;
   scroll-snap-type:x mandatory;
   scroll-behavior:smooth;
@@ -230,114 +240,127 @@ header {
 .track::-webkit-scrollbar { display:none }
 .slide {
   flex:0 0 100%;
-  height:100%;
   scroll-snap-align:start;
   display:grid;
   place-items:center;
 }
 .slide img {
-  width:100%;height:100%;
+  width:100%;
+  height:100%;
   object-fit:contain;
 }
-.photo-error { padding:20px;color:#977d67;text-align:center }
+.photo-error {
+  padding:20px;
+  text-align:center;
+  color:#91735e;
+}
 .like {
   position:absolute;
-  top:10px;right:10px;
   z-index:2;
+  right:10px;
+  top:10px;
+  width:42px;
+  height:42px;
   border:0;
   border-radius:50%;
-  width:42px;height:42px;
   background:white;
+  color:#79503a;
   font-size:27px;
-  color:#77503b;
 }
-.like.active { color:#ca415c }
+.like.active { color:#cb4258 }
 .photo-count {
   position:absolute;
-  bottom:10px;left:50%;
+  bottom:10px;
+  left:50%;
   transform:translateX(-50%);
-  background:#382319b8;
-  color:white;
-  border-radius:20px;
   padding:6px 11px;
+  border-radius:20px;
+  background:#382419ba;
+  color:white;
   font-size:12px;
 }
 .product-info { padding:17px }
 .product-info h3 {
-  font:600 24px "Playfair Display",serif;
   margin:0 0 10px;
+  font:600 24px "Playfair Display",serif;
 }
-.product-info .price {
-  font-size:20px;
-  font-weight:700;
-}
-.product-info button { width:100% }
+.price { font-size:20px;font-weight:700 }
+.product-info .primary { width:100% }
 .empty {
-  padding:35px;
-  text-align:center;
   background:white;
+  padding:38px;
+  text-align:center;
+  color:var(--muted);
   border-radius:15px;
-  color:#93745d;
 }
 .backdrop {
   position:fixed;
-  inset:0;
   z-index:30;
-  background:#21140da8;
+  inset:0;
+  background:#23150eaa;
 }
 .cart {
   position:fixed;
   z-index:31;
-  right:0;top:0;
+  right:0;
+  top:0;
   width:min(430px,100%);
   height:100dvh;
-  background:#fffaf3;
   padding:20px;
+  background:#fffaf3;
   display:flex;
   flex-direction:column;
   transform:translateX(105%);
-  transition:transform .25s;
+  transition:transform .25s ease;
 }
 .cart.open { transform:translateX(0) }
-.cart-header,.total {
+.cart-head,.total {
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
+  gap:10px;
 }
 .cart-body { flex:1;overflow:auto }
 .cart-row {
   display:flex;
   gap:12px;
+  border-bottom:1px solid var(--line);
   padding:15px 0;
-  border-bottom:1px solid #e9d8c5;
 }
 .cart-row img {
-  width:75px;height:85px;
+  width:76px;
+  height:86px;
   object-fit:contain;
-  background:#f1e7db;
   border-radius:9px;
+  background:#f2e8db;
 }
-.cart-row .detail { flex:1 }
-.cart-controls { display:flex;align-items:center;gap:9px }
-.cart-controls button { padding:5px 11px }
+.cart-detail { flex:1 }
+.qty {
+  display:flex;
+  gap:9px;
+  align-items:center;
+}
+.qty button { padding:6px 11px }
 .cart-footer {
-  padding-top:15px;
-  border-top:1px solid #e1d0bc;
-  display:grid;gap:12px;
+  display:grid;
+  gap:12px;
+  border-top:1px solid var(--line);
+  padding-top:16px;
 }
 footer {
-  text-align:center;
-  background:#42291d;
-  color:#fff0da;
   padding:45px 18px;
+  background:#42291d;
+  text-align:center;
+  color:#fff2df;
 }
 footer nav {
   display:flex;
-  justify-content:center;
   flex-wrap:wrap;
-  gap:22px;
+  justify-content:center;
+  gap:24px;
   margin:20px 0;
 }
+
 @media(max-width:750px) {
   .collections { grid-template-columns:1fr }
   .grid { grid-template-columns:repeat(2,minmax(0,1fr)) }
@@ -346,7 +369,6 @@ footer nav {
 @media(max-width:440px) {
   header { padding:12px }
   .brand { font-size:11px }
-  .actions { gap:4px }
   .actions button { padding:8px }
   .grid { grid-template-columns:1fr }
   .section { padding:45px 15px }
@@ -355,19 +377,14 @@ footer nav {
 }
 @media(prefers-reduced-motion:reduce) {
   .glow { animation:none }
-  html { scroll-behavior:auto }
 }
 </style>
-
-<!-- ПРАВИЛЬНЫЙ ПОРЯДОК ПОДКЛЮЧЕНИЯ -->
-<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="supabase-config.js"></script>
 </head>
 
 <body>
 <header>
   <a class="brand" href="./">
-    <i>✦</i> MIX COFFEE BRACELET
+    <span>✦</span> MIX COFFEE BRACELET
   </a>
 
   <div class="actions">
@@ -376,9 +393,11 @@ footer nav {
       <option value="kz">KZ</option>
       <option value="en">EN</option>
     </select>
+
     <button id="favoritesBtn" aria-label="Избранное">
       ♡ <small id="favoritesCount">0</small>
     </button>
+
     <button id="cartBtn" aria-label="Корзина">
       🛒 <small id="cartCount">0</small>
     </button>
@@ -387,15 +406,20 @@ footer nav {
 
 <main>
   <section class="hero">
-    <div class="glow a"></div>
-    <div class="glow b"></div>
-    <div class="hero-inner">
-      <div class="star">✦</div>
+    <div class="glow one"></div>
+    <div class="glow two"></div>
+
+    <div class="hero-content">
+      <div class="big-star">✦</div>
       <p class="eyebrow">PREMIUM COFFEE JEWELRY</p>
       <h1>MIX</h1>
       <div class="hero-sub">COFFEE BRACELET</div>
-      <p id="tagline">Отборные кофейные зёрна 🤎</p>
-      <button class="primary" id="explore">Смотреть коллекции</button>
+      <p class="hero-desc" id="tagline">
+        Отборные кофейные зёрна 🤎
+      </p>
+      <button id="explore" class="primary">
+        Смотреть коллекции
+      </button>
     </div>
   </section>
 
@@ -431,18 +455,23 @@ footer nav {
   </section>
 
   <section class="section" id="products">
-    <div class="head-row">
+    <div class="products-head">
       <div>
         <p class="eyebrow">OUR BRACELETS</p>
         <h2 id="productsTitle">Coffee Classic</h2>
         <p id="productsCount"></p>
       </div>
-      <button class="outline" id="reload" title="Обновить">↻</button>
+      <button id="reload" class="outline"
+              aria-label="Обновить товары">↻</button>
     </div>
 
     <div class="tabs" id="tabs">
-      <button class="tab active" data-tab="classic">Classic</button>
-      <button class="tab" data-tab="premium">Premium</button>
+      <button class="tab active" data-tab="classic">
+        Classic
+      </button>
+      <button class="tab" data-tab="premium">
+        Premium
+      </button>
     </div>
 
     <p id="status" role="status"></p>
@@ -453,22 +482,26 @@ footer nav {
 
 <div class="backdrop" id="backdrop" hidden></div>
 
-<aside class="cart" id="cartPanel" aria-label="Корзина">
-  <div class="cart-header">
+<aside id="cartPanel" class="cart" aria-label="Корзина">
+  <div class="cart-head">
     <h2 id="cartTitle">Корзина</h2>
-    <button class="outline" id="closeCart">✕</button>
+    <button id="closeCart" class="outline">✕</button>
   </div>
-  <div class="cart-body" id="cartItems"></div>
+
+  <div id="cartItems" class="cart-body"></div>
+
   <div class="cart-footer">
     <div class="total">
-      <b id="totalLabel">Итого</b>
-      <b id="totalPrice">0 ₸</b>
+      <strong id="totalLabel">Итого</strong>
+      <strong id="totalPrice">0 ₸</strong>
     </div>
-    <a class="primary" id="whatsappOrder"
+    <a id="whatsappOrder" class="primary"
        target="_blank" rel="noopener noreferrer">
       Заказать через WhatsApp
     </a>
-    <button class="outline" id="copyOrder">Скопировать заказ</button>
+    <button id="copyOrder" class="outline">
+      Скопировать заказ
+    </button>
     <small id="cartStatus"></small>
   </div>
 </aside>
@@ -476,23 +509,41 @@ footer nav {
 <footer>
   <strong>MIX COFFEE BRACELET</strong>
   <p>Отборные кофейные зёрна 🤎</p>
+
   <nav>
     <a href="https://www.instagram.com/mix_coffee_bracelet/"
-       target="_blank" rel="noopener noreferrer">Instagram</a>
+       target="_blank" rel="noopener noreferrer">
+      Instagram
+    </a>
     <a href="https://www.tiktok.com/@mix_coffee_bracelet"
-       target="_blank" rel="noopener noreferrer">TikTok</a>
+       target="_blank" rel="noopener noreferrer">
+      TikTok
+    </a>
     <a href="https://wa.me/77058038122"
-       target="_blank" rel="noopener noreferrer">WhatsApp</a>
+       target="_blank" rel="noopener noreferrer">
+      WhatsApp
+    </a>
   </nav>
-  <small>© <span id="year"></span> MIX COFFEE BRACELET</small>
+
+  <small>© <span id="year"></span></small>
 </footer>
 
 <script>
 "use strict";
 
+/* SUPABASE — ПРЯМОЙ REST API.
+   SDK и сторонние CDN не требуются. */
+
+const SUPABASE_URL =
+  "https://zvancvqgwsqzrqestovd.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_ixGxOe65UcmtWQHW2Bxh5w_qZepizp2";
+
+const WHATSAPP = "77058038122";
 const $ = id => document.getElementById(id);
 
-const words = {
+const texts = {
   ru:{
     tagline:"Отборные кофейные зёрна 🤎",
     explore:"Смотреть коллекции",
@@ -504,12 +555,11 @@ const words = {
     empty:"Пока нет опубликованных браслетов.",
     emptyFav:"В избранном пока пусто.",
     loading:"Загружаем браслеты...",
-    error:"Ошибка загрузки:",
+    error:"Ошибка загрузки",
     total:"Итого",
     order:"Заказать через WhatsApp",
     copy:"Скопировать заказ",
-    copied:"Заказ скопирован",
-    remove:"Удалить"
+    copied:"Заказ скопирован"
   },
   kz:{
     tagline:"Іріктелген кофе дәндері 🤎",
@@ -522,12 +572,11 @@ const words = {
     empty:"Әзірге білезіктер жарияланбаған.",
     emptyFav:"Таңдаулы тауарлар жоқ.",
     loading:"Білезіктер жүктелуде...",
-    error:"Жүктеу қатесі:",
+    error:"Жүктеу қатесі",
     total:"Жалпы сома",
     order:"WhatsApp арқылы тапсырыс беру",
     copy:"Тапсырысты көшіру",
-    copied:"Тапсырыс көшірілді",
-    remove:"Өшіру"
+    copied:"Тапсырыс көшірілді"
   },
   en:{
     tagline:"Carefully Selected Coffee Beans 🤎",
@@ -540,247 +589,294 @@ const words = {
     empty:"No published bracelets yet.",
     emptyFav:"No favorites yet.",
     loading:"Loading bracelets...",
-    error:"Loading error:",
+    error:"Loading error",
     total:"Total",
     order:"Order via WhatsApp",
     copy:"Copy order",
-    copied:"Order copied",
-    remove:"Remove"
+    copied:"Order copied"
   }
 };
 
-function read(key, fallback) {
+function readLocal(key,fallback) {
   try {
-    const value = JSON.parse(localStorage.getItem(key));
-    return value ?? fallback;
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
   } catch {
     return fallback;
   }
 }
-function store(key, value) {
+function saveLocal(key,value) {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    localStorage.setItem(key,JSON.stringify(value));
   } catch {}
 }
 
-let language = read("mix-lang-v10","ru");
-if (!words[language]) language="ru";
+let lang=readLocal("mix-lang-v11","ru");
+if (!texts[lang]) lang="ru";
 
 let products=[];
-let category="classic";
-let db=null;
-let connected=false;
-let loading=false;
+let view="classic";
+let loaded=false;
+let busy=false;
 
-let cart=read("mix-cart-v10",[]);
+let cart=readLocal("mix-cart-v11",[]);
 if (!Array.isArray(cart)) cart=[];
 
-const savedFav=read("mix-favs-v10",[]);
+const storedFav=readLocal("mix-fav-v11",[]);
 let favorites=new Set(
-  Array.isArray(savedFav) ? savedFav : []
+  Array.isArray(storedFav)?storedFav:[]
 );
 
-const t = key => words[language][key] || key;
-const money = n => Number(n).toLocaleString("ru-RU")+" ₸";
-const name = c => c==="premium" ? "Coffee Premium":"Coffee Classic";
-const byId = id => products.find(p=>p.id===id);
+const t=key=>texts[lang][key]||key;
+const money=value=>
+  Number(value).toLocaleString("ru-RU")+" ₸";
 
-function photosOf(p) {
-  return [...(p.bracelet_photos||[])]
-    .filter(x=>x.image_url)
-    .sort((a,b)=>(a.position||0)-(b.position||0));
-}
+const productName=c=>
+  c==="premium"?"Coffee Premium":"Coffee Classic";
 
-function setStatus(s) {
-  $("status").textContent=s;
+const getProduct=id=>products.find(p=>p.id===id);
+
+function photosOf(product) {
+  return [...(product.bracelet_photos||[])]
+    .filter(p=>p.image_url)
+    .sort((a,b)=>
+      Number(a.position||0)-Number(b.position||0)
+    );
 }
 
 function saveCart() {
-  store("mix-cart-v10",cart);
+  saveLocal("mix-cart-v11",cart);
 }
 function saveFav() {
-  store("mix-favs-v10",[...favorites]);
+  saveLocal("mix-fav-v11",[...favorites]);
 }
 
-function initDb() {
-  if (!window.supabase?.createClient) {
-    throw new Error("Библиотека Supabase не загрузилась");
-  }
-  if (
-    !window.MIX_SUPABASE?.url ||
-    !window.MIX_SUPABASE?.key
-  ) {
-    throw new Error("Не найден supabase-config.js");
-  }
-  db=window.supabase.createClient(
-    window.MIX_SUPABASE.url,
-    window.MIX_SUPABASE.key
+function setStatus(text) {
+  $("status").textContent=text;
+}
+
+/* ПОЛУЧЕНИЕ ПУБЛИЧНЫХ ДАННЫХ */
+
+async function apiGet(table,params) {
+  const url=new URL(
+    SUPABASE_URL+"/rest/v1/"+table
   );
-  connected=true;
+
+  Object.entries(params).forEach(([key,value])=>{
+    url.searchParams.set(key,value);
+  });
+
+  const response=await fetch(url,{
+    method:"GET",
+    headers:{
+      apikey:SUPABASE_KEY,
+      Accept:"application/json"
+    },
+    cache:"no-store"
+  });
+
+  const raw=await response.text();
+  let result;
+
+  try {
+    result=JSON.parse(raw);
+  } catch {
+    throw new Error(
+      "Сервер вернул неправильный ответ: HTTP "+
+      response.status
+    );
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      "Supabase HTTP "+response.status+": "+
+      (result.message||result.error||raw)
+    );
+  }
+
+  return result;
 }
 
 async function loadProducts() {
-  if (loading || !connected) return;
-  loading=true;
+  if (busy) return;
+  busy=true;
   $("reload").disabled=true;
   setStatus(t("loading"));
 
   try {
-    const {data,error}=await db
-      .from("bracelets")
-      .select(`
-        id,category,price,published,created_at,
-        bracelet_photos(id,image_url,position)
-      `)
-      .eq("published",true)
-      .order("created_at",{ascending:false});
+    const data=await apiGet("bracelets",{
+      select:
+        "id,category,price,published,created_at,"+
+        "bracelet_photos(id,image_url,position)",
+      published:"eq.true",
+      order:"created_at.desc"
+    });
 
-    if (error) throw error;
+    if (!Array.isArray(data)) {
+      throw new Error("Supabase не вернул список товаров");
+    }
 
-    products=(data||[]).map(p=>({
+    products=data.map(p=>({
       ...p,
       bracelet_photos:photosOf(p)
     }));
 
     const ids=new Set(products.map(p=>p.id));
     cart=cart.filter(item=>
-      ids.has(item.id) &&
-      Number.isInteger(item.quantity) &&
+      ids.has(item.id)&&
+      Number.isInteger(item.quantity)&&
       item.quantity>0
     );
     favorites=new Set(
       [...favorites].filter(id=>ids.has(id))
     );
+
     saveCart();
     saveFav();
 
+    loaded=true;
     setStatus("");
     renderProducts();
     renderCart();
+
   } catch(error) {
-    console.error(error);
-    setStatus(t("error")+" "+error.message);
+    console.error("MIX STORE:",error);
+    loaded=false;
+    setStatus(t("error")+": "+error.message);
     $("empty").hidden=true;
   } finally {
-    loading=false;
+    busy=false;
     $("reload").disabled=false;
   }
 }
 
 async function loadCovers() {
   try {
-    const {data,error}=await db
-      .from("collection_covers")
-      .select("category,image_url");
+    const covers=await apiGet("collection_covers",{
+      select:"category,image_url"
+    });
 
-    if (error) throw error;
-
-    for (const c of ["classic","premium"]) {
-      const cover=(data||[]).find(x=>x.category===c);
-      const container=$(c+"Cover");
-
+    for (const category of ["classic","premium"]) {
+      const cover=covers.find(
+        c=>c.category===category
+      );
       if (!cover?.image_url) continue;
 
-      const img=document.createElement("img");
-      img.src=cover.image_url;
-      img.alt=name(c);
-      img.onerror=()=>img.remove();
-      container.replaceChildren(img);
+      const box=$(category+"Cover");
+      const image=document.createElement("img");
+      image.src=cover.image_url;
+      image.alt=productName(category);
+      image.onerror=()=>image.remove();
+
+      box.replaceChildren(image);
     }
   } catch(error) {
-    console.warn("Обложки:",error.message);
+    console.warn("Обложки:",error);
   }
 }
 
-function createGallery(p) {
+/* ГАЛЕРЕЯ ФОТО */
+
+function makeGallery(product) {
   const gallery=document.createElement("div");
   gallery.className="gallery";
 
   const track=document.createElement("div");
   track.className="track";
-  const pictures=photosOf(p);
 
-  for (const [i,picture] of pictures.entries()) {
+  const photos=photosOf(product);
+
+  photos.forEach((photo,index)=>{
     const slide=document.createElement("div");
     slide.className="slide";
 
-    const img=document.createElement("img");
-    img.src=picture.image_url;
-    img.alt=name(p.category)+" фото "+(i+1);
-    img.loading=i===0?"eager":"lazy";
-    img.onerror=()=>{
-      const placeholder=document.createElement("p");
-      placeholder.className="photo-error";
-      placeholder.textContent="Фото недоступно";
-      img.replaceWith(placeholder);
+    const image=document.createElement("img");
+    image.src=photo.image_url;
+    image.alt=productName(product.category)+
+      " — фото "+(index+1);
+    image.loading=index===0?"eager":"lazy";
+
+    image.onerror=()=>{
+      const error=document.createElement("p");
+      error.className="photo-error";
+      error.textContent="Фото недоступно";
+      image.replaceWith(error);
     };
 
-    slide.append(img);
+    slide.append(image);
     track.append(slide);
-  }
+  });
 
-  if (!pictures.length) {
-    const empty=document.createElement("p");
-    empty.className="photo-error";
-    empty.textContent="Нет фотографии";
-    track.append(empty);
+  if (!photos.length) {
+    const noPhoto=document.createElement("p");
+    noPhoto.className="photo-error";
+    noPhoto.textContent="Нет фотографии";
+    track.append(noPhoto);
   }
 
   gallery.append(track);
 
-  if (pictures.length>1) {
+  if (photos.length>1) {
     const counter=document.createElement("span");
     counter.className="photo-count";
-    counter.textContent="1 / "+pictures.length;
+    counter.textContent="1 / "+photos.length;
 
     track.addEventListener("scroll",()=>{
-      const index=Math.min(
-        pictures.length,
-        1+Math.round(track.scrollLeft/(track.clientWidth||1))
+      const number=Math.min(
+        photos.length,
+        Math.round(
+          track.scrollLeft/(track.clientWidth||1)
+        )+1
       );
-      counter.textContent=index+" / "+pictures.length;
+      counter.textContent=number+" / "+photos.length;
     },{passive:true});
 
     gallery.append(counter);
   }
 
-  const like=document.createElement("button");
-  like.className="like";
-  like.classList.toggle("active",favorites.has(p.id));
-  like.textContent=favorites.has(p.id)?"♥":"♡";
-  like.setAttribute("aria-label",t("fav"));
-  like.onclick=()=>{
-    favorites.has(p.id)
-      ? favorites.delete(p.id)
-      : favorites.add(p.id);
+  const favorite=document.createElement("button");
+  favorite.className="like";
+  favorite.textContent=favorites.has(product.id)?"♥":"♡";
+  favorite.classList.toggle(
+    "active",favorites.has(product.id)
+  );
+  favorite.setAttribute("aria-label",t("fav"));
+
+  favorite.onclick=()=>{
+    if (favorites.has(product.id)) {
+      favorites.delete(product.id);
+    } else {
+      favorites.add(product.id);
+    }
     saveFav();
     renderProducts();
   };
-  gallery.append(like);
+
+  gallery.append(favorite);
   return gallery;
 }
 
-function createCard(p) {
+function createCard(product) {
   const card=document.createElement("article");
   card.className="product";
-  card.append(createGallery(p));
+
+  card.append(makeGallery(product));
 
   const info=document.createElement("div");
   info.className="product-info";
 
-  const title=document.createElement("h3");
-  title.textContent=name(p.category);
+  const heading=document.createElement("h3");
+  heading.textContent=productName(product.category);
 
   const price=document.createElement("p");
   price.className="price";
-  price.textContent=money(p.price);
+  price.textContent=money(product.price);
 
   const add=document.createElement("button");
   add.className="primary";
   add.textContent=t("add");
-  add.onclick=()=>addCart(p.id);
+  add.onclick=()=>addCart(product.id);
 
-  info.append(title,price,add);
+  info.append(heading,price,add);
   card.append(info);
   return card;
 }
@@ -789,49 +885,59 @@ function renderProducts() {
   const grid=$("grid");
   grid.replaceChildren();
 
-  $("productsTitle").textContent=
-    category==="favorites" ? t("fav"):name(category);
+  $("productsTitle").textContent=view==="favorites"
+    ?t("fav")
+    :productName(view);
 
-  $("tabs").hidden=category==="favorites";
+  $("tabs").hidden=view==="favorites";
 
   document.querySelectorAll("[data-tab]")
-    .forEach(btn=>btn.classList.toggle(
-      "active",btn.dataset.tab===category
+    .forEach(button=>button.classList.toggle(
+      "active",
+      button.dataset.tab===view
     ));
 
   const visible=products.filter(p=>
-    category==="favorites"
-      ? favorites.has(p.id)
-      : p.category===category
+    view==="favorites"
+      ?favorites.has(p.id)
+      :p.category===view
   );
 
   visible.forEach(p=>grid.append(createCard(p)));
 
   $("productsCount").textContent=
     visible.length+" "+(
-      language==="kz"?"білезік":"браслетов"
+      lang==="kz"?"білезік":
+      lang==="en"?"bracelets":"браслетов"
     );
 
-  $("empty").hidden=visible.length!==0;
-  $("empty").textContent=category==="favorites"
+  $("empty").hidden=!loaded||visible.length!==0;
+  $("empty").textContent=view==="favorites"
     ?t("emptyFav"):t("empty");
 
   updateCounts();
 }
 
-function openCategory(c) {
-  category=c;
+function openCategory(category) {
+  view=category;
   renderProducts();
   $("products").scrollIntoView({behavior:"smooth"});
 }
 
+/* КОРЗИНА */
+
 function addCart(id) {
+  const product=getProduct(id);
+  if (!product) return;
+
   const existing=cart.find(x=>x.id===id);
+
   if (existing) {
     existing.quantity=Math.min(99,existing.quantity+1);
   } else {
     cart.push({id,quantity:1});
   }
+
   saveCart();
   renderCart();
   openCart();
@@ -840,103 +946,115 @@ function addCart(id) {
 function changeQty(id,amount) {
   const item=cart.find(x=>x.id===id);
   if (!item) return;
+
   item.quantity+=amount;
+
   if (item.quantity<=0) {
     cart=cart.filter(x=>x.id!==id);
   } else {
     item.quantity=Math.min(99,item.quantity);
   }
+
   saveCart();
   renderCart();
 }
 
 function total() {
   return cart.reduce((sum,item)=>{
-    const p=byId(item.id);
+    const p=getProduct(item.id);
     return sum+(p?p.price*item.quantity:0);
   },0);
 }
 
 function updateCounts() {
   $("favoritesCount").textContent=favorites.size;
+
   $("cartCount").textContent=cart.reduce(
-    (s,item)=>s+item.quantity,0
+    (sum,item)=>sum+item.quantity,0
   );
 }
 
 function orderText() {
   const lines=[
-    "MIX COFFEE BRACELET 🤎",
+    "🤎 MIX COFFEE BRACELET",
     "Заказ / Тапсырыс",
-    "----------------"
+    "-------------------"
   ];
+
   cart.forEach((item,index)=>{
-    const p=byId(item.id);
-    if (!p) return;
+    const product=getProduct(item.id);
+    if (!product) return;
+
     lines.push(
-      `${index+1}. ${name(p.category)}`,
-      `Количество: ${item.quantity}`,
-      `Сумма: ${money(p.price*item.quantity)}`
+      (index+1)+". "+productName(product.category),
+      "Количество: "+item.quantity,
+      "Цена: "+money(product.price*item.quantity)
     );
-    const photo=photosOf(p)[0];
-    if (photo) lines.push("Фото: "+photo.image_url);
+
+    const image=photosOf(product)[0];
+    if (image) lines.push("Фото: "+image.image_url);
+
+    lines.push("-------------------");
   });
+
   lines.push("Итого: "+money(total()));
   return lines.join("\n");
 }
 
 function renderCart() {
-  const box=$("cartItems");
-  box.replaceChildren();
+  const container=$("cartItems");
+  container.replaceChildren();
 
   if (!cart.length) {
-    const p=document.createElement("p");
-    p.textContent=language==="kz"?"Себет бос":"Корзина пуста";
-    box.append(p);
+    const empty=document.createElement("p");
+    empty.textContent=
+      lang==="kz"?"Себет бос":
+      lang==="en"?"Cart is empty":"Корзина пуста";
+    container.append(empty);
   }
 
   for (const item of cart) {
-    const p=byId(item.id);
-    if (!p) continue;
+    const product=getProduct(item.id);
+    if (!product) continue;
 
     const row=document.createElement("div");
     row.className="cart-row";
 
-    const img=document.createElement("img");
-    img.src=photosOf(p)[0]?.image_url||"";
-    img.alt=name(p.category);
+    const image=document.createElement("img");
+    image.src=photosOf(product)[0]?.image_url||"";
+    image.alt=productName(product.category);
 
     const detail=document.createElement("div");
-    detail.className="detail";
+    detail.className="cart-detail";
 
     const heading=document.createElement("strong");
-    heading.textContent=name(p.category);
+    heading.textContent=productName(product.category);
 
     const price=document.createElement("p");
-    price.textContent=money(p.price*item.quantity);
+    price.textContent=money(product.price*item.quantity);
 
-    const controls=document.createElement("div");
-    controls.className="cart-controls";
+    const qty=document.createElement("div");
+    qty.className="qty";
 
     const minus=document.createElement("button");
     minus.textContent="−";
-    minus.onclick=()=>changeQty(p.id,-1);
+    minus.onclick=()=>changeQty(item.id,-1);
 
-    const qty=document.createElement("b");
-    qty.textContent=item.quantity;
+    const number=document.createElement("b");
+    number.textContent=item.quantity;
 
     const plus=document.createElement("button");
     plus.textContent="+";
-    plus.onclick=()=>changeQty(p.id,1);
+    plus.onclick=()=>changeQty(item.id,1);
 
     const remove=document.createElement("button");
     remove.textContent="×";
-    remove.onclick=()=>changeQty(p.id,-item.quantity);
+    remove.onclick=()=>changeQty(item.id,-item.quantity);
 
-    controls.append(minus,qty,plus,remove);
-    detail.append(heading,price,controls);
-    row.append(img,detail);
-    box.append(row);
+    qty.append(minus,number,plus,remove);
+    detail.append(heading,price,qty);
+    row.append(image,detail);
+    container.append(row);
   }
 
   $("totalPrice").textContent=money(total());
@@ -946,15 +1064,16 @@ function renderCart() {
   link.textContent=t("order");
 
   if (cart.length) {
-    link.href="https://wa.me/77058038122?text="+
-      encodeURIComponent(orderText());
+    link.href="https://wa.me/"+WHATSAPP+
+      "?text="+encodeURIComponent(orderText());
     link.style.opacity="1";
-    link.style.pointerEvents="";
+    link.style.pointerEvents="auto";
   } else {
     link.removeAttribute("href");
     link.style.opacity=".5";
     link.style.pointerEvents="none";
   }
+
   updateCounts();
 }
 
@@ -962,17 +1081,23 @@ function openCart() {
   $("backdrop").hidden=false;
   $("cartPanel").classList.add("open");
 }
+
 function closeCart() {
   $("backdrop").hidden=true;
   $("cartPanel").classList.remove("open");
 }
 
-function changeLanguage(l) {
-  if (!words[l]) return;
-  language=l;
-  store("mix-lang-v10",l);
-  $("lang").value=l;
-  document.documentElement.lang=l==="kz"?"kk":l;
+/* ЯЗЫК */
+
+function changeLanguage(next) {
+  if (!texts[next]) return;
+
+  lang=next;
+  saveLocal("mix-lang-v11",lang);
+  $("lang").value=lang;
+
+  document.documentElement.lang=
+    lang==="kz"?"kk":lang;
 
   $("tagline").textContent=t("tagline");
   $("explore").textContent=t("explore");
@@ -980,34 +1105,51 @@ function changeLanguage(l) {
   $("cartTitle").textContent=t("cart");
   $("totalLabel").textContent=t("total");
   $("copyOrder").textContent=t("copy");
+
   document.querySelectorAll(".viewLabel")
-    .forEach(x=>x.textContent=t("view"));
+    .forEach(el=>el.textContent=t("view"));
+
   renderProducts();
   renderCart();
 }
 
+/* КНОПКИ */
+
 $("lang").onchange=e=>changeLanguage(e.target.value);
-$("explore").onclick=()=>
-  $("collections").scrollIntoView({behavior:"smooth"});
+
+$("explore").onclick=()=>{
+  $("collections").scrollIntoView({
+    behavior:"smooth"
+  });
+};
 
 document.querySelectorAll("[data-category]")
-  .forEach(b=>b.onclick=()=>openCategory(b.dataset.category));
+  .forEach(button=>{
+    button.onclick=()=>openCategory(
+      button.dataset.category
+    );
+  });
 
 document.querySelectorAll("[data-tab]")
-  .forEach(b=>b.onclick=()=>openCategory(b.dataset.tab));
+  .forEach(button=>{
+    button.onclick=()=>openCategory(
+      button.dataset.tab
+    );
+  });
 
 $("favoritesBtn").onclick=()=>openCategory("favorites");
-$("reload").onclick=()=>loadProducts();
 $("cartBtn").onclick=openCart;
 $("closeCart").onclick=closeCart;
 $("backdrop").onclick=closeCart;
+$("reload").onclick=loadProducts;
 
-document.addEventListener("keydown",e=>{
-  if (e.key==="Escape") closeCart();
+document.addEventListener("keydown",event=>{
+  if (event.key==="Escape") closeCart();
 });
 
 $("copyOrder").onclick=async()=>{
   if (!cart.length) return;
+
   try {
     await navigator.clipboard.writeText(orderText());
     $("cartStatus").textContent=t("copied");
@@ -1016,21 +1158,20 @@ $("copyOrder").onclick=async()=>{
   }
 };
 
+/* ЗАПУСК */
+
 async function start() {
   $("year").textContent=new Date().getFullYear();
-  changeLanguage(language);
+  changeLanguage(lang);
 
-  try {
-    initDb();
-    await Promise.all([loadProducts(),loadCovers()]);
-  } catch(error) {
-    console.error(error);
-    setStatus(t("error")+" "+error.message);
-    $("empty").hidden=true;
-  }
+  await Promise.all([
+    loadProducts(),
+    loadCovers()
+  ]);
 }
 
 start();
 </script>
+
 </body>
 </html>
