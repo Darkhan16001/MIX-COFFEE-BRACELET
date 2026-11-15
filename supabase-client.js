@@ -1,39 +1,25 @@
 
 "use strict";
 
-// MIX BRACELET — Supabase
-
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
-
-async function checkSupabaseConnection() {
-  try {
-    const { data, error } = await db
-      .from("bracelets")
-      .select("id")
-      .limit(1);
-
-    if (error) {
-      console.error(
-        "MIX BRACELET — Supabase error:",
-        error.message
-      );
-      return;
-    }
-
-    console.log(
-      "MIX BRACELET — Supabase подключён!",
-      data
-    );
-
-  } catch (error) {
-    console.error(
-      "Ошибка подключения Supabase:",
-      error
-    );
-  }
+if (!window.supabase) {
+  throw new Error("Библиотека Supabase не загружена");
 }
 
-checkSupabaseConnection();
+if (
+  !window.SUPABASE_URL ||
+  !window.SUPABASE_ANON_KEY ||
+  window.SUPABASE_URL.includes("ВСТАВЬ_")
+) {
+  throw new Error("Настройте supabase-config.js");
+}
+
+window.db = window.supabase.createClient(
+  window.SUPABASE_URL,
+  window.SUPABASE_ANON_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true
+    }
+  }
+);
