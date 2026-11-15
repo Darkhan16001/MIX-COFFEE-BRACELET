@@ -1,11 +1,17 @@
 
 "use strict";
 
-/* MIX BRACELET — ADMIN */
+/* =========================================
+   MIX COFFEE BRACELET — ADMIN PANEL
+   Supabase + Gallery + Products
+   ========================================= */
 
 const el = id => document.getElementById(id);
 
 const BUCKET = "bracelet-photos";
+
+const MAX_FILE_SIZE = 25 * 1024 * 1024;
+const MAX_PHOTOS = 6;
 
 const ALLOWED_TYPES = [
   "image/jpeg",
@@ -24,13 +30,13 @@ const coverUrls = {
   premium: ""
 };
 
-/* HELPERS */
+/* ========== HELPERS ========== */
 
-function setMessage(id, text, isError = false) {
+function setMessage(id, message, isError = false) {
   const target = el(id);
+  if (!target) return;
 
-  target.textContent = text;
-
+  target.textContent = message;
   target.className =
     "status " + (isError ? "error" : "success");
 }
@@ -51,6 +57,10 @@ function sortPhotos(photos) {
   );
 }
 
+function formatSize(bytes) {
+  return (bytes / 1024 / 1024).toFixed(2) + " МБ";
+}
+
 function validateImage(file) {
   if (!ALLOWED_TYPES.includes(file.type)) {
     throw new Error(
@@ -58,10 +68,17 @@ function validateImage(file) {
     );
   }
 
-  if (file.size > 5 * 1024 * 1024) {
+  if (file.size > MAX_FILE_SIZE) {
     throw new Error(
-      "Фотография должна быть меньше 5 МБ."
+      "Файл " + file.name +
+      " слишком большой (" +
+      formatSize(file.size) +
+      "). Максимум — 25 МБ."
     );
+  }
+
+  if (file.size === 0) {
+    throw new Error("Фотография пустая.");
   }
 }
 
@@ -70,6 +87,22 @@ function fileExtension(file) {
   if (file.type === "image/webp") return "webp";
   return "jpg";
 }
+
+function friendlyError(error) {
+  const message = error?.message || String(error);
+
+  if (/maximum.*size|file.*size|too large|413/i.test(message)) {
+    return (
+      "Файл превышает лимит Supabase Storage. " +
+      "Проверь настройки размера файлов в Supabase. " +
+      "Подробности: " + message
+    );
+  }
+
+  return message;
+}
+
+/* ========== SUPABASE STORAGE ========== */
 
 async function uploadFile(file, folder) {
   validateImage(file);
@@ -83,10 +116,13 @@ async function uploadFile(file, folder) {
     .from(BUCKET)
     .upload(path, file, {
       contentType: file.type,
-      upsert: false
+      upsert: false,
+      cacheControl: "3600"
     });
 
-  if (error) throw error;
+  if (error) {
+    throw new Error(friendlyError(error));
+  }
 
   const { data } = db.storage
     .from(BUCKET)
@@ -98,18 +134,15 @@ async function uploadFile(file, folder) {
   };
 }
 
-/* AUTHENTICATION */
+/* ========== AUTHENTICATION ========== */
 
 async function checkStaff() {
-  const {
-    data: { user },
-    error
-  } = await db.auth.getUser();
+  const { data, error } = await db.auth.getUser();
 
-  if (error || !user) return false;
+  if (error || !data?.user) return false;
 
   const result = await db.rpc("is_staff", {
-    uid: user.id
+    uid: data.user.id
   });
 
   if (result.error) {
@@ -148,11 +181,10 @@ el("loginForm").addEventListener(
       "Проверяем данные..."
     );
 
-    const { error } =
-      await db.auth.signInWithPassword({
-        email,
-        password
-      });
+    const { error } = await db.auth.signInWithPassword({
+      email,
+      password
+    });
 
     if (error) {
       setMessage(
@@ -170,7 +202,7 @@ el("loginForm").addEventListener(
 
       setMessage(
         "loginMessage",
-        "У этого аккаунта нет прав управления.",
+        "У этого аккаунта нет прав администратора.",
         true
       );
       return;
@@ -189,7 +221,7 @@ el("logout").addEventListener(
   }
 );
 
-/* COLLECTION COVERS */
+/* ========== COLLECTION COVERS ========== */
 
 function previewCover(category, url) {
   const target = el(
@@ -205,17 +237,17 @@ function previewCover(category, url) {
     return;
   }
 
-  const img = document.createElement("img");
+  const image = document.createElement("img");
 
-  img.src = url;
-  img.alt = categoryName(category);
+  image.src = url;
+  image.alt = categoryName(category);
 
-  img.onerror = () => {
+  image.onerror = () => {
     target.textContent =
       "Не удалось открыть фотографию";
   };
 
-  target.appendChild(img);
+  target.appendChild(image);
 }
 
 async function loadCollectionCovers() {
@@ -224,11 +256,13 @@ async function loadCollectionCovers() {
     .select("category,image_url");
 
   if (error) {
-    setMessage(
-      "coverStatusClassic",
-      "Ошибка: " + error.message,
-      true
-    );
+    for (const category of ["Classic", "Premium"]) {
+      setMessage(
+        "coverStatus" + category,
+        "Ошибка: " + error.message,
+        true
+      );
+    }
     return;
   }
 
@@ -237,8 +271,7 @@ async function loadCollectionCovers() {
       item => item.category === category
     );
 
-    coverUrls[category] =
-      found?.image_url || "";
+    coverUrls[category] = found?.image_url || "";
 
     previewCover(
       category,
@@ -274,12 +307,10 @@ async function saveCover(category) {
   let uploaded = null;
 
   try {
-    uploaded = await uploadFile(
-      file,
-      "covers"
-    );
+    validateImage(file);
 
-    // Строки classic и premium уже созданы SQL-кодом.
+    uploaded = await uploadFile(file, "covers");
+
     const { data, error } = await db
       .from("collection_covers")
       .update({
@@ -301,21 +332,16 @@ async function saveCover(category) {
 
     coverUrls[category] = uploaded.image_url;
 
-    previewCover(
-      category,
-      uploaded.image_url
-    );
+    previewCover(category, uploaded.image_url);
 
     input.value = "";
 
     setMessage(
       statusId,
-      "Фото сохранено! Оно появится в магазине."
+      "Фотография успешно опубликована!"
     );
 
   } catch (error) {
-    // При ошибке записи удаляем только что
-    // загруженный, но не сохранённый файл.
     if (uploaded?.storage_path) {
       await db.storage
         .from(BUCKET)
@@ -324,9 +350,10 @@ async function saveCover(category) {
 
     setMessage(
       statusId,
-      "Ошибка: " + error.message,
+      "Ошибка: " + friendlyError(error),
       true
     );
+
   } finally {
     button.disabled = false;
   }
@@ -342,7 +369,6 @@ el("saveCoverPremium").addEventListener(
   () => saveCover("premium")
 );
 
-// Локальный предварительный просмотр
 for (const category of ["classic", "premium"]) {
   const suffix =
     category === "classic" ? "Classic" : "Premium";
@@ -355,12 +381,14 @@ for (const category of ["classic", "premium"]) {
 
       try {
         validateImage(file);
+
       } catch (error) {
         setMessage(
           "coverStatus" + suffix,
           error.message,
           true
         );
+
         event.target.value = "";
         return;
       }
@@ -374,27 +402,30 @@ for (const category of ["classic", "premium"]) {
       ).querySelector("img");
 
       if (image) {
+        const cleanup = () => URL.revokeObjectURL(url);
+
         image.addEventListener(
           "load",
-          () => URL.revokeObjectURL(url),
+          cleanup,
           { once: true }
         );
+
         image.addEventListener(
           "error",
-          () => URL.revokeObjectURL(url),
+          cleanup,
           { once: true }
         );
       }
 
       setMessage(
         "coverStatus" + suffix,
-        "Нажмите «Сохранить фото»."
+        "Файл выбран. Нажмите «Сохранить фото»."
       );
     }
   );
 }
 
-/* PRODUCTS */
+/* ========== LOAD PRODUCTS ========== */
 
 async function loadProducts() {
   setMessage(
@@ -424,7 +455,7 @@ async function loadProducts() {
   if (error) {
     setMessage(
       "listMessage",
-      error.message,
+      "Ошибка: " + error.message,
       true
     );
     return;
@@ -444,6 +475,8 @@ async function loadProducts() {
   );
 }
 
+/* ========== PRODUCT CARDS ========== */
+
 function renderProducts() {
   const container = el("productList");
   container.replaceChildren();
@@ -455,22 +488,21 @@ function renderProducts() {
     const photo = document.createElement("div");
     photo.className = "product-photo";
 
-    const mainPhoto =
-      product.bracelet_photos[0];
+    const mainPhoto = product.bracelet_photos[0];
 
     if (mainPhoto?.image_url) {
       const image = document.createElement("img");
+
       image.src = mainPhoto.image_url;
       image.alt = categoryName(product.category);
       image.loading = "lazy";
+
       photo.appendChild(image);
     } else {
       photo.textContent = "Нет фотографии";
     }
 
-    // Карандаш в правом верхнем углу
     const edit = document.createElement("button");
-
     edit.type = "button";
     edit.className = "edit-corner";
     edit.textContent = "✏️";
@@ -490,8 +522,7 @@ function renderProducts() {
     content.className = "product-content";
 
     const name = document.createElement("h3");
-    name.textContent =
-      categoryName(product.category);
+    name.textContent = categoryName(product.category);
 
     const price = document.createElement("p");
     price.textContent = formatPrice(product.price);
@@ -537,7 +568,7 @@ function renderProducts() {
         .eq("id", product.id);
 
       if (error) {
-        alert(error.message);
+        alert("Ошибка: " + error.message);
         toggle.disabled = false;
         return;
       }
@@ -558,7 +589,7 @@ function renderProducts() {
   });
 }
 
-/* PRODUCT EDITOR */
+/* ========== OPEN EDITOR ========== */
 
 function openEditor(product = null) {
   closeEditor();
@@ -622,6 +653,8 @@ el("cancelEdit").addEventListener(
   closeEditor
 );
 
+/* ========== SELECT PHOTOS ========== */
+
 el("photoInput").addEventListener(
   "change",
   event => {
@@ -629,7 +662,18 @@ el("photoInput").addEventListener(
       event.target.files || []
     );
 
+    const errors = [];
+    let added = 0;
+
     for (const file of files) {
+      if (editingPhotos.length >= MAX_PHOTOS) {
+        errors.push(
+          "Можно добавить максимум " +
+          MAX_PHOTOS + " фотографий."
+        );
+        break;
+      }
+
       try {
         validateImage(file);
 
@@ -639,19 +683,39 @@ el("photoInput").addEventListener(
           previewUrl: URL.createObjectURL(file)
         });
 
+        added++;
+
       } catch (error) {
-        setMessage(
-          "editorMessage",
-          error.message,
-          true
+        errors.push(
+          file.name + ": " + friendlyError(error)
         );
       }
     }
 
     event.target.value = "";
+
     renderPhotos();
+
+    if (errors.length > 0) {
+      setMessage(
+        "editorMessage",
+        "Добавлено: " + added +
+        ". Ошибки: " + errors.join(" | "),
+        true
+      );
+    } else {
+      setMessage(
+        "editorMessage",
+        "Фотографии выбраны: " +
+        editingPhotos.length +
+        " из " + MAX_PHOTOS +
+        ". Нажмите «Сохранить браслет»."
+      );
+    }
   }
 );
+
+/* ========== PHOTO ORDER ========== */
 
 function movePhoto(index, direction) {
   const next = index + direction;
@@ -659,7 +723,9 @@ function movePhoto(index, direction) {
   if (
     next < 0 ||
     next >= editingPhotos.length
-  ) return;
+  ) {
+    return;
+  }
 
   [
     editingPhotos[index],
@@ -682,6 +748,8 @@ function removePhoto(index) {
   editingPhotos.splice(index, 1);
   renderPhotos();
 }
+
+/* ========== PHOTO PREVIEW ========== */
 
 function renderPhotos() {
   const container = el("photoList");
@@ -722,7 +790,6 @@ function renderPhotos() {
     right.type = "button";
     right.className = "outline";
     right.textContent = "→";
-
     right.disabled =
       index === editingPhotos.length - 1;
 
@@ -748,7 +815,7 @@ function renderPhotos() {
   });
 }
 
-/* SAVE PRODUCT */
+/* ========== SAVE PRODUCT ========== */
 
 el("productForm").addEventListener(
   "submit",
@@ -761,6 +828,15 @@ el("productForm").addEventListener(
       setMessage(
         "editorMessage",
         "Добавьте хотя бы одну фотографию.",
+        true
+      );
+      return;
+    }
+
+    if (editingPhotos.length > MAX_PHOTOS) {
+      setMessage(
+        "editorMessage",
+        "Максимум 6 фотографий.",
         true
       );
       return;
@@ -780,19 +856,70 @@ el("productForm").addEventListener(
     savingProduct = true;
     el("saveProduct").disabled = true;
 
-    setMessage(
-      "editorMessage",
-      "Сохраняем браслет..."
-    );
-
     let productId = selectedProduct?.id;
     const newProduct = !productId;
+    const previousPublished =
+      selectedProduct?.published ?? false;
+
+    const uploadedPaths = [];
+    let dbPhotosWritten = false;
 
     try {
       const category = el("category").value;
       const published = el("published").checked;
 
-      // Новый товар создаётся скрытым.
+      // Проверяем все новые изображения.
+      for (const photo of editingPhotos) {
+        if (photo.kind === "new") {
+          validateImage(photo.file);
+        }
+      }
+
+      setMessage(
+        "editorMessage",
+        "Подготавливаем браслет..."
+      );
+
+      // Сначала загружаем новые фотографии.
+      // Старый товар пока не изменяется.
+      const orderedPhotos = [];
+
+      for (let i = 0; i < editingPhotos.length; i++) {
+        const photo = editingPhotos[i];
+
+        if (photo.kind === "existing") {
+          orderedPhotos.push({
+            kind: "existing",
+            id: photo.id
+          });
+
+        } else {
+          setMessage(
+            "editorMessage",
+            "Загружаем фото " +
+            (i + 1) + " из " +
+            editingPhotos.length + "..."
+          );
+
+          const uploaded = await uploadFile(
+            photo.file,
+            "products"
+          );
+
+          uploadedPaths.push(uploaded.storage_path);
+
+          orderedPhotos.push({
+            kind: "new",
+            ...uploaded
+          });
+        }
+      }
+
+      setMessage(
+        "editorMessage",
+        "Сохраняем данные в Supabase..."
+      );
+
       if (newProduct) {
         const { data, error } = await db
           .from("bracelets")
@@ -809,7 +936,6 @@ el("productForm").addEventListener(
         productId = data.id;
 
       } else {
-        // Скрываем товар на время замены фото.
         const { error } = await db
           .from("bracelets")
           .update({
@@ -831,29 +957,7 @@ el("productForm").addEventListener(
           .map(photo => photo.id)
       );
 
-      // Сначала загружаем новые файлы
-      const orderedPhotos = [];
-
-      for (const photo of editingPhotos) {
-        if (photo.kind === "existing") {
-          orderedPhotos.push({
-            kind: "existing",
-            id: photo.id
-          });
-        } else {
-          const uploaded = await uploadFile(
-            photo.file,
-            "products"
-          );
-
-          orderedPhotos.push({
-            kind: "new",
-            ...uploaded
-          });
-        }
-      }
-
-      // Сохраняем фотографии и порядок
+      // Сохраняем порядок фотографий.
       for (let i = 0; i < orderedPhotos.length; i++) {
         const photo = orderedPhotos[i];
 
@@ -877,9 +981,11 @@ el("productForm").addEventListener(
 
           if (error) throw error;
         }
+
+        dbPhotosWritten = true;
       }
 
-      // Удаляем снятые из галереи записи
+      // Удаляем записи о снятых фотографиях.
       for (const photo of oldPhotos) {
         if (retainedIds.has(photo.id)) continue;
 
@@ -889,12 +995,9 @@ el("productForm").addEventListener(
           .eq("id", photo.id);
 
         if (error) throw error;
-
-        // Старый файл не удаляем автоматически:
-        // это безопаснее для восстановления.
       }
 
-      // Публикуем после сохранения всех данных
+      // Публикуем товар только после сохранения.
       const { error: publishError } = await db
         .from("bracelets")
         .update({ published })
@@ -908,17 +1011,51 @@ el("productForm").addEventListener(
 
       setMessage(
         "listMessage",
-        "Браслет успешно сохранён!"
+        "Браслет успешно сохранён! " +
+        "Фотографий: " + orderedPhotos.length
       );
 
     } catch (error) {
+      console.error("Ошибка сохранения:", error);
+
+      // Если новые фотографии уже записаны
+      // в таблицу, не удаляем их из Storage:
+      // так мы не создадим битые ссылки.
+      if (!dbPhotosWritten && uploadedPaths.length) {
+        const { error: cleanupError } = await db.storage
+          .from(BUCKET)
+          .remove(uploadedPaths);
+
+        if (cleanupError) {
+          console.error(
+            "Ошибка очистки файлов:",
+            cleanupError
+          );
+        }
+      }
+
+      // Пытаемся вернуть прежний статус товара.
+      if (!newProduct && productId) {
+        const { error: restoreError } = await db
+          .from("bracelets")
+          .update({ published: previousPublished })
+          .eq("id", productId);
+
+        if (restoreError) {
+          console.error(
+            "Ошибка восстановления статуса:",
+            restoreError
+          );
+        }
+      }
+
       setMessage(
         "editorMessage",
-        "Ошибка: " + error.message,
+        "Ошибка сохранения: " +
+        friendlyError(error) +
+        ". Проверьте данные перед повторной попыткой.",
         true
       );
-
-      console.error(error);
 
     } finally {
       savingProduct = false;
@@ -927,6 +1064,8 @@ el("productForm").addEventListener(
   }
 );
 
-/* START */
+/* ========== START ========== */
 
-showScreen();
+showScreen().catch(error => {
+  console.error("Ошибка запуска админ-панели:", error);
+});
