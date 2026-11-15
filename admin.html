@@ -3,247 +3,254 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#ead3ad">
-<title>Управление — MIX COFFEE BRACELET</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIX COFFEE BRACELET — Администратор</title>
 <style>
+:root {
+  --brown:#4a2c20;
+  --cream:#f8f0e5;
+  --line:#e5d3bd;
+}
 * { box-sizing:border-box }
 body {
   margin:0;
-  background:#f7f0e6;
-  color:#472c1f;
   font-family:Arial,sans-serif;
+  color:var(--brown);
+  background:var(--cream);
 }
 [hidden] { display:none!important }
 button,input,select { font:inherit }
 button { cursor:pointer }
-button:disabled { opacity:.5;cursor:wait }
+button:disabled { opacity:.5;cursor:not-allowed }
 a { color:inherit;text-decoration:none }
 header {
-  display:flex;align-items:center;
+  padding:18px 5%;
+  background:white;
+  display:flex;
   justify-content:space-between;
   gap:12px;
-  padding:16px 5%;
-  background:#fffaf3;
-  border-bottom:1px solid #e6d5c0;
+  border-bottom:1px solid var(--line);
 }
-header strong { letter-spacing:1px }
-main { max-width:1100px;margin:auto;padding:25px 16px 80px }
-h1 { font-size:clamp(26px,5vw,38px) }
-h2 { font-size:24px }
+main {
+  max-width:1050px;
+  padding:25px 16px 75px;
+  margin:auto;
+}
 .panel {
   background:white;
-  border:1px solid #e8d9c6;
+  border:1px solid var(--line);
   border-radius:18px;
-  padding:23px;
   margin:20px 0;
-  box-shadow:0 10px 30px #5d382013;
+  padding:22px;
 }
-label { display:block;margin:14px 0;font-weight:600 }
+label { display:block;margin:13px 0;font-weight:600 }
 input:not([type=checkbox]),select {
   display:block;
   width:100%;
-  padding:13px;
   margin-top:8px;
-  border-radius:11px;
-  border:1px solid #d7c2a9;
-  background:#fffdfa;
+  padding:13px;
+  border:1px solid #cdb69d;
+  border-radius:10px;
+  background:white;
 }
-input[type=checkbox] { width:20px;height:20px;vertical-align:middle }
-.primary {
-  background:#4b2f21;
-  color:white;
-  border:0;
+input[type=checkbox] {
+  width:19px;height:19px;
+  vertical-align:middle;
+}
+.primary,.outline {
   border-radius:11px;
-  padding:13px 20px;
+  padding:12px 18px;
+  margin:4px;
+}
+.primary {
+  background:var(--brown);
+  border:0;
+  color:white;
 }
 .outline {
   background:white;
-  border:1px solid #c9b29a;
-  color:#4b2f21;
-  border-radius:11px;
-  padding:12px 17px;
+  border:1px solid #cbb59a;
+  color:var(--brown);
 }
-.actions { display:flex;flex-wrap:wrap;gap:10px;margin:15px 0 }
-.cols { display:grid;grid-template-columns:1fr 1fr;gap:20px }
-.status { padding:10px 0;white-space:pre-wrap }
-.error { color:#b22c2c }
-.success { color:#267548 }
-.products {
+.grid {
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
   gap:15px;
 }
-.product {
-  border:1px solid #e1d0bc;
-  border-radius:14px;
-  overflow:hidden;
-  background:#fffdfa;
+.card {
+  background:#fffdf9;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:12px;
+  min-width:0;
 }
-.product img {
-  width:100%;height:200px;
+.card img {
+  display:block;
+  width:100%;
+  height:155px;
   object-fit:contain;
-  background:#f0e7db;
+  background:#f0e8df;
 }
-.product-content { padding:15px }
-.product-content h3 { margin:0 0 10px }
-.product-content .actions button { flex:1 }
-.photo-list {
+.card h3 { margin-bottom:6px }
+.photos {
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
   gap:12px;
   margin:20px 0;
 }
-.photo-card {
-  border:1px solid #e1d0bc;
-  padding:9px;
+.photo {
+  border:1px solid var(--line);
   border-radius:12px;
+  padding:8px;
 }
-.photo-card img {
-  width:100%;height:145px;object-fit:contain;
-}
-.photo-card p { margin:7px 0 }
-.photo-buttons { display:flex;gap:5px }
-.photo-buttons button { padding:8px 11px }
-.cover-preview {
-  min-height:150px;
-  background:#f0e7db;
-  border-radius:12px;
-  display:grid;place-items:center;
-  overflow:hidden;
-  margin:15px 0;
-}
-.cover-preview img {
-  width:100%;height:190px;
+.photo img {
+  width:100%;
+  height:125px;
   object-fit:contain;
 }
-small { color:#876b56 }
-@media(max-width:750px) {
-  .products { grid-template-columns:repeat(2,minmax(0,1fr)) }
+.photo button {
+  padding:6px 10px;
+  margin:2px;
 }
-@media(max-width:500px) {
-  .cols,.products { grid-template-columns:1fr }
-  .photo-list { grid-template-columns:repeat(2,minmax(0,1fr)) }
-  .panel { padding:17px }
+.two {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+.status {
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  color:#76523b;
+}
+.error { color:#aa2828 }
+.preview img {
+  max-width:100%;
+  width:220px;
+  height:170px;
+  object-fit:contain;
+}
+@media(max-width:700px) {
+  .grid { grid-template-columns:repeat(2,1fr) }
+  .two { grid-template-columns:1fr }
+}
+@media(max-width:440px) {
+  .grid { grid-template-columns:1fr }
+  .photos { grid-template-columns:repeat(2,1fr) }
+  .panel { padding:16px }
 }
 </style>
-
-<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="supabase-config.js"></script>
 </head>
 
 <body>
 <header>
   <strong>✦ MIX COFFEE BRACELET</strong>
-  <a href="./">← Магазин</a>
+  <a href="./index.html">← Магазин</a>
 </header>
 
 <main>
-<h1>Управление магазином</h1>
+<h1>Панель продавца</h1>
+
+<p id="connection" class="status">
+  Подключаемся к Supabase...
+</p>
 
 <section class="panel" id="loginSection">
-  <h2>Вход продавца</h2>
+  <h2>Вход администратора</h2>
   <form id="loginForm">
-    <label>
-      Email
-      <input id="email" type="email" required autocomplete="username">
+    <label>Email
+      <input id="email" type="email" required>
     </label>
-    <label>
-      Пароль
-      <input id="password" type="password" required autocomplete="current-password">
+    <label>Пароль
+      <input id="password" type="password" required>
     </label>
     <button class="primary">Войти</button>
   </form>
-  <p class="status" id="loginStatus"></p>
+  <p id="loginStatus" class="status"></p>
 </section>
 
 <div id="manager" hidden>
-  <div class="actions">
-    <button class="outline" id="logout">Выйти</button>
-    <button class="outline" id="reload">Обновить товары</button>
-  </div>
+  <button class="outline" id="logout">Выйти</button>
 
   <section class="panel">
-    <h2>Мои браслеты</h2>
-    <button class="primary" id="add">+ Добавить браслет</button>
-    <p class="status" id="listStatus"></p>
-    <div class="products" id="productList"></div>
+    <h2>Браслеты</h2>
+    <button class="primary" id="addProduct">
+      + Добавить браслет
+    </button>
+    <button class="outline" id="refresh">
+      Обновить
+    </button>
+
+    <p id="listStatus" class="status"></p>
+    <div class="grid" id="productList"></div>
   </section>
 
   <section class="panel" id="editor" hidden>
     <h2 id="editorTitle">Новый браслет</h2>
 
     <form id="productForm">
-      <div class="cols">
-        <label>
-          Коллекция
+      <div class="two">
+        <label>Коллекция
           <select id="category">
             <option value="classic">Coffee Classic</option>
             <option value="premium">Coffee Premium</option>
           </select>
         </label>
 
-        <label>
-          Цена в тенге
-          <input id="price" type="number" min="1" required>
+        <label>Цена ₸
+          <input id="price" type="number"
+                 min="1" value="3990" required>
         </label>
       </div>
 
       <label>
-        <input type="checkbox" id="published" checked>
-        Опубликовать для покупателей
+        <input id="published" type="checkbox" checked>
+        Показывать покупателям
       </label>
 
       <h3>Фотографии</h3>
-      <p>Максимум 6 фотографий. Каждая до 25 МБ.</p>
-      <p>Разрешены JPG, PNG и WEBP.</p>
+      <p>До 6 фото на браслет, каждое до 25 МБ.</p>
 
-      <input id="photoInput" type="file"
-             multiple accept="image/jpeg,image/png,image/webp">
+      <input id="photoInput"
+             type="file"
+             multiple
+             accept="image/jpeg,image/png,image/webp">
 
-      <div class="photo-list" id="photoList"></div>
+      <div id="photoList" class="photos"></div>
+      <p id="editorStatus" class="status"></p>
 
-      <p class="status" id="editorStatus"></p>
-
-      <div class="actions">
-        <button class="primary" id="saveProduct">
-          Сохранить браслет
-        </button>
-        <button type="button" class="outline" id="cancel">
-          Отмена
-        </button>
-      </div>
+      <button class="primary" id="saveProduct">
+        Сохранить браслет
+      </button>
+      <button class="outline" type="button"
+              id="cancelEdit">
+        Отмена
+      </button>
     </form>
   </section>
 
   <section class="panel">
     <h2>Обложки коллекций</h2>
-    <div class="cols">
+    <div class="two">
       <div>
         <h3>Classic</h3>
-        <div class="cover-preview" id="previewClassic">
-          Нет обложки
-        </div>
-        <input type="file" id="fileClassic"
+        <div id="previewClassic" class="preview"></div>
+        <input id="fileClassic" type="file"
                accept="image/jpeg,image/png,image/webp">
-        <button class="outline" id="saveClassic">
-          Сохранить обложку
+        <button id="saveClassic" class="outline">
+          Сохранить Classic
         </button>
-        <p class="status" id="statusClassic"></p>
+        <p id="statusClassic" class="status"></p>
       </div>
 
       <div>
         <h3>Premium</h3>
-        <div class="cover-preview" id="previewPremium">
-          Нет обложки
-        </div>
-        <input type="file" id="filePremium"
+        <div id="previewPremium" class="preview"></div>
+        <input id="filePremium" type="file"
                accept="image/jpeg,image/png,image/webp">
-        <button class="outline" id="savePremium">
-          Сохранить обложку
+        <button id="savePremium" class="outline">
+          Сохранить Premium
         </button>
-        <p class="status" id="statusPremium"></p>
+        <p id="statusPremium" class="status"></p>
       </div>
     </div>
   </section>
@@ -253,68 +260,120 @@ small { color:#876b56 }
 <script>
 "use strict";
 
-const $ = id=>document.getElementById(id);
+const $ = id => document.getElementById(id);
+const URL_PROJECT =
+  "https://zvancvqgwsqzrqestovd.supabase.co";
+const PUBLIC_KEY =
+  "sb_publishable_ixGxOe65UcmtWQHW2Bxh5w_qZepizp2";
+const BUCKET = "bracelet-photos";
+const MAX_PHOTOS = 6;
+const MAX_BYTES = 25 * 1024 * 1024;
 
-let db=null;
-let staff=false;
-let products=[];
-let editing=null;
-let photos=[];
-let saving=false;
+let db = null;
+let products = [];
+let currentProduct = null;
+let photos = [];
+let saving = false;
+let staff = false;
 
-const BUCKET="bracelet-photos";
-const MAX_PHOTOS=6;
-const MAX_SIZE=25*1024*1024;
-const MIME=["image/jpeg","image/png","image/webp"];
+function status(id,text,error=false) {
+  const el=$(id);
+  el.textContent=text;
+  el.className="status"+(error?" error":"");
+}
 
-const name=c=>c==="premium"?"Coffee Premium":"Coffee Classic";
-const money=n=>Number(n).toLocaleString("ru-RU")+" ₸";
+function money(n) {
+  return Number(n).toLocaleString("ru-RU")+" ₸";
+}
 
-function message(id,text,bad=false) {
-  const e=$(id);
-  e.textContent=text;
-  e.className="status "+(bad?"error":"success");
+function categoryName(c) {
+  return c==="premium"?"Coffee Premium":"Coffee Classic";
 }
 
 function photoSort(list) {
   return [...(list||[])].sort(
-    (a,b)=>(a.position||0)-(b.position||0)
+    (a,b)=>(a.position??0)-(b.position??0)
   );
 }
 
 function validate(file) {
-  if (!MIME.includes(file.type)) {
-    throw new Error(file.name+": нужен JPG, PNG или WEBP");
+  if (!["image/jpeg","image/png","image/webp"]
+    .includes(file.type)) {
+    throw new Error(
+      file.name+": поддерживаются только JPG, PNG и WEBP"
+    );
   }
-  if (!file.size) {
-    throw new Error(file.name+": пустой файл");
-  }
-  if (file.size>MAX_SIZE) {
-    throw new Error(file.name+": превышен лимит 25 МБ");
+  if (!file.size || file.size>MAX_BYTES) {
+    throw new Error(
+      file.name+": размер должен быть до 25 МБ"
+    );
   }
 }
 
-function extension(file) {
+function ext(file) {
   if (file.type==="image/png") return "png";
   if (file.type==="image/webp") return "webp";
   return "jpg";
 }
 
-function initDb() {
-  if (!window.supabase?.createClient) {
-    throw new Error("Библиотека Supabase не загрузилась");
-  }
-  if (!window.MIX_SUPABASE?.key) {
-    throw new Error("Нет supabase-config.js");
+/* ЗАГРУЗКА БИБЛИОТЕКИ С РЕЗЕРВОМ */
+
+function loadScript(url) {
+  return new Promise((resolve,reject)=>{
+    const script=document.createElement("script");
+    script.src=url;
+    script.onload=resolve;
+    script.onerror=()=>{
+      script.remove();
+      reject(new Error("CDN недоступен: "+url));
+    };
+    document.head.appendChild(script);
+  });
+}
+
+async function loadSupabaseLibrary() {
+  const sources=[
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
+    "https://unpkg.com/@supabase/supabase-js@2"
+  ];
+
+  for (const source of sources) {
+    try {
+      if (!window.supabase?.createClient) {
+        await loadScript(source);
+      }
+      if (window.supabase?.createClient) return;
+    } catch(error) {
+      console.warn(error.message);
+    }
   }
 
-  db=window.supabase.createClient(
-    window.MIX_SUPABASE.url,
-    window.MIX_SUPABASE.key
+  throw new Error(
+    "Не удалось загрузить Supabase с двух CDN. "+
+    "Проверь интернет и блокировку скриптов."
   );
 }
 
-async function isStaff() {
+async function init() {
+  await loadSupabaseLibrary();
+
+  db=window.supabase.createClient(
+    URL_PROJECT,
+    PUBLIC_KEY,
+    {
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true
+      }
+    }
+  );
+
+  status("connection","Supabase подключён");
+}
+
+/* ПРОВЕРКА ПРАВ ПРОДАВЦА */
+
+async function checkStaff() {
   const {data,error}=await db.auth.getUser();
   if (error || !data?.user) return false;
 
@@ -326,23 +385,27 @@ async function isStaff() {
     console.error(result.error);
     return false;
   }
+
   return result.data===true;
 }
 
-async function show() {
-  staff=await isStaff();
+async function showAdmin() {
+  staff=await checkStaff();
 
   $("loginSection").hidden=staff;
   $("manager").hidden=!staff;
 
   if (staff) {
-    await Promise.all([loadProducts(),loadCovers()]);
+    await Promise.all([
+      loadProducts(),
+      loadCovers()
+    ]);
   }
 }
 
-$("loginForm").onsubmit=async e=>{
-  e.preventDefault();
-  message("loginStatus","Проверяем вход...");
+$("loginForm").onsubmit=async event=>{
+  event.preventDefault();
+  status("loginStatus","Проверяем вход...");
 
   const {error}=await db.auth.signInWithPassword({
     email:$("email").value.trim(),
@@ -350,28 +413,34 @@ $("loginForm").onsubmit=async e=>{
   });
 
   if (error) {
-    message("loginStatus",error.message,true);
+    status("loginStatus",error.message,true);
     return;
   }
-  if (!(await isStaff())) {
+
+  if (!(await checkStaff())) {
     await db.auth.signOut();
-    message("loginStatus","Нет прав продавца",true);
+    status(
+      "loginStatus",
+      "У этого аккаунта нет прав продавца",
+      true
+    );
     return;
   }
+
   $("password").value="";
-  await show();
+  await showAdmin();
 };
 
 $("logout").onclick=async()=>{
   await db.auth.signOut();
   closeEditor();
-  await show();
+  await showAdmin();
 };
 
 /* ЗАГРУЗКА ТОВАРОВ */
 
 async function loadProducts() {
-  message("listStatus","Загружаем товары...");
+  status("listStatus","Загрузка товаров...");
 
   const {data,error}=await db
     .from("bracelets")
@@ -382,7 +451,7 @@ async function loadProducts() {
     .order("created_at",{ascending:false});
 
   if (error) {
-    message("listStatus",error.message,true);
+    status("listStatus",error.message,true);
     return;
   }
 
@@ -392,207 +461,213 @@ async function loadProducts() {
   }));
 
   renderProducts();
-  message("listStatus","Всего товаров: "+products.length);
+  status("listStatus","Всего товаров: "+products.length);
 }
 
 function renderProducts() {
-  const box=$("productList");
-  box.replaceChildren();
+  const list=$("productList");
+  list.replaceChildren();
 
-  for (const p of products) {
+  products.forEach(product=>{
     const card=document.createElement("article");
-    card.className="product";
+    card.className="card";
 
-    const img=document.createElement("img");
-    img.src=p.bracelet_photos[0]?.image_url||"";
-    img.alt=name(p.category);
-
-    const content=document.createElement("div");
-    content.className="product-content";
+    const image=document.createElement("img");
+    image.src=product.bracelet_photos[0]?.image_url||"";
+    image.alt=categoryName(product.category);
 
     const title=document.createElement("h3");
-    title.textContent=name(p.category);
+    title.textContent=categoryName(product.category);
 
     const price=document.createElement("p");
-    price.textContent=money(p.price);
+    price.textContent=money(product.price);
 
     const count=document.createElement("p");
-    count.textContent=p.bracelet_photos.length+" фото";
+    count.textContent=
+      product.bracelet_photos.length+" фото";
 
-    const state=document.createElement("p");
-    state.textContent=p.published?"Опубликован":"Скрыт";
-
-    const buttons=document.createElement("div");
-    buttons.className="actions";
+    const published=document.createElement("p");
+    published.textContent=product.published
+      ?"Опубликован":"Скрыт";
 
     const edit=document.createElement("button");
     edit.className="outline";
     edit.textContent="✏️ Изменить";
-    edit.onclick=()=>openEditor(p);
+    edit.onclick=()=>openEditor(product);
 
     const toggle=document.createElement("button");
     toggle.className="outline";
-    toggle.textContent=p.published?"− Скрыть":"+ Вернуть";
+    toggle.textContent=product.published
+      ?"Скрыть":"Опубликовать";
 
     toggle.onclick=async()=>{
-      if (!confirm(
-        p.published?"Скрыть товар?":"Опубликовать товар?"
-      )) return;
-
+      if (!confirm("Изменить публикацию товара?")) return;
       toggle.disabled=true;
 
-      const {error}=await db.from("bracelets")
-        .update({published:!p.published})
-        .eq("id",p.id);
+      const {error}=await db
+        .from("bracelets")
+        .update({published:!product.published})
+        .eq("id",product.id);
 
       if (error) {
         alert(error.message);
         toggle.disabled=false;
         return;
       }
+
       await loadProducts();
     };
 
-    buttons.append(edit,toggle);
-    content.append(title,price,count,state,buttons);
-    card.append(img,content);
-    box.append(card);
-  }
+    card.append(
+      image,title,price,count,published,edit,toggle
+    );
+    list.append(card);
+  });
 }
 
-/* РЕДАКТОР */
+/* РЕДАКТОР ТОВАРОВ */
 
 function closeEditor() {
-  for (const p of photos) {
+  photos.forEach(p=>{
     if (p.preview) URL.revokeObjectURL(p.preview);
-  }
+  });
   photos=[];
-  editing=null;
+  currentProduct=null;
   $("editor").hidden=true;
 }
 
-function openEditor(p=null) {
+function openEditor(product=null) {
   closeEditor();
-  editing=p;
+  currentProduct=product;
 
-  photos=(p?.bracelet_photos||[]).map(x=>({
-    ...x,kind:"existing"
+  photos=(product?.bracelet_photos||[]).map(p=>({
+    ...p,
+    kind:"existing"
   }));
 
-  $("editorTitle").textContent=
-    p?"Изменить браслет":"Добавить браслет";
-  $("category").value=p?.category||"classic";
-  $("price").value=p?.price||3990;
-  $("published").checked=p?.published??true;
+  $("editorTitle").textContent=product
+    ?"Редактировать браслет"
+    :"Новый браслет";
+
+  $("category").value=product?.category||"classic";
+  $("price").value=product?.price||3990;
+  $("published").checked=product?.published??true;
   $("photoInput").value="";
-  message("editorStatus","");
+
+  status("editorStatus","");
   $("editor").hidden=false;
   renderPhotos();
+
   $("editor").scrollIntoView({behavior:"smooth"});
 }
 
-$("add").onclick=()=>openEditor();
-$("cancel").onclick=closeEditor;
-$("reload").onclick=loadProducts;
+$("addProduct").onclick=()=>openEditor();
+$("cancelEdit").onclick=closeEditor;
+$("refresh").onclick=loadProducts;
 
 $("category").onchange=()=>{
-  if (editing) return;
+  if (currentProduct) return;
   $("price").value=$("category").value==="premium"
     ?5990:3990;
 };
 
-$("photoInput").onchange=e=>{
-  let count=0;
+$("photoInput").onchange=event=>{
   const errors=[];
+  let added=0;
 
-  for (const file of [...e.target.files]) {
+  for (const file of [...event.target.files]) {
     if (photos.length>=MAX_PHOTOS) {
       errors.push("Максимум 6 фотографий");
       break;
     }
+
     try {
       validate(file);
+
       photos.push({
         kind:"new",
         file,
         preview:URL.createObjectURL(file)
       });
-      count++;
+      added++;
     } catch(error) {
       errors.push(error.message);
     }
   }
 
-  e.target.value="";
+  event.target.value="";
   renderPhotos();
 
-  message(
+  status(
     "editorStatus",
-    "Добавлено: "+count+
+    "Добавлено: "+added+
     ". Всего: "+photos.length+"/6"+
     (errors.length?"\n"+errors.join("\n"):""),
     errors.length>0
   );
 };
 
+function movePhoto(index,step) {
+  const next=index+step;
+  if (next<0||next>=photos.length) return;
+
+  [photos[index],photos[next]]=
+    [photos[next],photos[index]];
+
+  renderPhotos();
+}
+
 function renderPhotos() {
-  const box=$("photoList");
-  box.replaceChildren();
+  const list=$("photoList");
+  list.replaceChildren();
 
-  photos.forEach((p,i)=>{
-    const item=document.createElement("div");
-    item.className="photo-card";
+  photos.forEach((photo,index)=>{
+    const card=document.createElement("div");
+    card.className="photo";
 
-    const img=document.createElement("img");
-    img.src=p.preview||p.image_url;
+    const image=document.createElement("img");
+    image.src=photo.preview||photo.image_url;
 
-    const text=document.createElement("p");
-    text.textContent=i===0?"Главное фото":"Фото "+(i+1);
-
-    const buttons=document.createElement("div");
-    buttons.className="photo-buttons";
+    const label=document.createElement("p");
+    label.textContent=index===0
+      ?"Главное фото"
+      :"Фото "+(index+1);
 
     const left=document.createElement("button");
     left.type="button";
     left.textContent="←";
-    left.disabled=i===0;
-    left.onclick=()=>move(i,-1);
+    left.disabled=index===0;
+    left.onclick=()=>movePhoto(index,-1);
 
     const right=document.createElement("button");
     right.type="button";
     right.textContent="→";
-    right.disabled=i===photos.length-1;
-    right.onclick=()=>move(i,1);
+    right.disabled=index===photos.length-1;
+    right.onclick=()=>movePhoto(index,1);
 
     const remove=document.createElement("button");
     remove.type="button";
     remove.textContent="×";
     remove.onclick=()=>{
-      if (p.preview) URL.revokeObjectURL(p.preview);
-      photos.splice(i,1);
+      if (photo.preview) {
+        URL.revokeObjectURL(photo.preview);
+      }
+      photos.splice(index,1);
       renderPhotos();
     };
 
-    buttons.append(left,right,remove);
-    item.append(img,text,buttons);
-    box.append(item);
+    card.append(image,label,left,right,remove);
+    list.append(card);
   });
 }
 
-function move(i,step) {
-  const n=i+step;
-  if (n<0||n>=photos.length) return;
-  [photos[i],photos[n]]=[photos[n],photos[i]];
-  renderPhotos();
-}
+/* SUPABASE STORAGE */
 
-/* ЗАГРУЗКА ФОТО В STORAGE */
-
-async function upload(file,folder) {
+async function uploadFile(file,folder) {
   validate(file);
 
   const path=folder+"/"+crypto.randomUUID()+
-    "."+extension(file);
+    "."+ext(file);
 
   const {error}=await db.storage
     .from(BUCKET)
@@ -602,7 +677,7 @@ async function upload(file,folder) {
     });
 
   if (error) throw new Error(
-    file.name+": "+error.message
+    "Ошибка фото "+file.name+": "+error.message
   );
 
   const {data}=db.storage
@@ -615,19 +690,19 @@ async function upload(file,folder) {
   };
 }
 
-/* СОХРАНЕНИЕ БРАСЛЕТА */
+/* СОХРАНЕНИЕ ТОВАРА */
 
-$("productForm").onsubmit=async e=>{
-  e.preventDefault();
+$("productForm").onsubmit=async event=>{
+  event.preventDefault();
   if (saving) return;
 
-  if (!(await isStaff())) {
-    message("editorStatus","Нет прав администратора",true);
+  if (!(await checkStaff())) {
+    status("editorStatus","Нет прав продавца",true);
     return;
   }
 
   if (!photos.length||photos.length>MAX_PHOTOS) {
-    message(
+    status(
       "editorStatus",
       "Нужно от 1 до 6 фотографий",
       true
@@ -636,8 +711,9 @@ $("productForm").onsubmit=async e=>{
   }
 
   const price=Number($("price").value);
+
   if (!Number.isInteger(price)||price<=0) {
-    message("editorStatus","Проверь цену",true);
+    status("editorStatus","Неверная цена",true);
     return;
   }
 
@@ -646,39 +722,46 @@ $("productForm").onsubmit=async e=>{
 
   const category=$("category").value;
   const published=$("published").checked;
+  let id=currentProduct?.id;
 
   const uploadedPaths=[];
-  let databaseChanged=false;
+  let recordsChanged=false;
 
   try {
     const prepared=[];
 
-    // Сначала все файлы.
+    // Загружаем новые фотографии,
+    // не изменяя существующий товар.
     for (let i=0;i<photos.length;i++) {
-      const p=photos[i];
+      const photo=photos[i];
 
-      if (p.kind==="existing") {
-        prepared.push({...p});
+      if (photo.kind==="existing") {
+        prepared.push({...photo});
         continue;
       }
 
-      message(
+      status(
         "editorStatus",
-        "Загружаем фото "+(i+1)+
+        "Загрузка фото "+(i+1)+
         " из "+photos.length+"..."
       );
 
-      const file=await upload(p.file,"products");
-      uploadedPaths.push(file.storage_path);
-      prepared.push({kind:"new",...file});
+      const result=await uploadFile(
+        photo.file,"products"
+      );
+
+      uploadedPaths.push(result.storage_path);
+      prepared.push({
+        kind:"new",
+        ...result
+      });
     }
 
-    message("editorStatus","Сохраняем товар...");
-
-    let id=editing?.id;
+    status("editorStatus","Сохраняем в базе...");
 
     if (!id) {
-      const {data,error}=await db.from("bracelets")
+      const {data,error}=await db
+        .from("bracelets")
         .insert({
           category,
           price,
@@ -689,51 +772,53 @@ $("productForm").onsubmit=async e=>{
 
       if (error) throw error;
       id=data.id;
-      databaseChanged=true;
+      recordsChanged=true;
     }
 
-    // Новые фото добавляем в БД.
     const newPhotos=prepared.filter(
       p=>p.kind==="new"
     );
 
     if (newPhotos.length) {
-      const rows=newPhotos.map((p,i)=>({
-        bracelet_id:id,
-        image_url:p.image_url,
-        storage_path:p.storage_path,
-        position:1000+i
-      }));
-
       const {error}=await db
         .from("bracelet_photos")
-        .insert(rows);
+        .insert(
+          newPhotos.map((p,index)=>({
+            bracelet_id:id,
+            image_url:p.image_url,
+            storage_path:p.storage_path,
+            position:1000+index
+          }))
+        );
 
       if (error) throw error;
-      databaseChanged=true;
+      recordsChanged=true;
     }
 
-    const {data:saved,error:readError}=await db
+    const {data:stored,error:readError}=await db
       .from("bracelet_photos")
       .select("id,storage_path")
       .eq("bracelet_id",id);
 
     if (readError) throw readError;
 
-    const paths=new Map(
-      (saved||[]).map(p=>[p.storage_path,p.id])
+    const idsByPath=new Map(
+      (stored||[]).map(p=>[
+        p.storage_path,p.id
+      ])
     );
 
-    // Устанавливаем порядок фото.
     for (let i=0;i<prepared.length;i++) {
-      const p=prepared[i];
+      const photo=prepared[i];
 
-      const photoId=p.kind==="existing"
-        ?p.id
-        :paths.get(p.storage_path);
+      const photoId=photo.kind==="existing"
+        ?photo.id
+        :idsByPath.get(photo.storage_path);
 
       if (!photoId) {
-        throw new Error("Не найдено фото №"+(i+1));
+        throw new Error(
+          "Не найдено фото "+(i+1)
+        );
       }
 
       const {error}=await db
@@ -742,17 +827,17 @@ $("productForm").onsubmit=async e=>{
         .eq("id",photoId);
 
       if (error) throw error;
-      databaseChanged=true;
+      recordsChanged=true;
     }
 
-    // Удаление только записей о снятых фото.
-    const keep=new Set(
-      prepared.filter(p=>p.kind==="existing")
+    const retained=new Set(
+      prepared
+        .filter(p=>p.kind==="existing")
         .map(p=>p.id)
     );
 
-    for (const old of editing?.bracelet_photos||[]) {
-      if (keep.has(old.id)) continue;
+    for (const old of currentProduct?.bracelet_photos||[]) {
+      if (retained.has(old.id)) continue;
 
       const {error}=await db
         .from("bracelet_photos")
@@ -760,37 +845,38 @@ $("productForm").onsubmit=async e=>{
         .eq("id",old.id);
 
       if (error) throw error;
-      databaseChanged=true;
+      recordsChanged=true;
     }
 
-    // Публикация только после успешной
-    // загрузки и сохранения фотографий.
-    const {error:updateError}=await db
+    const {error:saveError}=await db
       .from("bracelets")
       .update({
-        category,price,published
+        category,
+        price,
+        published
       })
       .eq("id",id);
 
-    if (updateError) throw updateError;
-    databaseChanged=true;
+    if (saveError) throw saveError;
+    recordsChanged=true;
 
     closeEditor();
     await loadProducts();
-    message("listStatus","Браслет сохранён!");
+
+    status("listStatus","Браслет сохранён!");
 
   } catch(error) {
     console.error(error);
 
-    // Файлы удаляем только если до ошибки
-    // ещё не было изменений в базе.
-    if (!databaseChanged&&uploadedPaths.length) {
+    if (!recordsChanged&&uploadedPaths.length) {
       const {error:cleanupError}=await db.storage
-        .from(BUCKET).remove(uploadedPaths);
+        .from(BUCKET)
+        .remove(uploadedPaths);
+
       if (cleanupError) console.warn(cleanupError);
     }
 
-    message(
+    status(
       "editorStatus",
       "Ошибка: "+error.message+
       "\nПроверь товар перед повторным сохранением.",
@@ -810,30 +896,36 @@ async function loadCovers() {
     .select("category,image_url");
 
   if (error) {
-    console.warn(error);
+    console.error(error);
     return;
   }
 
-  for (const c of ["classic","premium"]) {
-    const suffix=c==="classic"?"Classic":"Premium";
-    const box=$("preview"+suffix);
-    const cover=(data||[]).find(p=>p.category===c);
+  for (const category of ["classic","premium"]) {
+    const suffix=category==="classic"
+      ?"Classic":"Premium";
 
-    box.replaceChildren();
+    const container=$("preview"+suffix);
+    const cover=(data||[]).find(
+      p=>p.category===category
+    );
+
+    container.replaceChildren();
 
     if (!cover?.image_url) {
-      box.textContent="Нет обложки";
+      container.textContent="Нет обложки";
       continue;
     }
 
-    const img=document.createElement("img");
-    img.src=cover.image_url;
-    img.alt=name(c);
-    box.append(img);
+    const image=document.createElement("img");
+    image.src=cover.image_url;
+    image.alt=categoryName(category);
+    container.append(image);
   }
 }
 
 async function saveCover(category) {
+  if (!(await checkStaff())) return;
+
   const suffix=category==="classic"
     ?"Classic":"Premium";
 
@@ -842,7 +934,7 @@ async function saveCover(category) {
   const file=input.files[0];
 
   if (!file) {
-    message("status"+suffix,"Выбери фото",true);
+    status("status"+suffix,"Выбери фотографию",true);
     return;
   }
 
@@ -850,13 +942,10 @@ async function saveCover(category) {
   let uploaded=null;
 
   try {
-    if (!(await isStaff())) {
-      throw new Error("Нет прав продавца");
-    }
+    uploaded=await uploadFile(file,"covers");
 
-    uploaded=await upload(file,"covers");
-
-    const {error}=await db.from("collection_covers")
+    const {error}=await db
+      .from("collection_covers")
       .upsert({
         category,
         image_url:uploaded.image_url,
@@ -868,17 +957,19 @@ async function saveCover(category) {
 
     input.value="";
     await loadCovers();
-    message("status"+suffix,"Обложка сохранена");
+
+    status("status"+suffix,"Обложка сохранена!");
 
   } catch(error) {
     if (uploaded?.storage_path) {
       const {error:cleanupError}=await db.storage
         .from(BUCKET)
         .remove([uploaded.storage_path]);
+
       if (cleanupError) console.warn(cleanupError);
     }
-    message("status"+suffix,error.message,true);
 
+    status("status"+suffix,error.message,true);
   } finally {
     button.disabled=false;
   }
@@ -887,23 +978,19 @@ async function saveCover(category) {
 $("saveClassic").onclick=()=>saveCover("classic");
 $("savePremium").onclick=()=>saveCover("premium");
 
-/* START */
+/* ЗАПУСК */
 
-async function startAdmin() {
+async function start() {
   try {
-    initDb();
-    await show();
+    await init();
+    await showAdmin();
   } catch(error) {
     console.error(error);
-    message("loginStatus",error.message,true);
+    status("connection",error.message,true);
   }
 }
 
-document.addEventListener(
-  "DOMContentLoaded",
-  startAdmin,
-  {once:true}
-);
+start();
 </script>
 </body>
 </html>
