@@ -1,0 +1,13 @@
+
+{
+  "name": "MIX COFFEE BRACELET",
+  "short_name": "MIX COFFEE",
+  "description": "Coffee inspired bracelet store",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff1da",
+  "theme_color": "#e4c9b3",
+  "lang": "kk"
+}
+
