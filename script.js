@@ -23,9 +23,15 @@ const SUPABASE_KEY =
   Не вводи здесь Supabase Secret Key.
 */
 
-const WHATSAPP_NUMBER = "";
-const INSTAGRAM_URL = "";
-const TIKTOK_URL = "";
+
+const WHATSAPP_NUMBER = "77058038122";
+
+const INSTAGRAM_URL =
+  "https://www.instagram.com/mix_coffee_bracelet/";
+
+const TIKTOK_URL =
+  "https://www.tiktok.com/@mix_coffee_bracelet";
+
 
 /* ==========================================
    ELEMENTS
